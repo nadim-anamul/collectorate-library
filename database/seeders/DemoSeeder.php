@@ -26,28 +26,25 @@ class DemoSeeder extends Seeder
         $fiction = Category::firstOrCreate(['slug' => 'fiction'], ['name_en' => 'Fiction', 'name_bn' => 'উপন্যাস']);
         $tagClassic = Tag::firstOrCreate(['slug' => 'classic'], ['name' => 'Classic']);
 
-        $book = Book::withoutSyncingToSearch(function() use ($fiction, $tagClassic) {
-            $b = Book::firstOrCreate([
-                'title_en' => 'Shesher Kobita',
-                'title_bn' => 'শেষের কবিতা',
-            ], [
-                'title_bn_translit' => 'Shesher Kobita',
-                'author_en' => 'Rabindranath Tagore',
-                'author_bn' => 'রবীন্দ্রনাথ ঠাকুর',
-                'category_id' => $fiction->id,
-                'publisher_en' => 'Visva-Bharati',
-                'publisher_bn' => 'বিশ্বভারতী',
-                'isbn' => '9780195661330',
-                'barcode' => '9780195661330',
-                'publication_year' => 1929,
-                'pages' => 220,
-                'language_primary' => 'bn',
-                'available_copies' => 3,
-                'total_copies' => 3,
-            ]);
-            $b->tags()->syncWithoutDetaching([$tagClassic->id]);
-            return $b;
-        });
+        $book = Book::firstOrCreate([
+            'title_en' => 'Shesher Kobita',
+            'title_bn' => 'শেষের কবিতা',
+        ], [
+            'title_bn_translit' => 'Shesher Kobita',
+            'author_en' => 'Rabindranath Tagore',
+            'author_bn' => 'রবীন্দ্রনাথ ঠাকুর',
+            'category_id' => $fiction->id,
+            'publisher_en' => 'Visva-Bharati',
+            'publisher_bn' => 'বিশ্বভারতী',
+            'isbn' => '9780195661330',
+            'barcode' => '9780195661330',
+            'publication_year' => 1929,
+            'pages' => 220,
+            'language_primary' => 'bn',
+            'available_copies' => 3,
+            'total_copies' => 3,
+        ]);
+        $book->tags()->syncWithoutDetaching([$tagClassic->id]);
 
         Member::firstOrCreate(['member_id' => 'M-1001'], ['name' => 'Demo Member', 'type' => 'Student', 'active' => true]);
     }

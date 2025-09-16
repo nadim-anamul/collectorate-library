@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Models\Book;
 use App\Models\Models\Category;
 use App\Models\Models\Tag;
+use App\Models\Author;
+use App\Models\Publisher;
+use App\Models\Language;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Services\ActivityLogger;
@@ -39,7 +42,10 @@ class BookController extends Controller
     {
         $categories = Category::orderBy('name_en')->get();
         $tags = Tag::orderBy('name')->get();
-        return view('admin.books.create', compact('categories','tags'));
+        $authors = Author::orderBy('name_en')->get();
+        $publishers = Publisher::orderBy('name_en')->get();
+        $languages = Language::orderBy('name')->get();
+        return view('admin.books.create', compact('categories','tags','authors','publishers','languages'));
     }
 
     public function store(Request $request)
@@ -62,6 +68,11 @@ class BookController extends Controller
             'description_bn' => 'nullable|string',
             'cover' => 'nullable|image|max:2048',
             'pdf' => 'nullable|mimes:pdf|max:10240',
+            'primary_author_id' => 'nullable|exists:authors,id',
+            'publisher_id' => 'nullable|exists:publishers,id',
+            'language_id' => 'nullable|exists:languages,id',
+            'authors' => 'array',
+            'authors.*' => 'integer|exists:authors,id',
             'tags' => 'array',
             'tags.*' => 'integer|exists:tags,id',
         ]);
@@ -74,6 +85,9 @@ class BookController extends Controller
         }
 
         $book = Book::create($validated);
+        if(isset($validated['authors'])){
+            $book->authors()->sync($validated['authors']);
+        }
         if(isset($validated['tags'])){
             $book->tags()->sync($validated['tags']);
         }
@@ -86,8 +100,11 @@ class BookController extends Controller
     {
         $categories = Category::orderBy('name_en')->get();
         $tags = Tag::orderBy('name')->get();
-        $book->load('tags');
-        return view('admin.books.edit', compact('book','categories','tags'));
+        $authors = Author::orderBy('name_en')->get();
+        $publishers = Publisher::orderBy('name_en')->get();
+        $languages = Language::orderBy('name')->get();
+        $book->load(['tags','authors']);
+        return view('admin.books.edit', compact('book','categories','tags','authors','publishers','languages'));
     }
 
     public function update(Request $request, Book $book)
@@ -110,6 +127,11 @@ class BookController extends Controller
             'description_bn' => 'nullable|string',
             'cover' => 'nullable|image|max:2048',
             'pdf' => 'nullable|mimes:pdf|max:10240',
+            'primary_author_id' => 'nullable|exists:authors,id',
+            'publisher_id' => 'nullable|exists:publishers,id',
+            'language_id' => 'nullable|exists:languages,id',
+            'authors' => 'array',
+            'authors.*' => 'integer|exists:authors,id',
             'tags' => 'array',
             'tags.*' => 'integer|exists:tags,id',
         ]);
@@ -124,6 +146,9 @@ class BookController extends Controller
         }
 
         $book->update($validated);
+        if(isset($validated['authors'])){
+            $book->authors()->sync($validated['authors']);
+        }
         if(isset($validated['tags'])){
             $book->tags()->sync($validated['tags']);
         }

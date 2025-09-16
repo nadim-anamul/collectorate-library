@@ -23,11 +23,26 @@ class CategoryController extends Controller
     {
         $validated = $request->validate([
             'name_en' => 'required|string|max:255',
-            'name_bn' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:categories,slug',
+            'name_bn' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
         ]);
 
-        Category::create($validated);
+        // Generate slug from name_en if not provided
+        if (!isset($validated['slug'])) {
+            $validated['slug'] = \Str::slug($validated['name_en']);
+        }
+
+        $category = Category::create($validated);
+
+        // Return JSON response for AJAX requests
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'category' => $category,
+                'message' => 'Category created successfully.'
+            ]);
+        }
+
         return redirect()->route('admin.categories.index')->with('status','Category created');
     }
 

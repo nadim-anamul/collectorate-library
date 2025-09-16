@@ -1,0 +1,247 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\Models\Book;
+use App\Models\Models\Category;
+use App\Models\Author;
+use App\Models\Publisher;
+use App\Models\Language;
+use Illuminate\Database\Seeder;
+
+class BookSeeder extends Seeder
+{
+    public function run(): void
+    {
+        $books = [
+            // Bengali Literature
+            [
+                'title_en' => 'Gitanjali',
+                'title_bn' => 'গীতাঞ্জলি',
+                'title_bn_translit' => 'Gitanjali',
+                'author_en' => 'Rabindranath Tagore',
+                'author_bn' => 'রবীন্দ্রনাথ ঠাকুর',
+                'category' => 'Poetry',
+                'publisher_name' => 'Ananda Publishers',
+                'language_code' => 'bn',
+                'isbn' => '978-984-01-0001-1',
+                'publication_year' => 1910,
+                'pages' => 120,
+                'description_en' => 'A collection of poems by Rabindranath Tagore, originally composed in Bengali.',
+                'description_bn' => 'রবীন্দ্রনাথ ঠাকুরের বিশ্বখ্যাত কাব্যগ্রন্থ। নোবেল পুরস্কার বিজয়ী এই কাব্যসংকলন।',
+                'available_copies' => 5,
+                'total_copies' => 5,
+            ],
+            [
+                'title_en' => 'Chokher Bali',
+                'title_bn' => 'চোখের বালি',
+                'title_bn_translit' => 'Chokher Bali',
+                'author_en' => 'Rabindranath Tagore',
+                'author_bn' => 'রবীন্দ্রনাথ ঠাকুর',
+                'category' => 'Fiction',
+                'publisher_name' => 'Ananda Publishers',
+                'language_code' => 'bn',
+                'isbn' => '978-984-01-0002-2',
+                'publication_year' => 1903,
+                'pages' => 280,
+                'description_en' => 'A classic Bengali novel about love, betrayal, and social norms.',
+                'description_bn' => 'প্রেম, বিশ্বাসঘাতকতা ও সামাজিক রীতিনীতি নিয়ে রচিত রবীন্দ্রনাথের অমর উপন্যাস।',
+                'available_copies' => 4,
+                'total_copies' => 5,
+            ],
+            [
+                'title_en' => 'Agniveena',
+                'title_bn' => 'অগ্নিবীণা',
+                'title_bn_translit' => 'Agniveena',
+                'author_en' => 'Kazi Nazrul Islam',
+                'author_bn' => 'কাজী নজরুল ইসলাম',
+                'category' => 'Poetry',
+                'publisher_name' => 'Kakoli Prokashoni',
+                'language_code' => 'bn',
+                'isbn' => '978-984-01-0003-3',
+                'publication_year' => 1922,
+                'pages' => 150,
+                'description_en' => 'Revolutionary poetry collection by the rebel poet of Bengal.',
+                'description_bn' => 'বিদ্রোহী কবি নজরুলের বিপ্লবী কাব্যগ্রন্থ। স্বাধীনতা সংগ্রামের প্রেরণাদায়ক কবিতা।',
+                'available_copies' => 6,
+                'total_copies' => 6,
+            ],
+            [
+                'title_en' => 'Shrikanta',
+                'title_bn' => 'শ্রীকান্ত',
+                'title_bn_translit' => 'Shrikanta',
+                'author_en' => 'Sarat Chandra Chattopadhyay',
+                'author_bn' => 'শরৎচন্দ্র চট্টোপাধ্যায়',
+                'category' => 'Fiction',
+                'publisher_name' => 'Ananda Publishers',
+                'language_code' => 'bn',
+                'isbn' => '978-984-01-0004-4',
+                'publication_year' => 1917,
+                'pages' => 320,
+                'description_en' => 'A classic Bengali novel about love, society, and human nature.',
+                'description_bn' => 'শরৎচন্দ্রের অমর সৃষ্টি। প্রেম, সমাজ ও মানবিক চরিত্রের গভীর বিশ্লেষণ।',
+                'available_copies' => 3,
+                'total_copies' => 4,
+            ],
+            [
+                'title_en' => 'Misir Ali Series',
+                'title_bn' => 'মিসির আলি সিরিজ',
+                'title_bn_translit' => 'Misir Ali Series',
+                'author_en' => 'Humayun Ahmed',
+                'author_bn' => 'হুমায়ূন আহমেদ',
+                'category' => 'Mystery',
+                'publisher_name' => 'Onno Prokash',
+                'language_code' => 'bn',
+                'isbn' => '978-984-01-0005-5',
+                'publication_year' => 1985,
+                'pages' => 400,
+                'description_en' => 'Popular mystery series featuring psychologist detective Misir Ali.',
+                'description_bn' => 'জনপ্রিয় গোয়েন্দা সিরিজ। মনোবিজ্ঞানী গোয়েন্দা মিসির আলির রোমাঞ্চকর অভিযান।',
+                'available_copies' => 8,
+                'total_copies' => 10,
+            ],
+            [
+                'title_en' => 'Kothao Keu Nei',
+                'title_bn' => 'কোথাও কেউ নেই',
+                'title_bn_translit' => 'Kothao Keu Nei',
+                'author_en' => 'Humayun Ahmed',
+                'author_bn' => 'হুমায়ূন আহমেদ',
+                'category' => 'Fiction',
+                'publisher_name' => 'Onno Prokash',
+                'language_code' => 'bn',
+                'isbn' => '978-984-01-0006-6',
+                'publication_year' => 1990,
+                'pages' => 350,
+                'description_en' => 'A popular Bengali novel that became a famous TV drama.',
+                'description_bn' => 'হুমায়ূন আহমেদের জনপ্রিয় উপন্যাস। পরবর্তীতে টেলিভিশনে নাটক হিসেবে প্রচারিত।',
+                'available_copies' => 5,
+                'total_copies' => 6,
+            ],
+            [
+                'title_en' => 'Aranyak',
+                'title_bn' => 'আরণ্যক',
+                'title_bn_translit' => 'Aranyak',
+                'author_en' => 'Bibhutibhushan Bandyopadhyay',
+                'author_bn' => 'বিভূতিভূষণ বন্দ্যোপাধ্যায়',
+                'category' => 'Fiction',
+                'publisher_name' => 'Ananda Publishers',
+                'language_code' => 'bn',
+                'isbn' => '978-984-01-0007-7',
+                'publication_year' => 1939,
+                'pages' => 250,
+                'description_en' => 'A novel about life in the forests of Bihar.',
+                'description_bn' => 'বিহারের অরণ্য জীবনের অপূর্ব বর্ণনা। প্রকৃতি ও মানুষের সম্পর্কের মর্মস্পর্শী উপন্যাস।',
+                'available_copies' => 4,
+                'total_copies' => 5,
+            ],
+            [
+                'title_en' => 'Lalsalu',
+                'title_bn' => 'লালসালু',
+                'title_bn_translit' => 'Lalsalu',
+                'author_en' => 'Syed Waliullah',
+                'author_bn' => 'সৈয়দ ওয়ালীউল্লাহ',
+                'category' => 'Fiction',
+                'publisher_name' => 'Somoy Prakashan',
+                'language_code' => 'bn',
+                'isbn' => '978-984-01-0008-8',
+                'publication_year' => 1948,
+                'pages' => 180,
+                'description_en' => 'A classic novel about religious exploitation in rural Bengal.',
+                'description_bn' => 'গ্রামীণ বাংলার ধর্মীয় শোষণ নিয়ে লেখা ক্লাসিক উপন্যাস। বাংলা সাহিত্যের অন্যতম শ্রেষ্ঠ কীর্তি।',
+                'available_copies' => 3,
+                'total_copies' => 4,
+            ],
+            // English Literature
+            [
+                'title_en' => '1984',
+                'title_bn' => '১৯৮৪',
+                'title_bn_translit' => '1984',
+                'author_en' => 'George Orwell',
+                'author_bn' => 'জর্জ অরওয়েল',
+                'category' => 'Fiction',
+                'publisher_name' => 'Penguin Random House',
+                'language_code' => 'en',
+                'isbn' => '978-0-452-28423-4',
+                'publication_year' => 1949,
+                'pages' => 328,
+                'description_en' => 'A dystopian social science fiction novel.',
+                'description_bn' => 'একটি ডিস্টোপিয়ান বিজ্ঞান কল্পকাহিনী।',
+                'available_copies' => 6,
+                'total_copies' => 6,
+            ],
+            [
+                'title_en' => 'Pride and Prejudice',
+                'title_bn' => 'প্রাইড অ্যান্ড প্রেজুডিস',
+                'title_bn_translit' => 'Pride and Prejudice',
+                'author_en' => 'Jane Austen',
+                'author_bn' => 'জেন অস্টেন',
+                'category' => 'Fiction',
+                'publisher_name' => 'Penguin Random House',
+                'language_code' => 'en',
+                'isbn' => '978-0-14-143951-8',
+                'publication_year' => 1813,
+                'pages' => 432,
+                'description_en' => 'A romantic novel of manners written by Jane Austen.',
+                'description_bn' => 'জেন অস্টেনের লেখা একটি রোমান্টিক উপন্যাস।',
+                'available_copies' => 4,
+                'total_copies' => 5,
+            ],
+            [
+                'title_en' => 'The Great Gatsby',
+                'title_bn' => 'দ্য গ্রেট গ্যাটসবি',
+                'title_bn_translit' => 'The Great Gatsby',
+                'author_en' => 'F. Scott Fitzgerald',
+                'author_bn' => 'এফ. স্কট ফিটজেরাল্ড',
+                'category' => 'Fiction',
+                'publisher_name' => 'Penguin Random House',
+                'language_code' => 'en',
+                'isbn' => '978-0-7432-7356-5',
+                'publication_year' => 1925,
+                'pages' => 180,
+                'description_en' => 'A classic American novel set in the Jazz Age.',
+                'description_bn' => 'জ্যাজ যুগে রচিত একটি ক্লাসিক আমেরিকান উপন্যাস।',
+                'available_copies' => 3,
+                'total_copies' => 4,
+            ],
+        ];
+
+        foreach ($books as $bookData) {
+            // Find or create category
+            $category = Category::firstOrCreate(
+                ['name_en' => $bookData['category']],
+                ['name_bn' => $bookData['category'], 'slug' => strtolower($bookData['category'])]
+            );
+
+            // Find publisher and language
+            $publisher = Publisher::where('name_en', $bookData['publisher_name'])->first();
+            $language = Language::where('code', $bookData['language_code'])->first();
+            
+            // Find primary author
+            $primaryAuthor = Author::where('name_en', $bookData['author_en'])->first();
+
+            $book = Book::create([
+                'title_en' => $bookData['title_en'],
+                'title_bn' => $bookData['title_bn'],
+                'title_bn_translit' => $bookData['title_bn_translit'],
+                'author_en' => $bookData['author_en'],
+                'author_bn' => $bookData['author_bn'],
+                'category_id' => $category->id,
+                'primary_author_id' => $primaryAuthor?->id,
+                'publisher_id' => $publisher?->id,
+                'language_id' => $language?->id,
+                'isbn' => $bookData['isbn'],
+                'publication_year' => $bookData['publication_year'],
+                'pages' => $bookData['pages'],
+                'description_en' => $bookData['description_en'],
+                'description_bn' => $bookData['description_bn'],
+                'available_copies' => $bookData['available_copies'],
+                'total_copies' => $bookData['total_copies'],
+            ]);
+
+            // Attach primary author to many-to-many relationship
+            if ($primaryAuthor) {
+                $book->authors()->attach($primaryAuthor->id);
+            }
+        }
+    }
+}

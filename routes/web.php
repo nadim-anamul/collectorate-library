@@ -1,11 +1,17 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\BookController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\MemberController;
+use App\Http\Controllers\Admin\AuthorController;
+use App\Http\Controllers\Admin\PublisherController;
+use App\Http\Controllers\Admin\LanguageController;
+use App\Http\Controllers\Admin\UserManagementController;
+use App\Http\Controllers\Member\DashboardController as MemberDashboardController;
 use App\Http\Controllers\Admin\LoanController;
 use App\Http\Controllers\Admin\SearchController;
 use App\Http\Controllers\Admin\ReportsController;
@@ -21,15 +27,26 @@ use App\Http\Controllers\Admin\ReportsController;
 |
 */
 
-Route::get('/', function(){ return redirect()->route('dashboard'); });
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/books/{book}', [HomeController::class, 'show'])->name('books.show');
 
-Route::middleware(['auth'])->group(function(){
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::middleware(['auth', 'approved'])->group(function(){
+    Route::get('/dashboard', [MemberDashboardController::class, 'index'])->name('dashboard');
 
     Route::middleware(['role:Admin|Librarian'])->prefix('admin')->name('admin.')->group(function(){
         Route::get('/', [DashboardController::class, 'index'])->name('home');
         Route::resource('books', BookController::class);
+        Route::resource('authors', AuthorController::class)->except(['show']);
+        Route::resource('publishers', PublisherController::class)->except(['show']);
+        Route::resource('languages', LanguageController::class)->except(['show']);
         Route::resource('categories', CategoryController::class)->except(['show']);
+        
+        Route::get('users', [UserManagementController::class, 'index'])->name('users.index');
+        Route::get('users/{user}', [UserManagementController::class, 'show'])->name('users.show');
+        Route::post('users/{user}/approve', [UserManagementController::class, 'approve'])->name('users.approve');
+        Route::post('users/{user}/reject', [UserManagementController::class, 'reject'])->name('users.reject');
+        Route::put('users/{user}/role', [UserManagementController::class, 'updateRole'])->name('users.updateRole');
+        Route::delete('users/{user}', [UserManagementController::class, 'destroy'])->name('users.destroy');
         Route::resource('tags', TagController::class)->except(['show']);
         Route::resource('members', MemberController::class)->except(['show']);
         Route::get('members/{member}/card', [MemberController::class,'card'])->name('members.card');

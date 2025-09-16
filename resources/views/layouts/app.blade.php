@@ -10,10 +10,8 @@
         <!-- Fonts -->
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap">
 
-        <!-- Styles -->
-        <link rel="stylesheet" href="{{ mix('css/app.css') }}">
-        <!-- Scripts -->
-        <script src="{{ mix('js/app.js') }}" defer></script>
+        <!-- Styles & Scripts -->
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body x-data="{ dark: localStorage.getItem('theme')==='dark' }" x-init="document.documentElement.classList.toggle('dark', dark)" x-on:theme-toggled.window="dark = !dark; localStorage.setItem('theme', dark ? 'dark' : 'light'); document.documentElement.classList.toggle('dark', dark)" class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
