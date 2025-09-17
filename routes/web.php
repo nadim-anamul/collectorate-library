@@ -6,7 +6,6 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\BookController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\TagController;
-use App\Http\Controllers\Admin\MemberController;
 use App\Http\Controllers\Admin\AuthorController;
 use App\Http\Controllers\Admin\PublisherController;
 use App\Http\Controllers\Admin\LanguageController;
@@ -32,6 +31,11 @@ Route::get('/books/{book}', [HomeController::class, 'show'])->name('books.show')
 
 Route::middleware(['auth', 'approved'])->group(function(){
     Route::get('/dashboard', [MemberDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/history', [MemberDashboardController::class, 'history'])->name('dashboard.history');
+
+    // Borrow request from book page
+    Route::post('/books/{book}/request', [LoanController::class,'request'])->name('books.request');
+    Route::post('/loans/{loan}/request-return', [LoanController::class,'requestReturn'])->name('loans.requestReturn');
 
     Route::middleware(['role:Admin|Librarian'])->prefix('admin')->name('admin.')->group(function(){
         Route::get('/', [DashboardController::class, 'index'])->name('home');
@@ -48,13 +52,13 @@ Route::middleware(['auth', 'approved'])->group(function(){
         Route::put('users/{user}/role', [UserManagementController::class, 'updateRole'])->name('users.updateRole');
         Route::delete('users/{user}', [UserManagementController::class, 'destroy'])->name('users.destroy');
         Route::resource('tags', TagController::class)->except(['show']);
-        Route::resource('members', MemberController::class)->except(['show']);
-        Route::get('members/{member}/card', [MemberController::class,'card'])->name('members.card');
 
         Route::get('loans', [LoanController::class,'index'])->name('loans.index');
         Route::get('loans/create', [LoanController::class,'create'])->name('loans.create');
         Route::post('loans', [LoanController::class,'store'])->name('loans.store');
         Route::post('loans/{loan}/return', [LoanController::class,'return'])->name('loans.return');
+        Route::post('loans/{loan}/approve', [LoanController::class,'approve'])->name('loans.approve');
+        Route::post('loans/{loan}/decline', [LoanController::class,'decline'])->name('loans.decline');
 
         Route::get('reports', [ReportsController::class,'index'])->name('reports.index');
     });

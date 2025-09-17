@@ -23,7 +23,7 @@ class ReportsController extends Controller
         };
 
         $issuedCount = Loan::where('issued_at','>=',$start->toDateString())->count();
-        $lateLoans = Loan::whereNotNull('returned_at')->where('late_fee','>',0)->with('member')->latest()->limit(20)->get();
+        $lateLoans = Loan::whereNotNull('returned_at')->where('late_fee','>',0)->with('user')->latest()->limit(20)->get();
         $popularBooks = Loan::select('book_id', DB::raw('COUNT(*) as cnt'))
             ->groupBy('book_id')->orderByDesc('cnt')->with('book')->limit(10)->get();
         $categoryCounts = Book::select('category_id', DB::raw('COUNT(*) as cnt'))

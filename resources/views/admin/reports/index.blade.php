@@ -20,13 +20,13 @@
                 <div class="bg-white p-4 rounded shadow"><div class="text-gray-500">By Category</div><ul class="mt-2">@foreach($categoryCounts as $cc)<li>{{ optional($cc->category)->name_en }} ({{ $cc->cnt }})</li>@endforeach</ul></div>
             </div>
 
-            <div class="bg-white p-4 rounded shadow">
+            <div class="bg-white dark:bg-gray-800 p-4 rounded shadow">
                 <div class="font-semibold mb-2">Recent Late Returns</div>
                 <table class="min-w-full text-sm">
-                    <thead><tr class="text-left"><th class="py-2">Member</th><th class="py-2">Late Fee</th><th class="py-2">Returned</th></tr></thead>
+                    <thead><tr class="text-left text-gray-700 dark:text-gray-300"><th class="py-2">User</th><th class="py-2">Late Fee</th><th class="py-2">Returned</th></tr></thead>
                     <tbody>
                     @foreach($lateLoans as $loan)
-                        <tr class="border-t"><td class="py-2">{{ $loan->member->name }}</td><td class="py-2">{{ number_format($loan->late_fee,2) }}</td><td class="py-2">{{ $loan->returned_at }}</td></tr>
+                        <tr class="border-t border-gray-200 dark:border-gray-700"><td class="py-2">{{ optional($loan->user)->name }}</td><td class="py-2">{{ number_format($loan->late_fee,2) }}</td><td class="py-2">{{ $loan->returned_at }}</td></tr>
                     @endforeach
                     </tbody>
                 </table>

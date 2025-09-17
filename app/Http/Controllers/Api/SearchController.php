@@ -16,32 +16,52 @@ class SearchController extends Controller
             return response()->json(['books' => []]);
         }
 
-        // Start with a simple search and build up
+        // Start with a comprehensive search including related models
         $books = Book::with(['primaryAuthor', 'publisher', 'category', 'language', 'tags'])
-            ->where('title_en', 'like', "%{$query}%")
-            ->orWhere('title_bn', 'like', "%{$query}%")
-            ->orWhere('isbn', 'like', "%{$query}%")
+            ->where(function ($q) use ($query) {
+                $q->where('title_en', 'like', "%{$query}%")
+                  ->orWhere('title_bn', 'like', "%{$query}%")
+                  ->orWhere('isbn', 'like', "%{$query}%")
+                  ->orWhere('description_en', 'like', "%{$query}%")
+                  ->orWhere('description_bn', 'like', "%{$query}%")
+                  ->orWhereHas('primaryAuthor', function ($subQ) use ($query) {
+                      $subQ->where('name_en', 'like', "%{$query}%")
+                           ->orWhere('name_bn', 'like', "%{$query}%");
+                  })
+                  ->orWhereHas('publisher', function ($subQ) use ($query) {
+                      $subQ->where('name_en', 'like', "%{$query}%")
+                           ->orWhere('name_bn', 'like', "%{$query}%");
+                  })
+                  ->orWhereHas('category', function ($subQ) use ($query) {
+                      $subQ->where('name_en', 'like', "%{$query}%")
+                           ->orWhere('name_bn', 'like', "%{$query}%");
+                  })
+                  ->orWhereHas('tags', function ($subQ) use ($query) {
+                      $subQ->where('name', 'like', "%{$query}%");
+                  });
+            })
             ->orderBy('title_en')
             ->limit(20)
             ->get()
             ->map(function ($book) {
                 return [
                     'id' => $book->id,
-                    'title' => $book->title_en ?: $book->title_bn,
+                    'title' => $book->language_primary === 'bangla' && $book->title_bn ? $book->title_bn : ($book->title_en ?: $book->title_bn),
                     'title_bn' => $book->title_bn,
+                    'language_primary' => $book->language_primary,
                     'isbn' => $book->isbn,
-                    'description' => $book->description_en ?: $book->description_bn,
+                    'description' => $book->language_primary === 'bangla' && $book->description_bn ? $book->description_bn : ($book->description_en ?: $book->description_bn),
                     'publication_year' => $book->publication_year,
                     'status' => $book->available_copies > 0 ? 'Available' : 'Unavailable',
                     'cover_image' => $book->cover_path,
                     'primary_author' => $book->primaryAuthor ? [
                         'id' => $book->primaryAuthor->id,
-                        'name' => $book->primaryAuthor->name_en ?: $book->primaryAuthor->name_bn,
+                        'name' => $book->language_primary === 'bangla' && $book->primaryAuthor->name_bn ? $book->primaryAuthor->name_bn : ($book->primaryAuthor->name_en ?: $book->primaryAuthor->name_bn),
                         'name_bn' => $book->primaryAuthor->name_bn,
                     ] : null,
                     'publisher' => $book->publisher ? [
                         'id' => $book->publisher->id,
-                        'name' => $book->publisher->name_en ?: $book->publisher->name_bn,
+                        'name' => $book->language_primary === 'bangla' && $book->publisher->name_bn ? $book->publisher->name_bn : ($book->publisher->name_en ?: $book->publisher->name_bn),
                         'name_bn' => $book->publisher->name_bn,
                     ] : null,
                     'language' => $book->language ? [
@@ -51,14 +71,13 @@ class SearchController extends Controller
                     ] : null,
                     'category' => $book->category ? [
                         'id' => $book->category->id,
-                        'name' => $book->category->name_en ?: $book->category->name_bn,
+                        'name' => $book->language_primary === 'bangla' && $book->category->name_bn ? $book->category->name_bn : ($book->category->name_en ?: $book->category->name_bn),
                         'name_bn' => $book->category->name_bn,
                     ] : null,
                     'tags' => $book->tags->map(function ($tag) {
                         return [
                             'id' => $tag->id,
-                            'name' => $tag->name_en ?: $tag->name_bn,
-                            'name_bn' => $tag->name_bn,
+                            'name' => $tag->name,
                         ];
                     }),
                 ];

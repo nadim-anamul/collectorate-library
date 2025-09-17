@@ -7,6 +7,19 @@
 
         <title>{{ config('app.name', 'Laravel') }}</title>
 
+        <!-- Prevent dark mode flash -->
+        <script>
+            (function(){
+                try {
+                    var ls = localStorage.getItem('theme');
+                    var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    var dark = ls ? (ls === 'dark') : prefersDark;
+                    if (dark) { document.documentElement.classList.add('dark'); }
+                } catch(e) { /* no-op */ }
+            })();
+        </script>
+        <style>[x-cloak]{display:none!important}</style>
+
         <!-- Fonts -->
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap">
 
@@ -26,6 +39,38 @@
 
             <!-- Page Content -->
             <main class="text-gray-900 dark:text-gray-100">
+                @if (session('success'))
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+                        <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 rounded-lg px-4 py-3">
+                            {{ session('success') }}
+                        </div>
+                    </div>
+                @endif
+                @if (session('status'))
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+                        <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 rounded-lg px-4 py-3">
+                            {{ session('status') }}
+                        </div>
+                    </div>
+                @endif
+                @if (session('error'))
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+                        <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 rounded-lg px-4 py-3">
+                            {{ session('error') }}
+                        </div>
+                    </div>
+                @endif
+                @if ($errors->any())
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+                        <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 text-yellow-700 dark:text-yellow-300 rounded-lg px-4 py-3">
+                            <ul class="list-disc list-inside">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                @endif
                 {{ $slot }}
             </main>
         </div>

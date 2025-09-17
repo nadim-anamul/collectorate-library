@@ -9,15 +9,27 @@ class Loan extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['book_id','member_id','issued_by_user_id','issued_at','due_at','returned_at','late_days','late_fee','status'];
+    protected $fillable = [
+        'book_id',
+        'user_id',
+        'issued_by_user_id',
+        'requested_at',
+        'requested_due_at',
+        'issued_at',
+        'due_at',
+        'returned_at',
+        'status',
+    ];
 
     public function book()
     {
         return $this->belongsTo(Book::class);
     }
 
-    public function member()
+    // Legacy member relation intentionally removed in user-centric flow
+
+    public function user()
     {
-        return $this->belongsTo(Member::class);
+        return $this->belongsTo(\App\Models\User::class);
     }
 }

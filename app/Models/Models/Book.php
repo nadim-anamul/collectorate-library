@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Author;
 use App\Models\Publisher;
 use App\Models\Language;
+use App\Models\Models\Category;
+use App\Models\Models\Tag;
 
 class Book extends Model
 {

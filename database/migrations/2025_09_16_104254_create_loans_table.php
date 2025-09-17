@@ -16,18 +16,17 @@ class CreateLoansTable extends Migration
         Schema::create('loans', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('book_id');
-            $table->unsignedBigInteger('member_id');
-            $table->unsignedBigInteger('issued_by_user_id');
-            $table->date('issued_at');
-            $table->date('due_at');
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->unsignedBigInteger('issued_by_user_id')->nullable();
+            $table->date('requested_at')->nullable();
+            $table->date('issued_at')->nullable();
+            $table->date('due_at')->nullable();
             $table->date('returned_at')->nullable();
-            $table->unsignedInteger('late_days')->default(0);
-            $table->decimal('late_fee', 8, 2)->default(0);
-            $table->string('status')->default('issued');
+            $table->string('status')->default('pending');
             $table->timestamps();
 
             $table->foreign('book_id')->references('id')->on('books')->onDelete('cascade');
-            $table->foreign('member_id')->references('id')->on('members')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('issued_by_user_id')->references('id')->on('users')->onDelete('cascade');
             $table->index(['status']);
         });

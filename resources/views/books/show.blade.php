@@ -139,5 +139,37 @@
                 </div>
             </div>
         </div>
+        @auth
+            @if(Auth::user()->status === 'approved')
+                <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+                    @auth
+                        @php
+                            $existingLoan = \App\Models\Models\Loan::where('user_id', auth()->id())
+                                ->where('book_id', $book->id)
+                                ->whereIn('status',["pending","issued"]) // active
+                                ->first();
+                        @endphp
+                        @if($existingLoan)
+                            <div class="inline-flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                                <span class="px-2 py-1 rounded bg-gray-100 dark:bg-gray-700">Request {{ ucfirst($existingLoan->status) }}</span>
+                                <button class="px-4 py-2 bg-gray-400 text-white rounded-lg cursor-not-allowed" disabled>
+                                    Request to Borrow
+                                </button>
+                            </div>
+                        @else
+                            <form action="{{ route('books.request', $book) }}" method="POST" class="inline">@csrf
+                                <button class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg">
+                                    Request to Borrow
+                                </button>
+                            </form>
+                        @endif
+                    @endauth
+                </div>
+            @else
+                <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 text-sm text-yellow-700 dark:text-yellow-300">
+                    Your account must be approved to request a borrow.
+                </div>
+            @endif
+        @endauth
     </div>
 </x-app-layout>

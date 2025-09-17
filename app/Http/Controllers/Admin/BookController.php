@@ -15,27 +15,113 @@ use App\Services\ActivityLogger;
 
 class BookController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $query = Book::with('category')->latest();
-        if(request('q')){
-            $q = request('q');
-            $query->where(function($w) use ($q){
-                $w->where('title_en','like','%'.$q.'%')
-                  ->orWhere('title_bn','like','%'.$q.'%')
-                  ->orWhere('author_en','like','%'.$q.'%')
-                  ->orWhere('author_bn','like','%'.$q.'%');
+        // Start with all books (no default availability filter for admin)
+        $query = Book::with(['category', 'tags', 'language', 'primaryAuthor', 'publisher']);
+        
+        // Search functionality
+        if ($request->filled('q')) {
+            $search = $request->q;
+            $query->where(function($q) use ($search) {
+                $q->where('title_en', 'like', "%{$search}%")
+                  ->orWhere('title_bn', 'like', "%{$search}%")
+                  ->orWhere('author_en', 'like', "%{$search}%")
+                  ->orWhere('author_bn', 'like', "%{$search}%")
+                  ->orWhere('isbn', 'like', "%{$search}%")
+                  ->orWhere('description_en', 'like', "%{$search}%")
+                  ->orWhere('description_bn', 'like', "%{$search}%")
+                  ->orWhereHas('primaryAuthor', function($subQ) use ($search) {
+                      $subQ->where('name_en', 'like', "%{$search}%")
+                           ->orWhere('name_bn', 'like', "%{$search}%");
+                  })
+                  ->orWhereHas('publisher', function($subQ) use ($search) {
+                      $subQ->where('name_en', 'like', "%{$search}%")
+                           ->orWhere('name_bn', 'like', "%{$search}%");
+                  })
+                  ->orWhereHas('category', function($subQ) use ($search) {
+                      $subQ->where('name_en', 'like', "%{$search}%")
+                           ->orWhere('name_bn', 'like', "%{$search}%");
+                  })
+                  ->orWhereHas('tags', function($subQ) use ($search) {
+                      $subQ->where('name', 'like', "%{$search}%");
+                  });
             });
         }
-        if(request('banglish')){
-            $b = request('banglish');
-            $query->where('title_bn_translit','like','%'.$b.'%');
+        
+        // Banglish filter
+        if ($request->filled('banglish')) {
+            $query->where('title_bn_translit', 'like', '%' . $request->banglish . '%');
         }
-        if(request('isbn')){
-            $query->where('isbn','like','%'.request('isbn').'%');
+        
+        // ISBN filter
+        if ($request->filled('isbn')) {
+            $query->where('isbn', 'like', '%' . $request->isbn . '%');
         }
-        $books = $query->paginate(15)->appends(request()->query());
-        return view('admin.books.index', compact('books'));
+        
+        // Category filter
+        if ($request->filled('category')) {
+            $query->where('category_id', $request->category);
+        }
+        
+        // Language filter
+        if ($request->filled('language')) {
+            $query->whereHas('language', function($q) use ($request) {
+                $q->where('code', $request->language);
+            });
+        }
+        
+        // Year filter
+        if ($request->filled('year')) {
+            $query->where('publication_year', $request->year);
+        }
+        
+        // Availability filter
+        if ($request->filled('availability')) {
+            if ($request->availability === 'available') {
+                $query->where('available_copies', '>', 0);
+            } elseif ($request->availability === 'unavailable') {
+                $query->where('available_copies', '=', 0);
+            }
+            // 'all' means no availability filter
+        }
+        
+        // Sort options
+        $sort = $request->get('sort', 'latest');
+        switch ($sort) {
+            case 'title':
+                $query->orderBy('title_en');
+                break;
+            case 'author':
+                $query->orderBy('author_en');
+                break;
+            case 'year':
+                $query->orderBy('publication_year', 'desc');
+                break;
+            default:
+                $query->latest();
+        }
+        
+        $books = $query->paginate(15)->appends($request->query());
+        
+        // Get filter data with caching
+        $categories = cache()->remember('categories_list', 3600, function () {
+            return Category::orderBy('name_en')->get();
+        });
+        
+        $languages = cache()->remember('languages_list', 3600, function () {
+            return Language::orderBy('name')->get();
+        });
+        
+        $years = cache()->remember('publication_years_list', 1800, function () {
+            return Book::select('publication_year')
+                ->distinct()
+                ->whereNotNull('publication_year')
+                ->orderBy('publication_year', 'desc')
+                ->pluck('publication_year');
+        });
+        
+        return view('admin.books.index', compact('books', 'categories', 'languages', 'years'));
     }
 
     public function create()

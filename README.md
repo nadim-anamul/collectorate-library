@@ -72,7 +72,15 @@ php artisan serve --port=8080
 Visit: http://localhost:8080
 
 ## 🔐 Default Login
-- **Admin:** `admin@example.com` / `password`
+- **Admin:** `admin@library.com` / `password`
+Library Admin: admin@library.com / password
+Head Librarian: librarian@library.com / password
+আহমেদ হাসান (student): ahmed@student.du.ac.bd / password
+ফাতেমা খাতুন (teacher): fatema@teacher.du.ac.bd / password
+রহিম উদ্দিন (public): rahim@public.com / password
+John Smith (public): john@international.com / password
+সালমা আক্তার (pending): salma@pending.com / password
+করিম মিয়া (rejected): karim@rejected.com / password
 
 ## 📊 Sample Data Included
 The system comes pre-seeded with:
