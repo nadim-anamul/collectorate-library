@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             BookSeeder::class,
             RoleBasedUsersSeeder::class,
             DemoSeeder::class,
+            BulkBooksAndLoansSeeder::class,
         ]);
     }
 }

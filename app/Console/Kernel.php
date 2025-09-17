@@ -15,7 +15,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->command('loans:mark-overdue')->dailyAt('01:00');
+        // Optional: backfill notification URLs nightly (safe no-op if already correct)
+        $schedule->command('notifications:backfill-loan-urls')->dailyAt('02:00');
     }
 
     /**

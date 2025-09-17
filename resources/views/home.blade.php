@@ -421,19 +421,16 @@
                                                     {{ $book->primaryAuthor->name_en }}
                                                 @endif
                                             </p>
-                                        @elseif($book->language && $book->language->code === 'bn' && $book->author_bn)
+                                        @elseif($book->primaryAuthor)
                                             <p class="text-sm text-gray-600 dark:text-gray-400 mb-1 flex items-center">
                                                 <svg class="w-3 h-3 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                                 </svg>
-                                                {{ $book->author_bn }}
-                                            </p>
-                                        @elseif($book->author_en)
-                                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-1 flex items-center">
-                                                <svg class="w-3 h-3 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                                </svg>
-                                                {{ $book->author_en }}
+                                                @if($book->language && $book->language->code === 'bn' && $book->primaryAuthor->name_bn)
+                                                    {{ $book->primaryAuthor->name_bn }}
+                                                @else
+                                                    {{ $book->primaryAuthor->name_en }}
+                                                @endif
                                             </p>
                                         @endif
                                         
@@ -512,9 +509,15 @@
                                                                     </button>
                                                                 </form>
                                                             @else
-                                                                <button class="w-full px-3 py-2 bg-gray-300 text-gray-500 text-xs font-medium rounded-lg cursor-not-allowed" disabled>
-                                                                    Not Available
-                                                                </button>
+                                                                <form action="{{ route('books.reserve', $book) }}" method="POST" class="w-full">
+                                                                    @csrf
+                                                                    <button type="submit" class="w-full inline-flex items-center justify-center px-3 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-lg shadow-sm hover:shadow-md transform hover:scale-105 transition-all duration-200">
+                                                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                                        </svg>
+                                                                        Reserve
+                                                                    </button>
+                                                                </form>
                                                             @endif
                                                         @endif
                                                     </div>

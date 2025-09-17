@@ -155,9 +155,15 @@
                                                         </button>
                                                     </form>
                                                 @else
-                                                    <button class="px-4 py-2 bg-gray-400 text-white rounded-lg cursor-not-allowed" disabled>
-                                                        Not Available
-                                                    </button>
+                                                    <form action="{{ route('books.reserve', $book) }}" method="POST" class="inline">
+                                                        @csrf
+                                                        <button type="submit" class="inline-flex items-center px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
+                                                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                            </svg>
+                                                            Reserve
+                                                        </button>
+                                                    </form>
                                                 @endif
                                             @endif
                                         </div>

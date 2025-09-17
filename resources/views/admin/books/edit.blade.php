@@ -86,9 +86,7 @@
                                     Transliteration
                                 </span>
                             </label>
-                            <input name="title_bn_translit" value="{{ old('title_bn_translit', $book->title_bn_translit) }}"
-                                class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-all duration-200"
-                                placeholder="Banglish transliteration of the title">
+                            <!-- Transliteration field removed - column no longer exists -->
                         </div>
                     </div>
                 </div>

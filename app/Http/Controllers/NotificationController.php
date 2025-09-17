@@ -24,6 +24,15 @@ class NotificationController extends Controller
         ]);
     }
 
+    public function all(Request $request)
+    {
+        $user = $request->user();
+        $q = $user->notifications()->latest();
+        $notifications = $q->paginate(30)->withQueryString();
+        $unreadCount = $user->unreadNotifications()->count();
+        return view('notifications.index', compact('notifications','unreadCount'));
+    }
+
     public function markAsRead(Request $request)
     {
         $request->validate([

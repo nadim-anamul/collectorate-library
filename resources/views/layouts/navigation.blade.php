@@ -158,7 +158,7 @@
                     </button>
                     <div x-show="open" x-cloak x-transition class="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
                         <div class="px-4 py-2 flex items-center justify-between">
-                            <span class="text-sm font-semibold text-gray-700 dark:text-gray-200">Notifications</span>
+                            <a href="{{ route('notifications.all') }}" class="text-sm font-semibold text-blue-600 hover:underline">Notifications</a>
                             <button @click="markAllRead()" class="text-xs text-blue-600 hover:underline">Mark all read</button>
                         </div>
                         <template x-if="items.length===0">

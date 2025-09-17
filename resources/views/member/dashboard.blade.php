@@ -23,6 +23,13 @@
     </x-slot>
 
     <div class="py-6">
+        @if($stats['overdue_books'] > 0)
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mb-4">
+                <div class="p-4 rounded-lg bg-red-50 border border-red-200 text-red-800 dark:bg-red-900/20 dark:text-red-200 dark:border-red-800">
+                    You have {{ $stats['overdue_books'] }} overdue {{ $stats['overdue_books'] === 1 ? 'book' : 'books' }}. Please return them as soon as possible.
+                </div>
+            </div>
+        @endif
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             <!-- Stats Cards -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -114,10 +121,14 @@
                                                 @if(!$loop->last), @endif
                                             @endforeach
                                         @else
-                                            @if($loan->book->language && $loan->book->language->code === 'bn' && $loan->book->author_bn)
-                                                {{ $loan->book->author_bn }}
+                                            @if($loan->book->primaryAuthor)
+                                                @if($loan->book->language && $loan->book->language->code === 'bn' && $loan->book->primaryAuthor->name_bn)
+                                                    {{ $loan->book->primaryAuthor->name_bn }}
+                                                @else
+                                                    {{ $loan->book->primaryAuthor->name_en }}
+                                                @endif
                                             @else
-                                                {{ $loan->book->author_en ?: 'Unknown Author' }}
+                                                Unknown Author
                                             @endif
                                         @endif
                                     </p>
@@ -191,10 +202,14 @@
                                                 @if(!$loop->last), @endif
                                             @endforeach
                                         @else
-                                            @if($loan->book->language && $loan->book->language->code === 'bn' && $loan->book->author_bn)
-                                                {{ $loan->book->author_bn }}
+                                            @if($loan->book->primaryAuthor)
+                                                @if($loan->book->language && $loan->book->language->code === 'bn' && $loan->book->primaryAuthor->name_bn)
+                                                    {{ $loan->book->primaryAuthor->name_bn }}
+                                                @else
+                                                    {{ $loan->book->primaryAuthor->name_en }}
+                                                @endif
                                             @else
-                                                {{ $loan->book->author_en ?: 'Unknown Author' }}
+                                                Unknown Author
                                             @endif
                                         @endif
                                     </p>
@@ -260,10 +275,14 @@
                                                 @if(!$loop->last), @endif
                                             @endforeach
                                         @else
-                                            @if($loan->book->language && $loan->book->language->code === 'bn' && $loan->book->author_bn)
-                                                {{ $loan->book->author_bn }}
+                                            @if($loan->book->primaryAuthor)
+                                                @if($loan->book->language && $loan->book->language->code === 'bn' && $loan->book->primaryAuthor->name_bn)
+                                                    {{ $loan->book->primaryAuthor->name_bn }}
+                                                @else
+                                                    {{ $loan->book->primaryAuthor->name_en }}
+                                                @endif
                                             @else
-                                                {{ $loan->book->author_en ?: 'Unknown Author' }}
+                                                Unknown Author
                                             @endif
                                         @endif
                                     </p>
@@ -355,19 +374,16 @@
                                                     {{ $book->primaryAuthor->name_en }}
                                                 @endif
                                             </p>
-                                        @elseif($book->language && $book->language->code === 'bn' && $book->author_bn)
+                                        @elseif($book->primaryAuthor)
                                             <p class="text-sm text-gray-600 dark:text-gray-400 mb-2 flex items-center">
                                                 <svg class="w-3 h-3 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                                 </svg>
-                                                {{ $book->author_bn }}
-                                            </p>
-                                        @elseif($book->author_en)
-                                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-2 flex items-center">
-                                                <svg class="w-3 h-3 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                                </svg>
-                                                {{ $book->author_en }}
+                                                @if($book->language && $book->language->code === 'bn' && $book->primaryAuthor->name_bn)
+                                                    {{ $book->primaryAuthor->name_bn }}
+                                                @else
+                                                    {{ $book->primaryAuthor->name_en }}
+                                                @endif
                                             </p>
                                         @endif
                                         

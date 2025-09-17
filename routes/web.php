@@ -12,6 +12,8 @@ use App\Http\Controllers\Admin\LanguageController;
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\Member\DashboardController as MemberDashboardController;
 use App\Http\Controllers\Admin\LoanController;
+use App\Http\Controllers\Admin\ReservationsController;
+use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\Admin\SearchController;
 use App\Http\Controllers\Admin\ReportsController;
 use App\Http\Controllers\NotificationController;
@@ -38,8 +40,10 @@ Route::middleware(['auth', 'approved'])->group(function(){
     // Borrow request from book page
     Route::post('/books/{book}/request', [LoanController::class,'request'])->name('books.request');
     Route::post('/loans/{loan}/request-return', [LoanController::class,'requestReturn'])->name('loans.requestReturn');
+    Route::post('/books/{book}/reserve', [ReservationController::class,'store'])->name('books.reserve');
     // Notifications
     Route::get('/notifications', [NotificationController::class,'index'])->name('notifications.index');
+    Route::get('/notifications/all', [NotificationController::class,'all'])->name('notifications.all');
     Route::post('/notifications/read', [NotificationController::class,'markAsRead'])->name('notifications.read');
 
     // Profile
@@ -64,6 +68,7 @@ Route::middleware(['auth', 'approved'])->group(function(){
         Route::resource('tags', TagController::class)->except(['show']);
 
         Route::get('loans', [LoanController::class,'index'])->name('loans.index');
+        Route::get('loans/{loan}', [LoanController::class,'show'])->name('loans.show');
         Route::get('loans/create', [LoanController::class,'create'])->name('loans.create');
         Route::post('loans', [LoanController::class,'store'])->name('loans.store');
         Route::post('loans/{loan}/return', [LoanController::class,'return'])->name('loans.return');
@@ -71,6 +76,7 @@ Route::middleware(['auth', 'approved'])->group(function(){
         Route::post('loans/{loan}/decline', [LoanController::class,'decline'])->name('loans.decline');
 
         Route::get('reports', [ReportsController::class,'index'])->name('reports.index');
+        Route::get('reservations', [ReservationsController::class,'index'])->name('reservations.index');
     });
 
     Route::get('/suggest/books', [SearchController::class,'suggestBooks'])->name('suggest.books');

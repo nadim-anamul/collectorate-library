@@ -21,9 +21,15 @@
                                     <input id="loan-search" type="text" name="q" value="{{ $search }}" placeholder="User, email, book title, ISBN" class="mt-1 w-full border rounded p-2 dark:bg-gray-700 dark:border-gray-600" />
                                 </div>
                                 <div class="rounded-lg bg-gray-50 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700 p-4">
-                                    <div class="flex items-center gap-2 text-gray-700 dark:text-gray-300 font-semibold mb-2">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <div class="flex items-center gap-2 text-gray-700 dark:text-gray-300 font-semibold">
                                         <svg class="w-4 h-4 text-sky-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4.5h18M5.25 8.25h13.5m-12 3.75h10.5m-9 3.75h7.5M9 19.5h6" /></svg>
-                                        <span>Filters</span>
+                                            <span>Filters</span>
+                                        </div>
+                                        <label class="inline-flex items-center text-xs cursor-pointer select-none">
+                                            <input type="checkbox" name="overdue" value="1" {{ ($overdueOnly ?? false) ? 'checked' : '' }} class="rounded border-gray-300 text-red-600 focus:ring-red-500">
+                                            <span class="ml-2 text-red-600 dark:text-red-400">Overdue only</span>
+                                        </label>
                                     </div>
                                     <label class="block text-sm text-gray-700 dark:text-gray-300">Status</label>
                                 <select name="status" class="mt-1 w-full border rounded p-2 dark:bg-gray-700 dark:border-gray-600">
@@ -111,19 +117,28 @@
                                     @foreach($loans as $loan)
                                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
                                             <td class="py-2 px-3">
-                                                <div class="font-medium">{{ optional($loan->user)->name }}</div>
+                                                <div class="font-medium">
+                                                    <a href="{{ route('admin.loans.show', $loan) }}" class="hover:underline">{{ optional($loan->user)->name }}</a>
+                                                </div>
                                                 <div class="text-xs text-gray-500 dark:text-gray-400">{{ optional($loan->user)->email }}</div>
                                             </td>
                                     <td class="py-2 px-3">
+                                        <a href="{{ route('admin.loans.show', $loan) }}" class="hover:underline">
                                         @if($loan->book->language && $loan->book->language->code === 'bn' && $loan->book->title_bn)
                                             {{ $loan->book->title_bn }}
                                         @else
                                             {{ $loan->book->title_en }}
                                         @endif
+                                        </a>
                                     </td>
                                             <td class="py-2 px-3">{{ $loan->requested_at ?? '' }}</td>
                                             <td class="py-2 px-3">{{ $loan->issued_at ?: '-' }}</td>
-                                            <td class="py-2 px-3">{{ $loan->due_at ?: '-' }}</td>
+                                            <td class="py-2 px-3">
+                                                {{ $loan->due_at ?: '-' }}
+                                                @if($loan->due_at && !$loan->returned_at && \Carbon\Carbon::parse($loan->due_at) < now())
+                                                    <span class="ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">Overdue</span>
+                                                @endif
+                                            </td>
                                             <td class="py-2 px-3">
                                                 <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold
                                                     {{ $loan->status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' : '' }}

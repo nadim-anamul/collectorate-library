@@ -183,7 +183,7 @@
                                                             {{ $book->primaryAuthor->name_en }}
                                                         @endif
                                                     @else
-                                                        {{ $book->author_en ?? $book->author_bn ?? 'Unknown Author' }}
+                                                        {{ $book->primaryAuthor ? ($book->primaryAuthor->name_en ?? $book->primaryAuthor->name_bn) : 'Unknown Author' }}
                                                     @endif
                                                 </p>
                                                 <p class="text-xs text-gray-500 dark:text-gray-400">{{ $book->publication_year }} • {{ $book->available_copies }}/{{ $book->total_copies }} copies</p>

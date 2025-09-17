@@ -12,6 +12,8 @@ use App\Services\ActivityLogger;
 use App\Models\User as SystemUser;
 use Illuminate\Support\Facades\Mail;
 use App\Notifications\LoanEventNotification;
+use App\Models\Models\Reservation;
+use Illuminate\Support\Facades\Log;
 
 class LoanController extends Controller
 {
@@ -22,6 +24,7 @@ class LoanController extends Controller
         // Filters
         $search = request('q');
         $status = request('status');
+        $overdueOnly = request('overdue') === '1';
         $userId = request('user_id');
         $bookId = null; // removed per UX
         $requestedFrom = null; // removed per UX
@@ -47,6 +50,10 @@ class LoanController extends Controller
             $query->where('status', $status);
         }
         if ($userId) { $query->where('user_id', $userId); }
+        if ($overdueOnly) {
+            $query->whereNull('returned_at')
+                  ->whereDate('due_at','<', now()->toDateString());
+        }
         // book and requested date filters removed by request
         if ($issuedFrom) { $query->whereDate('issued_at','>=',$issuedFrom); }
         if ($issuedTo) { $query->whereDate('issued_at','<=',$issuedTo); }
@@ -57,7 +64,13 @@ class LoanController extends Controller
 
         // For filter dropdowns
         $users = \App\Models\User::orderBy('name')->select('id','name','email')->get();
-        return view('admin.loans.index', compact('loans','users','search','status','userId','issuedFrom','issuedTo','dueFrom','dueTo'));
+        return view('admin.loans.index', compact('loans','users','search','status','userId','issuedFrom','issuedTo','dueFrom','dueTo','overdueOnly'));
+    }
+
+    public function show(Loan $loan)
+    {
+        $loan->load(['user','book']);
+        return view('admin.loans.show', compact('loan'));
     }
 
     public function create()
@@ -100,7 +113,7 @@ class LoanController extends Controller
         ActivityLogger::log('loan.issued','Loan',$loan->id,['book_id' => $book->id, 'user_id' => $validated['user_id']]);
         try {
             Mail::raw("Your loan for '{$book->title_en}' has been issued.", function($m) use ($borrower){ $m->to($borrower->email)->subject('Loan Issued'); });
-        } catch (\Throwable $e) { \Log::error($e->getMessage()); }
+        } catch (\Throwable $e) { Log::error($e->getMessage()); }
         return redirect()->route('admin.loans.index')->with('status','Book issued');
     }
 
@@ -117,6 +130,24 @@ class LoanController extends Controller
 
         $loan->book()->increment('available_copies');
         ActivityLogger::log('loan.returned','Loan',$loan->id,[]);
+        // Fulfill next reservation if any
+        try {
+            $book = $loan->book;
+            $nextReservation = Reservation::where('book_id', $book->id)
+                ->where('status','active')
+                ->orderBy('queued_at')
+                ->first();
+            if ($nextReservation) {
+                // Create a pending loan for the reserved user and mark reservation fulfilled
+                \App\Models\Models\Loan::create([
+                    'book_id' => $book->id,
+                    'user_id' => $nextReservation->user_id,
+                    'status' => 'pending',
+                    'requested_at' => now()->toDateString(),
+                ]);
+                $nextReservation->update(['status' => 'fulfilled', 'notified_at' => now()]);
+            }
+        } catch (\Throwable $e) { Log::error($e->getMessage()); }
         // Notify admins/librarians about return
         try {
             $admins = SystemUser::role(['Admin','Librarian'])->get();
@@ -129,10 +160,10 @@ class LoanController extends Controller
                     'book_title' => $book->title_en,
                     'by_user_id' => $user->id,
                     'by_user_name' => $user->name,
-                    'url' => route('admin.loans.index'),
+                    'url' => '/admin/loans/' . $loan->id,
                 ]));
             }
-        } catch (\Throwable $e) { \Log::error($e->getMessage()); }
+        } catch (\Throwable $e) { Log::error($e->getMessage()); }
 
         return back()->with('status','Book returned');
     }
@@ -178,10 +209,10 @@ class LoanController extends Controller
                     'book_title' => $book->title_en,
                     'by_user_id' => $user->id,
                     'by_user_name' => $user->name,
-                    'url' => route('admin.loans.index'),
+                    'url' => '/admin/loans/' . $loan->id,
                 ]));
             }
-        } catch (\Throwable $e) { \Log::error($e->getMessage()); }
+        } catch (\Throwable $e) { Log::error($e->getMessage()); }
         return back()->with('status','Borrow request submitted.');
     }
 
@@ -217,9 +248,9 @@ class LoanController extends Controller
                 'book_title' => $book->title_en,
                 'by_user_id' => Auth::id(),
                 'by_user_name' => Auth::user()->name,
-                'url' => route('dashboard'),
+                'url' => route('admin.loans.show', $loan),
             ]));
-        } catch (\Throwable $e) { \Log::error($e->getMessage()); }
+        } catch (\Throwable $e) { Log::error($e->getMessage()); }
         return back()->with('status','Loan approved and issued.');
     }
 
@@ -229,8 +260,12 @@ class LoanController extends Controller
         if($loan->status !== 'pending'){
             return back()->with('error','Only pending requests can be declined.');
         }
+        $validated = $request->validate([
+            'decline_reason' => 'required|string|min:5',
+        ]);
         $loan->update([
             'status' => 'declined',
+            'decline_reason' => $validated['decline_reason'] ?? null,
         ]);
         ActivityLogger::log('loan.declined','Loan',$loan->id,[]);
         // Notify borrower about decline
@@ -243,9 +278,9 @@ class LoanController extends Controller
                 'book_title' => $book->title_en,
                 'by_user_id' => Auth::id(),
                 'by_user_name' => Auth::user()->name,
-                'url' => route('dashboard'),
+                'url' => route('admin.loans.show', $loan),
             ]));
-        } catch (\Throwable $e) { \Log::error($e->getMessage()); }
+        } catch (\Throwable $e) { Log::error($e->getMessage()); }
         return back()->with('status','Loan request declined.');
     }
 
@@ -275,10 +310,10 @@ class LoanController extends Controller
                     'book_title' => $book->title_en,
                     'by_user_id' => $user->id,
                     'by_user_name' => $user->name,
-                    'url' => route('admin.loans.index'),
+                    'url' => '/admin/loans/' . $loan->id,
                 ]));
             }
-        } catch (\Throwable $e) { \Log::error($e->getMessage()); }
+        } catch (\Throwable $e) { Log::error($e->getMessage()); }
         return back()->with('status','Return requested. Please hand the book to the librarian.');
     }
 }

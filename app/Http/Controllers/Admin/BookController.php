@@ -29,8 +29,6 @@ class BookController extends Controller
             $query->where(function($q) use ($search) {
                 $q->where('title_en', 'like', "%{$search}%")
                   ->orWhere('title_bn', 'like', "%{$search}%")
-                  ->orWhere('author_en', 'like', "%{$search}%")
-                  ->orWhere('author_bn', 'like', "%{$search}%")
                   ->orWhere('isbn', 'like', "%{$search}%")
                   ->orWhere('description_en', 'like', "%{$search}%")
                   ->orWhere('description_bn', 'like', "%{$search}%")
@@ -52,10 +50,7 @@ class BookController extends Controller
             });
         }
         
-        // Banglish filter
-        if ($request->filled('banglish')) {
-            $query->where('title_bn_translit', 'like', '%' . $request->banglish . '%');
-        }
+        // Banglish filter removed - column no longer exists
         
         // ISBN filter
         if ($request->filled('isbn')) {
@@ -96,7 +91,8 @@ class BookController extends Controller
                 $query->orderBy('title_en');
                 break;
             case 'author':
-                $query->orderBy('author_en');
+                $query->join('authors', 'books.primary_author_id', '=', 'authors.id')
+                      ->orderBy('authors.name_en');
                 break;
             case 'year':
                 $query->orderBy('publication_year', 'desc');
@@ -141,22 +137,14 @@ class BookController extends Controller
     {
         $validated = $request->validate([
             'title_en' => 'required|string|max:255',
-            'title_bn' => 'required|string|max:255',
-            'title_bn_translit' => 'nullable|string|max:255',
-            'author_en' => 'nullable|string|max:255',
-            'author_bn' => 'nullable|string|max:255',
+            'title_bn' => 'nullable|string|max:255',
             'category_id' => 'nullable|exists:categories,id',
-            'publisher_en' => 'nullable|string|max:255',
-            'publisher_bn' => 'nullable|string|max:255',
             'isbn' => 'nullable|string|max:20|unique:books,isbn',
-            'barcode' => 'nullable|string|unique:books,barcode',
             'publication_year' => 'nullable|digits:4',
             'pages' => 'nullable|integer',
-            'language_primary' => 'nullable|string|max:10',
             'description_en' => 'nullable|string',
             'description_bn' => 'nullable|string',
             'cover' => 'nullable|image|max:2048',
-            'pdf' => 'nullable|mimes:pdf|max:10240',
             'primary_author_id' => 'nullable|exists:authors,id',
             'publisher_id' => 'nullable|exists:publishers,id',
             'language_id' => 'nullable|exists:languages,id',
@@ -169,9 +157,7 @@ class BookController extends Controller
         if($request->hasFile('cover')){
             $validated['cover_path'] = $this->optimizeAndStoreImage($request->file('cover'));
         }
-        if($request->hasFile('pdf')){
-            $validated['pdf_path'] = $request->file('pdf')->store('pdfs', 'public');
-        }
+        // PDF upload removed - column no longer exists
 
         $book = Book::create($validated);
         if(isset($validated['authors'])){
@@ -200,22 +186,14 @@ class BookController extends Controller
     {
         $validated = $request->validate([
             'title_en' => 'required|string|max:255',
-            'title_bn' => 'required|string|max:255',
-            'title_bn_translit' => 'nullable|string|max:255',
-            'author_en' => 'nullable|string|max:255',
-            'author_bn' => 'nullable|string|max:255',
+            'title_bn' => 'nullable|string|max:255',
             'category_id' => 'nullable|exists:categories,id',
-            'publisher_en' => 'nullable|string|max:255',
-            'publisher_bn' => 'nullable|string|max:255',
             'isbn' => 'nullable|string|max:20|unique:books,isbn,'.$book->id,
-            'barcode' => 'nullable|string|unique:books,barcode,'.$book->id,
             'publication_year' => 'nullable|digits:4',
             'pages' => 'nullable|integer',
-            'language_primary' => 'nullable|string|max:10',
             'description_en' => 'nullable|string',
             'description_bn' => 'nullable|string',
             'cover' => 'nullable|image|max:2048',
-            'pdf' => 'nullable|mimes:pdf|max:10240',
             'primary_author_id' => 'nullable|exists:authors,id',
             'publisher_id' => 'nullable|exists:publishers,id',
             'language_id' => 'nullable|exists:languages,id',
@@ -229,10 +207,7 @@ class BookController extends Controller
             if($book->cover_path){ Storage::disk('public')->delete($book->cover_path); }
             $validated['cover_path'] = $this->optimizeAndStoreImage($request->file('cover'));
         }
-        if($request->hasFile('pdf')){
-            if($book->pdf_path){ Storage::disk('public')->delete($book->pdf_path); }
-            $validated['pdf_path'] = $request->file('pdf')->store('pdfs', 'public');
-        }
+        // PDF upload removed - column no longer exists
 
         $book->update($validated);
         if(isset($validated['authors'])){
@@ -248,7 +223,6 @@ class BookController extends Controller
     public function destroy(Book $book)
     {
         if($book->cover_path){ Storage::disk('public')->delete($book->cover_path); }
-        if($book->pdf_path){ Storage::disk('public')->delete($book->pdf_path); }
         $book->tags()->detach();
         $book->delete();
         ActivityLogger::log('book.deleted','Book',$book->id,['title_en' => $book->title_en]);
