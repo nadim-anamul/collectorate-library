@@ -60,7 +60,7 @@ class DashboardController extends Controller
         $stats = [
             'books' => Book::count(),
             'available_books' => Book::where('available_copies', '>', 0)->count(),
-            'categories' => Category::count(),
+            'pending_loans' => Loan::where('status','pending')->count(),
             'users' => User::where('status','approved')->count(),
             'loans_active' => Loan::where('status','issued')->count(),
         ];

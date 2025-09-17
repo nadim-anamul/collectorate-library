@@ -153,6 +153,74 @@
                     </div>
                 </div>
 
+                <!-- Pending Requests -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden">
+                    <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Pending Requests</h3>
+                    </div>
+                    <div class="p-6">
+                        @forelse($pendingRequests as $loan)
+                            <div class="flex items-center space-x-4 py-4 {{ !$loop->last ? 'border-b border-gray-100 dark:border-gray-700' : '' }}">
+                                <div class="flex-shrink-0">
+                                    <div class="w-12 h-16 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded flex items-center justify-center">
+                                        @if($loan->book->cover_path)
+                                            <img src="{{ Storage::url($loan->book->cover_path) }}" alt="{{ $loan->book->title_en }}" class="w-full h-full object-cover rounded">
+                                        @else
+                                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                            </svg>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="text-sm font-medium text-gray-900 dark:text-white truncate">
+                                        @if($loan->book->language && $loan->book->language->code === 'bn' && $loan->book->title_bn)
+                                            {{ $loan->book->title_bn }}
+                                        @else
+                                            {{ $loan->book->title_en }}
+                                        @endif
+                                    </h4>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                                        @if($loan->book->authors->count() > 0)
+                                            @foreach($loan->book->authors as $author)
+                                                @if($loan->book->language && $loan->book->language->code === 'bn' && $author->name_bn)
+                                                    {{ $author->name_bn }}
+                                                @else
+                                                    {{ $author->name_en }}
+                                                @endif
+                                                @if(!$loop->last), @endif
+                                            @endforeach
+                                        @else
+                                            @if($loan->book->language && $loan->book->language->code === 'bn' && $loan->book->author_bn)
+                                                {{ $loan->book->author_bn }}
+                                            @else
+                                                {{ $loan->book->author_en ?: 'Unknown Author' }}
+                                            @endif
+                                        @endif
+                                    </p>
+                                    <p class="text-xs text-gray-400 dark:text-gray-500">
+                                        Requested: {{ \Carbon\Carbon::parse($loan->requested_at)->format('M d, Y') }}
+                                        @if($loan->requested_due_at)
+                                            • Requested Due: {{ \Carbon\Carbon::parse($loan->requested_due_at)->format('M d, Y') }}
+                                        @endif
+                                    </p>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <span class="px-3 py-2 text-sm rounded bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">Pending</span>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="text-center py-8">
+                                <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                </svg>
+                                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">No pending requests</h3>
+                                <p class="text-gray-600 dark:text-gray-400 mb-4">Request a book from its details page to see it here.</p>
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
+
                 <!-- Reading History -->
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden">
                     <div class="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
@@ -347,7 +415,67 @@
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                                 </svg>
                                                 <span>{{ $book->available_copies }} copies available</span>
+                                        </div>
+
+                                        <!-- Borrow Request Button (same logic as home) -->
+                                        @auth
+                                            @if(Auth::user()->status === 'approved')
+                                                @php
+                                                    $existingLoan = \App\Models\Models\Loan::where('user_id', auth()->id())
+                                                        ->where('book_id', $book->id)
+                                                        ->whereIn('status',["pending","issued"]) 
+                                                        ->first();
+                                                @endphp
+                                                <div class="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+                                                    @if($existingLoan)
+                                                        <div class="text-center">
+                                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+                                                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                                </svg>
+                                                                {{ ucfirst($existingLoan->status) }}
+                                                            </span>
+                                                        </div>
+                                                    @else
+                                                        @if($book->available_copies > 0)
+                                                            <form action="{{ route('books.request', $book) }}" method="POST" class="w-full">
+                                                                @csrf
+                                                                <button type="submit" class="w-full inline-flex items-center justify-center px-3 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white text-xs font-medium rounded-lg shadow-sm hover:shadow-md transform hover:scale-105 transition-all duration-200">
+                                                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                                                    </svg>
+                                                                    Borrow
+                                                                </button>
+                                                            </form>
+                                                        @else
+                                                            <button class="w-full px-3 py-2 bg-gray-300 text-gray-500 text-xs font-medium rounded-lg cursor-not-allowed" disabled>
+                                                                Not Available
+                                                            </button>
+                                                        @endif
+                                                    @endif
+                                                </div>
+                                            @else
+                                                <div class="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+                                                    <div class="text-center">
+                                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+                                                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                                            </svg>
+                                                            Pending Approval
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        @else
+                                            <div class="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+                                                <a href="{{ route('login') }}" class="w-full inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 text-xs font-medium rounded-lg transition-colors duration-200">
+                                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                                                    </svg>
+                                                    Sign In to Borrow
+                                                </a>
                                             </div>
+                                        @endauth
                                         </div>
                                     </div>
                                 </div>

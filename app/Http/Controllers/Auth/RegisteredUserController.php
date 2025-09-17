@@ -38,8 +38,9 @@ class RegisteredUserController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'phone' => ['nullable', 'string', 'max:20'],
             'address' => ['nullable', 'string', 'max:500'],
-            'member_type' => ['required', 'in:student,teacher,staff,public'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'job_post' => ['nullable', 'string', 'max:100'],
+            // Strong password: min 8, letters, mixed case, numbers, symbols
+            'password' => ['required', 'confirmed', Rules\Password::min(8)->letters()->mixedCase()->numbers()->symbols()],
         ]);
 
         $user = User::create([
@@ -47,7 +48,7 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'phone' => $request->phone,
             'address' => $request->address,
-            'member_type' => $request->member_type,
+            'job_post' => $request->job_post,
             'password' => Hash::make($request->password),
             'status' => 'pending', // Default to pending approval
         ]);

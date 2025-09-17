@@ -24,7 +24,8 @@
                 </a>
                     
                     @auth
-                    <!-- My Dashboard -->
+                    <!-- My Dashboard (hidden for Admin/Librarian to avoid duplication) -->
+                    @unlessrole('Admin|Librarian')
                     <a href="{{ route('dashboard') }}" class="flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 {{ request()->routeIs('dashboard') ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-700' }}">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
@@ -32,6 +33,7 @@
                         </svg>
                         My Dashboard
                     </a>
+                    @endunlessrole
                         
                         @role('Admin|Librarian')
                         <!-- Books Dropdown -->
@@ -123,7 +125,7 @@
                             Loans
                         </a>
                         <a href="{{ route('admin.users.index') }}" class="flex items-center px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-700 transition-all duration-200">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1"/></svg>
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                             Users
                         </a>
                         <a href="{{ route('admin.home') }}" class="flex items-center px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-700 transition-all duration-200">
@@ -144,6 +146,40 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
                     </svg>
                 </button>
+
+                @auth
+                <!-- Notifications -->
+                <div x-data="notifications()" x-init="init()" class="relative" @click.outside="open=false">
+                    <button @click="toggle()" class="relative p-2 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-300 dark:hover:bg-gray-700">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                        </svg>
+                        <span x-show="unread>0" x-text="unread" class="absolute -top-1 -right-1 inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold leading-none text-white bg-red-600 rounded-full"></span>
+                    </button>
+                    <div x-show="open" x-cloak x-transition class="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
+                        <div class="px-4 py-2 flex items-center justify-between">
+                            <span class="text-sm font-semibold text-gray-700 dark:text-gray-200">Notifications</span>
+                            <button @click="markAllRead()" class="text-xs text-blue-600 hover:underline">Mark all read</button>
+                        </div>
+                        <template x-if="items.length===0">
+                            <div class="px-4 py-6 text-sm text-gray-500 dark:text-gray-400">No notifications</div>
+                        </template>
+                        <div class="max-h-80 overflow-auto">
+                            <template x-for="n in items" :key="n.id">
+                                <a :href="n.data.url || '#'" @click.prevent="markOneRead(n)" class="block px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <div class="flex items-start">
+                                        <div class="flex-1">
+                                            <p class="text-sm" :class="n.read_at ? 'text-gray-500 dark:text-gray-400' : 'text-gray-800 dark:text-gray-100 font-medium'" x-text="n.data.message"></p>
+                                            <p class="text-xs text-gray-400 mt-1" x-text="n.created_at"></p>
+                                        </div>
+                                        <span x-show="!n.read_at" class="ml-2 mt-1 w-2 h-2 bg-blue-500 rounded-full"></span>
+                                    </div>
+                                </a>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+                @endauth
 
                 @guest
                     <!-- Guest Menu -->
@@ -187,6 +223,20 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v2H8V5z"></path>
                                 </svg>
                                 Dashboard
+                            </a>
+
+                            <a href="{{ route('profile.show') }}" class="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
+                                <svg class="w-4 h-4 mr-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
+                                My Profile
+                            </a>
+
+                            <a href="{{ route('profile.edit') }}" class="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
+                                <svg class="w-4 h-4 mr-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                </svg>
+                                Edit Profile
                             </a>
                             
                             @role('Admin|Librarian')

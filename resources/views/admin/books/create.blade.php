@@ -369,7 +369,7 @@
                                         Cover Image
                                     </span>
                                 </label>
-                                <input type="file" name="cover_image" accept="image/*"
+                                <input type="file" name="cover" accept="image/*"
                                     class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-all duration-200 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
                                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Upload book cover (JPG, PNG, max 2MB)</p>
                             </div>

@@ -36,17 +36,17 @@
                         </div>
                     </div>
                 </div>
-                <div class="p-4 rounded-xl shadow-sm text-white bg-gradient-to-r from-purple-500 to-violet-600">
+                <a href="{{ route('admin.loans.index') }}" class="block p-4 rounded-xl shadow-sm text-white bg-gradient-to-r from-purple-500 to-violet-600 hover:from-purple-600 hover:to-violet-700 transition-all duration-200 transform hover:scale-105 cursor-pointer">
                     <div class="flex items-center">
                         <div class="p-2 bg-white/10 rounded">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5l7 7-7 7-7-7V7z"/></svg>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         </div>
                         <div class="ml-3">
-                            <div class="text-xs opacity-80">Categories</div>
-                            <div class="text-2xl font-bold">{{ $stats['categories'] ?? 0 }}</div>
+                            <div class="text-xs opacity-80">Pending Loans</div>
+                            <div class="text-2xl font-bold">{{ $stats['pending_loans'] ?? 0 }}</div>
                         </div>
                     </div>
-                </div>
+                </a>
                 <div class="p-4 rounded-xl shadow-sm text-white bg-gradient-to-r from-sky-500 to-blue-600">
                     <div class="flex items-center">
                         <div class="p-2 bg-white/10 rounded">

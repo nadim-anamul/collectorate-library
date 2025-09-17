@@ -14,6 +14,8 @@ use App\Http\Controllers\Member\DashboardController as MemberDashboardController
 use App\Http\Controllers\Admin\LoanController;
 use App\Http\Controllers\Admin\SearchController;
 use App\Http\Controllers\Admin\ReportsController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +38,14 @@ Route::middleware(['auth', 'approved'])->group(function(){
     // Borrow request from book page
     Route::post('/books/{book}/request', [LoanController::class,'request'])->name('books.request');
     Route::post('/loans/{loan}/request-return', [LoanController::class,'requestReturn'])->name('loans.requestReturn');
+    // Notifications
+    Route::get('/notifications', [NotificationController::class,'index'])->name('notifications.index');
+    Route::post('/notifications/read', [NotificationController::class,'markAsRead'])->name('notifications.read');
+
+    // Profile
+    Route::get('/profile', [ProfileController::class,'show'])->name('profile.show');
+    Route::get('/profile/edit', [ProfileController::class,'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class,'update'])->name('profile.update');
 
     Route::middleware(['role:Admin|Librarian'])->prefix('admin')->name('admin.')->group(function(){
         Route::get('/', [DashboardController::class, 'index'])->name('home');

@@ -16,7 +16,7 @@
                     <div class="md:w-1/3 p-6">
                         <div class="w-full h-96 bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900 dark:to-indigo-900 rounded-lg flex items-center justify-center">
                             @if($book->cover_path)
-                                <img src="{{ $book->cover_path }}" alt="{{ $book->title_en ?: $book->title_bn }}" class="w-full h-full object-cover rounded-lg">
+                                <img src="{{ Storage::url($book->cover_path) }}" alt="{{ $book->title_en ?: $book->title_bn }}" class="w-full h-full object-cover rounded-lg">
                             @else
                                 <svg class="w-24 h-24 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
@@ -123,6 +123,61 @@
                                         {{ $book->available_copies }} of {{ $book->total_copies }} copies available
                                     </span>
                                 </div>
+                                
+                                <!-- Borrow Request Button -->
+                                @auth
+                                    @if(Auth::user()->status === 'approved')
+                                        @php
+                                            $existingLoan = \App\Models\Models\Loan::where('user_id', auth()->id())
+                                                ->where('book_id', $book->id)
+                                                ->whereIn('status',["pending","issued"]) // active
+                                                ->first();
+                                        @endphp
+                                        <div class="mt-4">
+                                            @if($existingLoan)
+                                                <div class="inline-flex items-center gap-3">
+                                                    <span class="text-sm text-gray-600 dark:text-gray-400">
+                                                        You have a {{ ucfirst($existingLoan->status) }} request for this book
+                                                    </span>
+                                                    <button class="px-4 py-2 bg-gray-400 text-white rounded-lg cursor-not-allowed" disabled>
+                                                        Request to Borrow
+                                                    </button>
+                                                </div>
+                                            @else
+                                                @if($book->available_copies > 0)
+                                                    <form action="{{ route('books.request', $book) }}" method="POST" class="inline">
+                                                        @csrf
+                                                        <button type="submit" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
+                                                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                                            </svg>
+                                                            Request to Borrow
+                                                        </button>
+                                                    </form>
+                                                @else
+                                                    <button class="px-4 py-2 bg-gray-400 text-white rounded-lg cursor-not-allowed" disabled>
+                                                        Not Available
+                                                    </button>
+                                                @endif
+                                            @endif
+                                        </div>
+                                    @else
+                                        <div class="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                                            <p class="text-sm text-yellow-700 dark:text-yellow-300">
+                                                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                                </svg>
+                                                Your account must be approved to request a borrow.
+                                            </p>
+                                        </div>
+                                    @endif
+                                @else
+                                    <div class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                                        <p class="text-sm text-blue-700 dark:text-blue-300">
+                                            <a href="{{ route('login') }}" class="font-medium hover:underline">Sign in</a> to request this book.
+                                        </p>
+                                    </div>
+                                @endauth
                             </div>
 
                             <!-- Description -->
@@ -139,37 +194,5 @@
                 </div>
             </div>
         </div>
-        @auth
-            @if(Auth::user()->status === 'approved')
-                <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-                    @auth
-                        @php
-                            $existingLoan = \App\Models\Models\Loan::where('user_id', auth()->id())
-                                ->where('book_id', $book->id)
-                                ->whereIn('status',["pending","issued"]) // active
-                                ->first();
-                        @endphp
-                        @if($existingLoan)
-                            <div class="inline-flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
-                                <span class="px-2 py-1 rounded bg-gray-100 dark:bg-gray-700">Request {{ ucfirst($existingLoan->status) }}</span>
-                                <button class="px-4 py-2 bg-gray-400 text-white rounded-lg cursor-not-allowed" disabled>
-                                    Request to Borrow
-                                </button>
-                            </div>
-                        @else
-                            <form action="{{ route('books.request', $book) }}" method="POST" class="inline">@csrf
-                                <button class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg">
-                                    Request to Borrow
-                                </button>
-                            </form>
-                        @endif
-                    @endauth
-                </div>
-            @else
-                <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 text-sm text-yellow-700 dark:text-yellow-300">
-                    Your account must be approved to request a borrow.
-                </div>
-            @endif
-        @endauth
     </div>
 </x-app-layout>

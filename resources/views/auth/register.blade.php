@@ -77,20 +77,15 @@
                         @enderror
                     </div>
 
-                    <!-- Member Type -->
+                    <!-- Job Post -->
                     <div>
-                        <label for="member_type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Member Type
+                        <label for="job_post" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Job Post (optional)
                         </label>
-                        <select id="member_type" name="member_type" required
-                            class="block w-full px-3 py-3 border border-gray-300 dark:border-gray-600 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition duration-200">
-                            <option value="">Select member type</option>
-                            <option value="student" {{ old('member_type') == 'student' ? 'selected' : '' }}>Student</option>
-                            <option value="teacher" {{ old('member_type') == 'teacher' ? 'selected' : '' }}>Teacher</option>
-                            <option value="staff" {{ old('member_type') == 'staff' ? 'selected' : '' }}>Staff</option>
-                            <option value="public" {{ old('member_type') == 'public' ? 'selected' : '' }}>Public</option>
-                        </select>
-                        @error('member_type')
+                        <input id="job_post" name="job_post" type="text" value="{{ old('job_post') }}"
+                            class="block w-full px-3 py-3 border border-gray-300 dark:border-gray-600 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition duration-200"
+                            placeholder="e.g., Assistant Librarian, Lecturer, Student">
+                        @error('job_post')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                         @enderror
                     </div>

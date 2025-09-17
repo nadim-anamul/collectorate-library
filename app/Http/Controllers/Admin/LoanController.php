@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Services\ActivityLogger;
 use App\Models\User as SystemUser;
 use Illuminate\Support\Facades\Mail;
+use App\Notifications\LoanEventNotification;
 
 class LoanController extends Controller
 {
@@ -116,6 +117,22 @@ class LoanController extends Controller
 
         $loan->book()->increment('available_copies');
         ActivityLogger::log('loan.returned','Loan',$loan->id,[]);
+        // Notify admins/librarians about return
+        try {
+            $admins = SystemUser::role(['Admin','Librarian'])->get();
+            $book = $loan->book; $user = $loan->user;
+            foreach ($admins as $admin) {
+                $admin->notify(new LoanEventNotification('loan.returned', [
+                    'message' => "Book returned: '{$book->title_en}' by {$user->name}",
+                    'loan_id' => $loan->id,
+                    'book_id' => $book->id,
+                    'book_title' => $book->title_en,
+                    'by_user_id' => $user->id,
+                    'by_user_name' => $user->name,
+                    'url' => route('admin.loans.index'),
+                ]));
+            }
+        } catch (\Throwable $e) { \Log::error($e->getMessage()); }
 
         return back()->with('status','Book returned');
     }
@@ -150,8 +167,20 @@ class LoanController extends Controller
             'requested_due_at' => $request->input('requested_due_at'),
         ]);
         ActivityLogger::log('loan.requested','Loan',$loan->id,['book_id' => $book->id]);
+        // Notify admins/librarians about new borrow request
         try {
-            Mail::raw("New borrow request for '{$book->title_en}' from {$user->name}.", function($m){ $m->to(config('mail.from.address'))->subject('New Borrow Request'); });
+            $admins = SystemUser::role(['Admin','Librarian'])->get();
+            foreach ($admins as $admin) {
+                $admin->notify(new LoanEventNotification('loan.requested', [
+                    'message' => "New borrow request for '{$book->title_en}'",
+                    'loan_id' => $loan->id,
+                    'book_id' => $book->id,
+                    'book_title' => $book->title_en,
+                    'by_user_id' => $user->id,
+                    'by_user_name' => $user->name,
+                    'url' => route('admin.loans.index'),
+                ]));
+            }
         } catch (\Throwable $e) { \Log::error($e->getMessage()); }
         return back()->with('status','Borrow request submitted.');
     }
@@ -178,9 +207,18 @@ class LoanController extends Controller
         ]);
         $book->decrement('available_copies');
         ActivityLogger::log('loan.approved','Loan',$loan->id,[]);
+        // Notify borrower about approval
         try {
-            $borrower = $loan->user; 
-            Mail::raw("Your borrow request for '{$book->title_en}' has been approved.", function($m) use ($borrower){ $m->to($borrower->email)->subject('Borrow Request Approved'); });
+            $borrower = $loan->user; $book = $loan->book;
+            $borrower->notify(new LoanEventNotification('loan.approved', [
+                'message' => "Your borrow request for '{$book->title_en}' has been approved.",
+                'loan_id' => $loan->id,
+                'book_id' => $book->id,
+                'book_title' => $book->title_en,
+                'by_user_id' => Auth::id(),
+                'by_user_name' => Auth::user()->name,
+                'url' => route('dashboard'),
+            ]));
         } catch (\Throwable $e) { \Log::error($e->getMessage()); }
         return back()->with('status','Loan approved and issued.');
     }
@@ -195,9 +233,18 @@ class LoanController extends Controller
             'status' => 'declined',
         ]);
         ActivityLogger::log('loan.declined','Loan',$loan->id,[]);
+        // Notify borrower about decline
         try {
             $borrower = $loan->user; $book = $loan->book;
-            Mail::raw("Your borrow request for '{$book->title_en}' has been declined.", function($m) use ($borrower){ $m->to($borrower->email)->subject('Borrow Request Declined'); });
+            $borrower->notify(new LoanEventNotification('loan.declined', [
+                'message' => "Your borrow request for '{$book->title_en}' has been declined.",
+                'loan_id' => $loan->id,
+                'book_id' => $book->id,
+                'book_title' => $book->title_en,
+                'by_user_id' => Auth::id(),
+                'by_user_name' => Auth::user()->name,
+                'url' => route('dashboard'),
+            ]));
         } catch (\Throwable $e) { \Log::error($e->getMessage()); }
         return back()->with('status','Loan request declined.');
     }
@@ -216,6 +263,22 @@ class LoanController extends Controller
             'status' => 'return_requested',
         ]);
         ActivityLogger::log('loan.return_requested','Loan',$loan->id,[]);
+        // Notify admins/librarians about return-request
+        try {
+            $admins = SystemUser::role(['Admin','Librarian'])->get();
+            $book = $loan->book;
+            foreach ($admins as $admin) {
+                $admin->notify(new LoanEventNotification('loan.return_requested', [
+                    'message' => "Return requested for '{$book->title_en}'",
+                    'loan_id' => $loan->id,
+                    'book_id' => $book->id,
+                    'book_title' => $book->title_en,
+                    'by_user_id' => $user->id,
+                    'by_user_name' => $user->name,
+                    'url' => route('admin.loans.index'),
+                ]));
+            }
+        } catch (\Throwable $e) { \Log::error($e->getMessage()); }
         return back()->with('status','Return requested. Please hand the book to the librarian.');
     }
 }

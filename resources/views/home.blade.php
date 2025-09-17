@@ -11,190 +11,20 @@
     </x-slot>
 
     <div class="py-6">
-        <!-- Enhanced Search Bar - Full width aligned with content -->
-        <div class="mb-8" x-data="homeSearch()" @click.outside="clearSearch()">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex flex-col lg:flex-row gap-8">
-                    <!-- Search Input - Takes up 3/4 width to align with main content -->
-                    <div class="lg:w-3/4 lg:ml-auto relative">
-                        <div class="relative group">
-                            <!-- Search Input with Enhanced Styling -->
-                            <input type="text" 
-                                   x-model="query"
-                                   @input="search()"
-                                   @keydown.arrow-down="navigateDown()"
-                                   @keydown.arrow-up="navigateUp()"
-                                   @keydown.enter="selectResult()"
-                                   @keydown.escape="clearSearch()"
-                                   placeholder="Search books, authors, ISBN..."
-                                   class="w-full px-5 py-4 pl-14 pr-16 text-gray-700 bg-white border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 focus:shadow-lg transition-all duration-300 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:focus:border-blue-400 dark:focus:ring-blue-400/20 group-hover:border-gray-300 dark:group-hover:border-gray-500">
-                            
-                            <!-- Search Icon with Animation -->
-                            <div class="absolute inset-y-0 left-0 flex items-center pl-5">
-                                <svg class="w-5 h-5 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                                </svg>
-                            </div>
-                            
-                            <!-- Clear Button (appears when typing) -->
-                            <div x-show="query.length > 0" 
-                                 x-transition:enter="transition ease-out duration-200"
-                                 x-transition:enter-start="opacity-0 scale-75"
-                                 x-transition:enter-end="opacity-100 scale-100"
-                                 x-transition:leave="transition ease-in duration-150"
-                                 x-transition:leave-start="opacity-100 scale-100"
-                                 x-transition:leave-end="opacity-0 scale-75"
-                                 class="absolute inset-y-0 right-0 flex items-center pr-5">
-                                <button @click="clearSearch()" 
-                                        class="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-200 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                    </svg>
-                                </button>
-                            </div>
-                            
-                            <!-- Keyboard Shortcut Badge -->
-                            <div x-show="query.length === 0" 
-                                 class="absolute inset-y-0 right-0 flex items-center pr-5">
-                                <kbd class="px-2 py-1 text-xs font-medium text-gray-500 bg-gray-100 dark:bg-gray-700 dark:text-gray-400 rounded-md border border-gray-200 dark:border-gray-600 shadow-sm">
-                                    ⌘K
-                                </kbd>
-                            </div>
-                            
-                            <!-- Loading Spinner (appears during search) -->
-                            <div x-show="isSearching" 
-                                 x-transition:enter="transition ease-out duration-200"
-                                 x-transition:enter-start="opacity-0"
-                                 x-transition:enter-end="opacity-100"
-                                 x-transition:leave="transition ease-in duration-150"
-                                 x-transition:leave-start="opacity-100"
-                                 x-transition:leave-end="opacity-0"
-                                 class="absolute inset-y-0 right-0 flex items-center pr-5">
-                                <svg class="w-4 h-4 text-blue-500 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                                </svg>
-                        </div>
-                    </div>
-                    
-                        <!-- Search Suggestions/Hints -->
-                        <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                            <span class="flex items-center">
-                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                                Try searching by title, author, ISBN, or category
-                            </span>
-                </div>
-
-                        <!-- Enhanced Search Results Dropdown -->
-                <div x-show="results.length > 0" 
-                             x-transition:enter="transition ease-out duration-300"
-                             x-transition:enter-start="opacity-0 transform scale-95 translate-y-2"
-                             x-transition:enter-end="opacity-100 transform scale-100 translate-y-0"
-                             x-transition:leave="transition ease-in duration-200"
-                             x-transition:leave-start="opacity-100 transform scale-100 translate-y-0"
-                             x-transition:leave-end="opacity-0 transform scale-95 translate-y-2"
-                             class="absolute z-50 w-full mt-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl max-h-96 overflow-y-auto backdrop-blur-sm">
-                        <template x-for="(book, index) in results" :key="book.id">
-                            <div 
-                                @click="selectBook(book)"
-                                :class="{
-                                        'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800': selectedIndex === index,
-                                    'hover:bg-gray-50 dark:hover:bg-gray-700': selectedIndex !== index
-                                }"
-                                    class="flex items-start sm:items-center p-4 border-b border-gray-100 dark:border-gray-700 cursor-pointer transition-all duration-200 last:border-b-0 hover:shadow-sm group"
-                            >
-                                    <!-- Enhanced Book Cover -->
-                                    <div class="flex-shrink-0 w-12 h-16 bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900 dark:to-indigo-900 rounded-lg flex items-center justify-center mr-4 shadow-sm group-hover:shadow-md transition-shadow duration-200">
-                                    <template x-if="book.cover_image">
-                                            <img :src="book.cover_image" :alt="book.title" class="w-full h-full object-cover rounded-lg">
-                                    </template>
-                                    <template x-if="!book.cover_image">
-                                            <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                                        </svg>
-                                    </template>
-                                </div>
-
-                                <!-- Book Details -->
-                                <div class="flex-1 min-w-0">
-                                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                                        <h3 class="text-sm font-semibold text-gray-900 dark:text-white truncate" x-text="book.title"></h3>
-                                        <div class="flex items-center space-x-2 mt-1 sm:mt-0">
-                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200" x-text="book.status"></span>
-                                                <span class="flex items-center text-xs text-gray-500 dark:text-gray-400" x-show="book.publication_year">
-                                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                                    </svg>
-                                                    <span x-text="book.publication_year"></span>
-                                                </span>
-                                            </div>
-                                    </div>
-                                    
-                                    <div class="mt-1 flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-2">
-                                        <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 truncate" x-text="book.primary_author?.name || 'Unknown Author'"></p>
-                                        <span class="hidden sm:inline text-gray-400">•</span>
-                                        <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 truncate" x-text="book.publisher?.name || 'Unknown Publisher'"></p>
-                                    </div>
-                                    
-                                    <div class="mt-1 flex flex-wrap items-center gap-1 sm:gap-2">
-                                        <template x-if="book.category">
-                                            <span class="inline-flex items-center px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200" x-text="book.category.name"></span>
-                                        </template>
-                                        <template x-for="tag in book.tags" :key="tag.id">
-                                            <span class="inline-flex items-center px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200" x-text="tag.name"></span>
-                                        </template>
-                                    </div>
-                                    
-                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400 line-clamp-2 hidden sm:block" x-text="book.description || 'No description available'"></p>
-                                </div>
-
-                                    <!-- Enhanced Arrow Icon -->
-                                    <div class="flex-shrink-0 ml-2">
-                                        <svg class="w-5 h-5 text-gray-400 group-hover:text-blue-500 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                    </svg>
-                                </div>
-                            </div>
-                        </template>
-                    </div>
-
-                        <!-- Enhanced No Results -->
-                <div x-show="query && results.length === 0 && !isSearching" 
-                             x-transition:enter="transition ease-out duration-300"
-                             x-transition:enter-start="opacity-0 transform scale-95 translate-y-2"
-                             x-transition:enter-end="opacity-100 transform scale-100 translate-y-0"
-                             x-transition:leave="transition ease-in duration-200"
-                             x-transition:leave-start="opacity-100 transform scale-100 translate-y-0"
-                             x-transition:leave-end="opacity-0 transform scale-95 translate-y-2"
-                             class="absolute z-50 w-full mt-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl p-6 text-center backdrop-blur-sm">
-                            <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-1.009-5.824-2.709"></path>
-                        </svg>
-                            </div>
-                            <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-2">No books found</h3>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Try searching with different keywords or check your spelling.</p>
-                            <div class="text-xs text-gray-400 dark:text-gray-500">
-                                <span class="font-medium">Suggestions:</span>
-                                <ul class="mt-1 space-y-1">
-                                    <li>• Try author names</li>
-                                    <li>• Use ISBN numbers</li>
-                                    <li>• Search by category</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Spacer to align with sidebar -->
-                    <div class="lg:w-1/4"></div>
-                </div>
-
-            </div>
-        </div>
 
         <!-- Main Content - Properly constrained width -->
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col items-center mb-6 p-6 border-b border-gray-200 dark:border-gray-700">
+                <!-- Results Header -->
+                    <h2 class="text-xl font-semibold text-gray-800 dark:text-white">
+                        {{ $books->total() }} Books Found
+                    </h2>
+                    @if(request()->hasAny(['search', 'category', 'language', 'year']) || (request('availability') && request('availability') != 'available'))
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            Filtered results
+                        </p>
+                    @endif
+            </div>
             <div class="flex flex-col lg:flex-row gap-8">
                 <!-- Sidebar Filters -->
                 <div class="lg:w-1/4">
@@ -405,17 +235,126 @@
 
                 <!-- Main Content -->
                 <div class="lg:w-3/4">
-                    <!-- Results Header -->
-                    <div class="flex justify-between items-center mb-6">
-                        <div>
-                            <h2 class="text-xl font-semibold text-gray-800 dark:text-white">
-                                {{ $books->total() }} Books Found
-                            </h2>
-                            @if(request()->hasAny(['search', 'category', 'language', 'year']) || (request('availability') && request('availability') != 'available'))
-                                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                                    Filtered results
-                                </p>
-                            @endif
+                    <!-- Search Bar (moved below results header) -->
+                    <div class="mb-8" x-data="homeSearch()" @click.outside="clearSearch()">
+                        <div class="relative group">
+                            <input type="text"
+                                   x-model="query"
+                                   @input="search()"
+                                   @keydown.arrow-down="navigateDown()"
+                                   @keydown.arrow-up="navigateUp()"
+                                   @keydown.enter="selectResult()"
+                                   @keydown.escape="clearSearch()"
+                                   placeholder="Search books, authors, ISBN..."
+                                   class="w-full px-5 py-4 pl-14 pr-16 text-gray-700 bg-white border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 focus:shadow-lg transition-all duration-300 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:focus:border-blue-400 dark:focus:ring-blue-400/20">
+
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-5">
+                                <svg class="w-5 h-5 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </div>
+
+                            <div x-show="query.length > 0" class="absolute inset-y-0 right-0 flex items-center pr-5">
+                                <button @click="clearSearch()" class="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-200 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <div x-show="query.length === 0" class="absolute inset-y-0 right-0 flex items-center pr-5">
+                                <kbd class="px-2 py-1 text-xs font-medium text-gray-500 bg-gray-100 dark:bg-gray-700 dark:text-gray-400 rounded-md border border-gray-200 dark:border-gray-600 shadow-sm">⌘K</kbd>
+                            </div>
+
+                            <div x-show="isSearching" class="absolute inset-y-0 right-0 flex items-center pr-5">
+                                <svg class="w-4 h-4 text-blue-500 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                            </div>
+
+                            <div x-show="results.length > 0"
+                                 x-transition:enter="transition ease-out duration-300"
+                                 x-transition:enter-start="opacity-0 transform scale-95 translate-y-2"
+                                 x-transition:enter-end="opacity-100 transform scale-100 translate-y-0"
+                                 x-transition:leave="transition ease-in duration-200"
+                                 x-transition:leave-start="opacity-100 transform scale-100 translate-y-0"
+                                 x-transition:leave-end="opacity-0 transform scale-95 translate-y-2"
+                                 class="absolute z-50 w-full mt-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl max-h-96 overflow-y-auto backdrop-blur-sm">
+                                <template x-for="(book, index) in results" :key="book.id">
+                                    <div @click="selectBook(book)"
+                                         :class="{ 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800': selectedIndex === index, 'hover:bg-gray-50 dark:hover:bg-gray-700': selectedIndex !== index }"
+                                         class="flex items-start sm:items-center p-4 border-b border-gray-100 dark:border-gray-700 cursor-pointer transition-all duration-200 last:border-b-0 hover:shadow-sm group">
+                                        <div class="flex-shrink-0 w-12 h-16 bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900 dark:to-indigo-900 rounded-lg flex items-center justify-center mr-4 shadow-sm group-hover:shadow-md transition-shadow duration-200">
+                                            <template x-if="book.cover_image">
+                                                <img :src="book.cover_image" :alt="book.title" class="w-full h-full object-cover rounded-lg">
+                                            </template>
+                                            <template x-if="!book.cover_image">
+                                                <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                                </svg>
+                                            </template>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                                                <h3 class="text-sm font-semibold text-gray-900 dark:text-white truncate" x-text="book.title"></h3>
+                                                <div class="flex items-center space-x-2 mt-1 sm:mt-0">
+                                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200" x-text="book.status"></span>
+                                                    <span class="flex items-center text-xs text-gray-500 dark:text-gray-400" x-show="book.publication_year">
+                                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                                        </svg>
+                                                        <span x-text="book.publication_year"></span>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="mt-1 flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-2">
+                                                <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 truncate" x-text="book.primary_author?.name || 'Unknown Author'"></p>
+                                                <span class="hidden sm:inline text-gray-400">•</span>
+                                                <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 truncate" x-text="book.publisher?.name || 'Unknown Publisher'"></p>
+                                            </div>
+                                            <div class="mt-1 flex flex-wrap items-center gap-1 sm:gap-2">
+                                                <template x-if="book.category">
+                                                    <span class="inline-flex items-center px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200" x-text="book.category.name"></span>
+                                                </template>
+                                                <template x-for="tag in book.tags" :key="tag.id">
+                                                    <span class="inline-flex items-center px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200" x-text="tag.name"></span>
+                                                </template>
+                                            </div>
+                                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400 line-clamp-2 hidden sm:block" x-text="book.description || 'No description available'"></p>
+                                        </div>
+                                        <div class="flex-shrink-0 ml-2">
+                                            <svg class="w-5 h-5 text-gray-400 group-hover:text-blue-500 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+
+                            <div x-show="query && results.length === 0 && !isSearching"
+                                 x-transition:enter="transition ease-out duration-300"
+                                 x-transition:enter-start="opacity-0 transform scale-95 translate-y-2"
+                                 x-transition:enter-end="opacity-100 transform scale-100 translate-y-0"
+                                 x-transition:leave="transition ease-in duration-200"
+                                 x-transition:leave-start="opacity-100 transform scale-100 translate-y-0"
+                                 x-transition:leave-end="opacity-0 transform scale-95 translate-y-2"
+                                 class="absolute z-50 w-full mt-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl p-6 text-center backdrop-blur-sm">
+                                <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-1.009-5.824-2.709"></path>
+                                    </svg>
+                                </div>
+                                <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-2">No books found</h3>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Try searching with different keywords or check your spelling.</p>
+                                <div class="text-xs text-gray-400 dark:text-gray-500">
+                                    <span class="font-medium">Suggestions:</span>
+                                    <ul class="mt-1 space-y-1">
+                                        <li>• Try author names</li>
+                                        <li>• Use ISBN numbers</li>
+                                        <li>• Search by category</li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -425,7 +364,7 @@
                             @foreach($books as $book)
                                 <div class="group bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-700 hover:border-blue-200 dark:hover:border-blue-600 hover:-translate-y-1">
                                     <!-- Enhanced Book Cover -->
-                                    <div class="relative aspect-[4/5] bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 overflow-hidden">
+                                    <div class="relative aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 overflow-hidden">
                                         @if($book->cover_path)
                                             <img src="{{ Storage::url($book->cover_path) }}" 
                                                  alt="{{ $book->title_en }}" 
@@ -460,9 +399,9 @@
                                     </div>
                                     
                                     <!-- Enhanced Book Info -->
-                                    <div class="p-4">
+                                    <div class="p-3">
                                         <!-- Title -->
-                                        <h3 class="font-semibold text-base text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
+                                        <h3 class="font-semibold text-base text-gray-900 dark:text-white mb-1 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
                                             @if($book->language && $book->language->code === 'bn' && $book->title_bn)
                                                 {{ $book->title_bn }}
                                             @else
@@ -472,7 +411,7 @@
                                         
                                         <!-- Author -->
                                         @if($book->primaryAuthor)
-                                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-2 flex items-center">
+                                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-1 flex items-center">
                                                 <svg class="w-3 h-3 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                                 </svg>
@@ -483,14 +422,14 @@
                                                 @endif
                                             </p>
                                         @elseif($book->language && $book->language->code === 'bn' && $book->author_bn)
-                                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-2 flex items-center">
+                                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-1 flex items-center">
                                                 <svg class="w-3 h-3 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                                 </svg>
                                                 {{ $book->author_bn }}
                                             </p>
                                         @elseif($book->author_en)
-                                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-2 flex items-center">
+                                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-1 flex items-center">
                                                 <svg class="w-3 h-3 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                                 </svg>
@@ -500,7 +439,7 @@
                                         
                                         <!-- Category -->
                                         @if($book->category)
-                                            <div class="mb-3">
+                                            <div class="mb-2">
                                                 <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
                                                     <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
@@ -515,8 +454,8 @@
                                         @endif
                                         
                                         <!-- Book Details - Fixed Layout -->
-                                        <div class="pt-3 border-t border-gray-100 dark:border-gray-700">
-                                            <div class="flex flex-col space-y-2">
+                                        <div class="pt-2 border-t border-gray-100 dark:border-gray-700">
+                                            <div class="flex flex-col space-y-1">
                                                 <!-- Publication Year and Pages -->
                                                 <div class="flex items-center text-xs text-gray-500 dark:text-gray-400">
                                                 @if($book->publication_year)
@@ -541,6 +480,66 @@
                                                     <span>{{ $book->available_copies }} {{ $book->available_copies === 1 ? 'copy' : 'copies' }} available</span>
                                                 </div>
                                             </div>
+                                            
+                                            <!-- Borrow Request Button -->
+                                            @auth
+                                                @if(Auth::user()->status === 'approved')
+                                                    @php
+                                                        $existingLoan = \App\Models\Models\Loan::where('user_id', auth()->id())
+                                                            ->where('book_id', $book->id)
+                                                            ->whereIn('status',["pending","issued"])
+                                                            ->first();
+                                                    @endphp
+                                                    <div class="mt-2 pt-2 border-t border-gray-100 dark:border-gray-700">
+                                                        @if($existingLoan)
+                                                            <div class="text-center">
+                                                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+                                                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                                    </svg>
+                                                                    {{ ucfirst($existingLoan->status) }}
+                                                                </span>
+                                                            </div>
+                                                        @else
+                                                            @if($book->available_copies > 0)
+                                                                <form action="{{ route('books.request', $book) }}" method="POST" class="w-full">
+                                                                    @csrf
+                                                                    <button type="submit" class="w-full inline-flex items-center justify-center px-3 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white text-xs font-medium rounded-lg shadow-sm hover:shadow-md transform hover:scale-105 transition-all duration-200">
+                                                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                                                        </svg>
+                                                                        Borrow
+                                                                    </button>
+                                                                </form>
+                                                            @else
+                                                                <button class="w-full px-3 py-2 bg-gray-300 text-gray-500 text-xs font-medium rounded-lg cursor-not-allowed" disabled>
+                                                                    Not Available
+                                                                </button>
+                                                            @endif
+                                                        @endif
+                                                    </div>
+                                                @else
+                                                    <div class="mt-2 pt-2 border-t border-gray-100 dark:border-gray-700">
+                                                        <div class="text-center">
+                                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+                                                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                                                </svg>
+                                                                Pending Approval
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                            @else
+                                                <div class="mt-2 pt-2 border-t border-gray-100 dark:border-gray-700">
+                                                    <a href="{{ route('login') }}" class="w-full inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 text-xs font-medium rounded-lg transition-colors duration-200">
+                                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                                                        </svg>
+                                                        Sign In to Borrow
+                                                    </a>
+                                                </div>
+                                            @endauth
                                         </div>
                                     </div>
                                 </div>

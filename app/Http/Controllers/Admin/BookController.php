@@ -12,6 +12,9 @@ use App\Models\Language;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Services\ActivityLogger;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
+use Illuminate\Support\Facades\Log;
 
 class BookController extends Controller
 {
@@ -164,7 +167,7 @@ class BookController extends Controller
         ]);
 
         if($request->hasFile('cover')){
-            $validated['cover_path'] = $request->file('cover')->store('covers', 'public');
+            $validated['cover_path'] = $this->optimizeAndStoreImage($request->file('cover'));
         }
         if($request->hasFile('pdf')){
             $validated['pdf_path'] = $request->file('pdf')->store('pdfs', 'public');
@@ -224,7 +227,7 @@ class BookController extends Controller
 
         if($request->hasFile('cover')){
             if($book->cover_path){ Storage::disk('public')->delete($book->cover_path); }
-            $validated['cover_path'] = $request->file('cover')->store('covers', 'public');
+            $validated['cover_path'] = $this->optimizeAndStoreImage($request->file('cover'));
         }
         if($request->hasFile('pdf')){
             if($book->pdf_path){ Storage::disk('public')->delete($book->pdf_path); }
@@ -250,5 +253,59 @@ class BookController extends Controller
         $book->delete();
         ActivityLogger::log('book.deleted','Book',$book->id,['title_en' => $book->title_en]);
         return back()->with('status','Book deleted');
+    }
+
+    /**
+     * Optimize and store image
+     *
+     * @param \Illuminate\Http\UploadedFile $file
+     * @return string
+     */
+    private function optimizeAndStoreImage($file)
+    {
+        try {
+            // Create image manager with GD driver
+            $manager = new ImageManager(new Driver());
+            
+            // Read the image
+            $image = $manager->read($file->getPathname());
+            
+            // Get original dimensions
+            $width = $image->width();
+            $height = $image->height();
+            
+            // Calculate new dimensions (max 500px while maintaining aspect ratio)
+            $maxSize = 500;
+            
+            if ($width > $maxSize || $height > $maxSize) {
+                if ($width > $height) {
+                    $newWidth = $maxSize;
+                    $newHeight = (int) ($height * $maxSize / $width);
+                } else {
+                    $newHeight = $maxSize;
+                    $newWidth = (int) ($width * $maxSize / $height);
+                }
+                
+                // Resize the image
+                $image->resize($newWidth, $newHeight);
+            }
+            
+            // Optimize quality (85% for good quality with smaller file size)
+            $image->toJpeg(85);
+            
+            // Generate unique filename
+            $filename = 'cover_' . time() . '_' . uniqid() . '.jpg';
+            $path = 'covers/' . $filename;
+            
+            // Save the optimized image
+            $image->save(storage_path('app/public/' . $path));
+            
+            return $path;
+            
+        } catch (\Exception $e) {
+            // Log the error and fall back to original file
+            Log::warning('Image optimization failed: ' . $e->getMessage());
+            return $file->store('covers', 'public');
+        }
     }
 }

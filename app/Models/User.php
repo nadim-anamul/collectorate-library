@@ -25,6 +25,7 @@ class User extends Authenticatable
         'phone',
         'address',
         'member_type',
+        'job_post',
         'status',
     ];
 

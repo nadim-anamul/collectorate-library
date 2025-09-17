@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Models\Book;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class SearchController extends Controller
 {
@@ -53,7 +54,7 @@ class SearchController extends Controller
                     'description' => $book->language_primary === 'bangla' && $book->description_bn ? $book->description_bn : ($book->description_en ?: $book->description_bn),
                     'publication_year' => $book->publication_year,
                     'status' => $book->available_copies > 0 ? 'Available' : 'Unavailable',
-                    'cover_image' => $book->cover_path,
+                    'cover_image' => $book->cover_path ? Storage::url($book->cover_path) : null,
                     'primary_author' => $book->primaryAuthor ? [
                         'id' => $book->primaryAuthor->id,
                         'name' => $book->language_primary === 'bangla' && $book->primaryAuthor->name_bn ? $book->primaryAuthor->name_bn : ($book->primaryAuthor->name_en ?: $book->primaryAuthor->name_bn),

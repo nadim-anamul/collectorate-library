@@ -23,6 +23,13 @@ class DashboardController extends Controller
                            ->latest()
                            ->get();
 
+        // Pending borrow requests
+        $pendingRequests = Loan::where('user_id', $user->id)
+                               ->where('status', 'pending')
+                               ->with(['book.category', 'book.authors', 'book.publisher', 'book.language'])
+                               ->latest()
+                               ->get();
+
         // Returned history
         $loanHistory = Loan::where('user_id', $user->id)
                           ->where('status', 'returned')
@@ -50,7 +57,7 @@ class DashboardController extends Controller
             'overdue_books' => $currentLoans->where('due_at', '<', now())->count(),
         ];
 
-        return view('member.dashboard', compact('currentLoans', 'loanHistory', 'recommendedBooks', 'stats', 'user'));
+        return view('member.dashboard', compact('currentLoans', 'pendingRequests', 'loanHistory', 'recommendedBooks', 'stats', 'user'));
     }
 
     public function history()
