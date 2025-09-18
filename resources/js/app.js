@@ -11,6 +11,7 @@ window.notifications = function () {
         items: [],
         _poller: null,
         _audioCtx: null,
+        isAdmin: window.userIsAdmin || false,
         init() {
             this.fetch();
             this._startPolling();
@@ -92,5 +93,6 @@ window.notifications = function () {
         },
     };
 };
+
 
 Alpine.start();

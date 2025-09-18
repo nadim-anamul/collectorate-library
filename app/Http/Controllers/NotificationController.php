@@ -40,11 +40,15 @@ class NotificationController extends Controller
         ]);
         $user = $request->user();
         if ($request->filled('id')) {
-            $user->notifications()->where('id',$request->input('id'))->update(['read_at' => now()]);
-        } else {
-            $user->unreadNotifications->markAsRead();
+            $notification = $user->notifications()->where('id', $request->input('id'))->first();
+            if ($notification && is_null($notification->read_at)) {
+                $notification->markAsRead();
+            }
+            return response()->json(['status' => 'ok']);
         }
-        return response()->noContent();
+        // Mark all unread as read efficiently
+        $user->unreadNotifications()->update(['read_at' => now()]);
+        return response()->json(['status' => 'ok']);
     }
 }
 

@@ -32,6 +32,11 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        // If a one-time password was issued, force password change flow
+        if (auth()->user() && (auth()->user()->force_password_reset ?? false)) {
+            return redirect()->route('password.change');
+        }
+
         // Redirect admin users to admin dashboard
         if (auth()->user()->hasRole(['Admin', 'Librarian'])) {
             return redirect()->intended('/admin');

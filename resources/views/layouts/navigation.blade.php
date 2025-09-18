@@ -149,6 +149,10 @@
 
                 @auth
                 <!-- Notifications -->
+                <script>
+                    window.userIsAdmin = @json(auth()->check() && auth()->user()->hasRole(['Admin', 'Librarian']));
+                    console.log('User is admin:', window.userIsAdmin);
+                </script>
                 <div x-data="notifications()" x-init="init()" class="relative" @click.outside="open=false">
                     <button @click="toggle()" class="relative p-2 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-300 dark:hover:bg-gray-700">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -166,15 +170,30 @@
                         </template>
                         <div class="max-h-80 overflow-auto">
                             <template x-for="n in items" :key="n.id">
-                                <a :href="n.data.url || '#'" @click.prevent="markOneRead(n)" class="block px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700">
-                                    <div class="flex items-start">
-                                        <div class="flex-1">
-                                            <p class="text-sm" :class="n.read_at ? 'text-gray-500 dark:text-gray-400' : 'text-gray-800 dark:text-gray-100 font-medium'" x-text="n.data.message"></p>
-                                            <p class="text-xs text-gray-400 mt-1" x-text="n.created_at"></p>
+                                <div class="block">
+                                    <template x-if="isAdmin">
+                                        <a :href="n.data.url || '#'" @click.prevent="markOneRead(n)" class="block px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                            <div class="flex items-start">
+                                                <div class="flex-1">
+                                                    <p class="text-sm" :class="n.read_at ? 'text-gray-500 dark:text-gray-400' : 'text-gray-800 dark:text-gray-100 font-medium'" x-text="n.data.message"></p>
+                                                    <p class="text-xs text-gray-400 mt-1" x-text="n.created_at"></p>
+                                                </div>
+                                                <span x-show="!n.read_at" class="ml-2 mt-1 w-2 h-2 bg-blue-500 rounded-full"></span>
+                                            </div>
+                                        </a>
+                                    </template>
+                                    <template x-if="!isAdmin">
+                                        <div @click="markOneRead(n)" class="block px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+                                            <div class="flex items-start">
+                                                <div class="flex-1">
+                                                    <p class="text-sm" :class="n.read_at ? 'text-gray-500 dark:text-gray-400' : 'text-gray-800 dark:text-gray-100 font-medium'" x-text="n.data.message"></p>
+                                                    <p class="text-xs text-gray-400 mt-1" x-text="n.created_at"></p>
+                                                </div>
+                                                <span x-show="!n.read_at" class="ml-2 mt-1 w-2 h-2 bg-blue-500 rounded-full"></span>
+                                            </div>
                                         </div>
-                                        <span x-show="!n.read_at" class="ml-2 mt-1 w-2 h-2 bg-blue-500 rounded-full"></span>
-                                    </div>
-                                </a>
+                                    </template>
+                                </div>
                             </template>
                         </div>
                     </div>

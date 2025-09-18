@@ -19,7 +19,8 @@ class LoanController extends Controller
 {
     public function index()
     {
-        $query = Loan::with(['user','book'])->latest();
+        // Build base query without default ordering; we'll apply custom ordering below
+        $query = Loan::with(['user','book']);
 
         // Filters
         $search = request('q');
@@ -60,7 +61,18 @@ class LoanController extends Controller
         if ($dueFrom) { $query->whereDate('due_at','>=',$dueFrom); }
         if ($dueTo) { $query->whereDate('due_at','<=',$dueTo); }
 
-        $loans = $query->paginate(20)->appends(request()->query());
+        // Default sort: status priority then most recent
+        $loans = $query->reorder()->orderByRaw("
+            CASE 
+                WHEN status = 'pending' THEN 1
+                WHEN status = 'return_requested' THEN 2
+                WHEN status = 'issued' THEN 3
+                WHEN status = 'returned' THEN 4
+                WHEN status = 'declined' THEN 5
+                ELSE 6
+            END
+        ")->orderByDesc('created_at')
+        ->paginate(20)->appends(request()->query());
 
         // For filter dropdowns
         $users = \App\Models\User::orderBy('name')->select('id','name','email')->get();

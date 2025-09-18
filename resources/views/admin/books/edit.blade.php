@@ -700,7 +700,7 @@
             
             setTimeout(() => {
                 notification.remove();
-            }, 3000);
+            }, 1500);
         }
     </script>
 </x-app-layout>

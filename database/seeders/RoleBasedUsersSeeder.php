@@ -18,7 +18,6 @@ class RoleBasedUsersSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'phone' => '+880171234567',
                 'address' => 'Dhaka University Campus, Dhaka-1000',
-                'member_type' => 'staff',
                 'status' => 'approved',
                 'approved_at' => now(),
                 'role' => 'Admin'
@@ -29,7 +28,6 @@ class RoleBasedUsersSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'phone' => '+880171234568',
                 'address' => 'Gulshan-2, Dhaka-1212',
-                'member_type' => 'staff',
                 'status' => 'approved',
                 'approved_at' => now(),
                 'role' => 'Librarian'
@@ -40,7 +38,6 @@ class RoleBasedUsersSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'phone' => '+880171234569',
                 'address' => 'ঢাকা বিশ্ববিদ্যালয়, কার্জন হল',
-                'member_type' => 'student',
                 'status' => 'approved',
                 'approved_at' => now(),
                 'role' => 'Member'
@@ -51,7 +48,6 @@ class RoleBasedUsersSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'phone' => '+880171234570',
                 'address' => 'ধানমন্ডি, ঢাকা-১২০৫',
-                'member_type' => 'teacher',
                 'status' => 'approved',
                 'approved_at' => now(),
                 'role' => 'Member'
@@ -62,7 +58,6 @@ class RoleBasedUsersSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'phone' => '+880171234571',
                 'address' => 'পুরান ঢাকা, ঢাকা-১১০০',
-                'member_type' => 'public',
                 'status' => 'approved',
                 'approved_at' => now(),
                 'role' => 'Member'
@@ -73,7 +68,6 @@ class RoleBasedUsersSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'phone' => '+880171234572',
                 'address' => 'Banani, Dhaka-1213',
-                'member_type' => 'public',
                 'status' => 'approved',
                 'approved_at' => now(),
                 'role' => 'Member'
@@ -84,7 +78,6 @@ class RoleBasedUsersSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'phone' => '+880171234573',
                 'address' => 'মিরপুর, ঢাকা-১২১৬',
-                'member_type' => 'student',
                 'status' => 'pending',
                 'approved_at' => null,
                 'role' => null
@@ -95,7 +88,6 @@ class RoleBasedUsersSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'phone' => '+880171234574',
                 'address' => 'উত্তরা, ঢাকা-১২৩০',
-                'member_type' => 'public',
                 'status' => 'rejected',
                 'rejection_reason' => 'Invalid documentation provided',
                 'approved_at' => null,

@@ -4,9 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Models\Book;
 use App\Models\Models\Category;
-use App\Models\Author;
-use App\Models\Publisher;
-use App\Models\Language;
 use Illuminate\Database\Seeder;
 
 class BookSeeder extends Seeder
@@ -18,7 +15,6 @@ class BookSeeder extends Seeder
             [
                 'title_en' => 'Gitanjali',
                 'title_bn' => 'গীতাঞ্জলি',
-                'title_bn_translit' => 'Gitanjali',
                 'author_en' => 'Rabindranath Tagore',
                 'author_bn' => 'রবীন্দ্রনাথ ঠাকুর',
                 'category' => 'Poetry',
@@ -35,7 +31,6 @@ class BookSeeder extends Seeder
             [
                 'title_en' => 'Chokher Bali',
                 'title_bn' => 'চোখের বালি',
-                'title_bn_translit' => 'Chokher Bali',
                 'author_en' => 'Rabindranath Tagore',
                 'author_bn' => 'রবীন্দ্রনাথ ঠাকুর',
                 'category' => 'Fiction',
@@ -103,7 +98,6 @@ class BookSeeder extends Seeder
             [
                 'title_en' => 'Kothao Keu Nei',
                 'title_bn' => 'কোথাও কেউ নেই',
-                'title_bn_translit' => 'Kothao Keu Nei',
                 'author_en' => 'Humayun Ahmed',
                 'author_bn' => 'হুমায়ূন আহমেদ',
                 'category' => 'Fiction',
@@ -120,7 +114,6 @@ class BookSeeder extends Seeder
             [
                 'title_en' => 'Aranyak',
                 'title_bn' => 'আরণ্যক',
-                'title_bn_translit' => 'Aranyak',
                 'author_en' => 'Bibhutibhushan Bandyopadhyay',
                 'author_bn' => 'বিভূতিভূষণ বন্দ্যোপাধ্যায়',
                 'category' => 'Fiction',
@@ -137,7 +130,6 @@ class BookSeeder extends Seeder
             [
                 'title_en' => 'Lalsalu',
                 'title_bn' => 'লালসালু',
-                'title_bn_translit' => 'Lalsalu',
                 'author_en' => 'Syed Waliullah',
                 'author_bn' => 'সৈয়দ ওয়ালীউল্লাহ',
                 'category' => 'Fiction',
@@ -155,7 +147,6 @@ class BookSeeder extends Seeder
             [
                 'title_en' => '1984',
                 'title_bn' => '১৯৮৪',
-                'title_bn_translit' => '1984',
                 'author_en' => 'George Orwell',
                 'author_bn' => 'জর্জ অরওয়েল',
                 'category' => 'Fiction',
@@ -172,7 +163,6 @@ class BookSeeder extends Seeder
             [
                 'title_en' => 'Pride and Prejudice',
                 'title_bn' => 'প্রাইড অ্যান্ড প্রেজুডিস',
-                'title_bn_translit' => 'Pride and Prejudice',
                 'author_en' => 'Jane Austen',
                 'author_bn' => 'জেন অস্টেন',
                 'category' => 'Fiction',
@@ -189,9 +179,6 @@ class BookSeeder extends Seeder
             [
                 'title_en' => 'The Great Gatsby',
                 'title_bn' => 'দ্য গ্রেট গ্যাটসবি',
-                'title_bn_translit' => 'The Great Gatsby',
-                'author_en' => 'F. Scott Fitzgerald',
-                'author_bn' => 'এফ. স্কট ফিটজেরাল্ড',
                 'category' => 'Fiction',
                 'publisher_name' => 'Penguin Random House',
                 'language_code' => 'en',
@@ -206,42 +193,35 @@ class BookSeeder extends Seeder
         ];
 
         foreach ($books as $bookData) {
-            // Find or create category
+            // Find or create category (still supported via category_id)
             $category = Category::firstOrCreate(
                 ['name_en' => $bookData['category']],
                 ['name_bn' => $bookData['category'], 'slug' => strtolower($bookData['category'])]
             );
 
-            // Find publisher and language
-            $publisher = Publisher::where('name_en', $bookData['publisher_name'])->first();
-            $language = Language::where('code', $bookData['language_code'])->first();
-            
-            // Find primary author
-            $primaryAuthor = Author::where('name_en', $bookData['author_en'])->first();
-
-            $book = Book::create([
+            Book::create([
                 'title_en' => $bookData['title_en'],
                 'title_bn' => $bookData['title_bn'],
-                'title_bn_translit' => $bookData['title_bn_translit'],
-                'author_en' => $bookData['author_en'],
-                'author_bn' => $bookData['author_bn'],
-                'category_id' => $category->id,
-                'primary_author_id' => $primaryAuthor?->id,
-                'publisher_id' => $publisher?->id,
-                'language_id' => $language?->id,
-                'isbn' => $bookData['isbn'],
-                'publication_year' => $bookData['publication_year'],
-                'pages' => $bookData['pages'],
-                'description_en' => $bookData['description_en'],
-                'description_bn' => $bookData['description_bn'],
-                'available_copies' => $bookData['available_copies'],
-                'total_copies' => $bookData['total_copies'],
+                'title_bn_translit' => $bookData['title_bn_translit'] ?? null,
+                'author_en' => $bookData['author_en'] ?? null,
+                'author_bn' => $bookData['author_bn'] ?? null,
+                'category_id' => $category?->id,
+                // New schema uses publisher strings instead of relation ids
+                'publisher_en' => $bookData['publisher_name'] ?? null,
+                'publisher_bn' => $bookData['publisher_name'] ?? null,
+                'isbn' => $bookData['isbn'] ?? null,
+                // New optional fields in schema
+                'barcode' => $bookData['barcode'] ?? null,
+                'publication_year' => $bookData['publication_year'] ?? null,
+                'pages' => $bookData['pages'] ?? null,
+                'language_primary' => $bookData['language_code'] ?? null,
+                'description_en' => $bookData['description_en'] ?? null,
+                'description_bn' => $bookData['description_bn'] ?? null,
+                'cover_path' => $bookData['cover_path'] ?? null,
+                'pdf_path' => $bookData['pdf_path'] ?? null,
+                'available_copies' => $bookData['available_copies'] ?? 1,
+                'total_copies' => $bookData['total_copies'] ?? 1,
             ]);
-
-            // Attach primary author to many-to-many relationship
-            if ($primaryAuthor) {
-                $book->authors()->attach($primaryAuthor->id);
-            }
         }
     }
 }

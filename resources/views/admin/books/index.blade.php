@@ -11,6 +11,86 @@
             <div class="flex flex-col lg:flex-row gap-8">
                 <!-- Sidebar Filters -->
                 <div class="lg:w-1/4">
+                    <!-- Mobile Filters Dropdown -->
+                    <div x-data="{ open: false }" class="lg:hidden mb-4">
+                        <button @click="open = !open" class="w-full inline-flex items-center justify-between px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
+                            <span class="flex items-center gap-2 text-gray-800 dark:text-gray-200 font-semibold">
+                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+                                Filters
+                            </span>
+                            <svg :class="{'rotate-180': open}" class="w-4 h-4 text-gray-500 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div x-show="open" x-transition class="mt-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                            <form method="GET" action="{{ route('admin.books.index') }}" class="p-4 space-y-6">
+                                @if(request('q'))
+                                    <input type="hidden" name="q" value="{{ request('q') }}">
+                                @endif
+                                <!-- Category -->
+                                <div>
+                                    <label class="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category</label>
+                                    <select name="category" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                        <option value="">All Categories</option>
+                                        @foreach($categories as $category)
+                                            <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>{{ $category->name_en }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <!-- Language -->
+                                <div>
+                                    <label class="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Language</label>
+                                    <select name="language" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                        <option value="">All Languages</option>
+                                        @foreach($languages as $language)
+                                            <option value="{{ $language->code }}" {{ request('language') == $language->code ? 'selected' : '' }}>{{ $language->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <!-- Year -->
+                                <div>
+                                    <label class="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Publication Year</label>
+                                    <select name="year" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                        <option value="">All Years</option>
+                                        @foreach($years as $year)
+                                            <option value="{{ $year }}" {{ request('year') == $year ? 'selected' : '' }}>{{ $year }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <!-- Availability -->
+                                <div>
+                                    <label class="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Availability</label>
+                                    <select name="availability" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                        <option value="all" {{ !request('availability') || request('availability') == 'all' ? 'selected' : '' }}>All Books (Default)</option>
+                                        <option value="available" {{ request('availability') == 'available' ? 'selected' : '' }}>Available Only</option>
+                                        <option value="unavailable" {{ request('availability') == 'unavailable' ? 'selected' : '' }}>Unavailable Only</option>
+                                    </select>
+                                </div>
+                                <!-- Banglish -->
+                                <div>
+                                    <label class="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Banglish</label>
+                                    <input type="text" name="banglish" value="{{ request('banglish') }}" placeholder="e.g. Shesher Kobita" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:text-white" />
+                                </div>
+                                <!-- ISBN -->
+                                <div>
+                                    <label class="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">ISBN</label>
+                                    <input type="text" name="isbn" value="{{ request('isbn') }}" placeholder="ISBN" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 dark:bg-gray-700 dark:text-white" />
+                                </div>
+                                <!-- Sort -->
+                                <div>
+                                    <label class="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Sort By</label>
+                                    <select name="sort" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                        <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Latest First</option>
+                                        <option value="title" {{ request('sort') == 'title' ? 'selected' : '' }}>Title A-Z</option>
+                                        <option value="author" {{ request('sort') == 'author' ? 'selected' : '' }}>Author A-Z</option>
+                                        <option value="year" {{ request('sort') == 'year' ? 'selected' : '' }}>Year (Newest)</option>
+                                    </select>
+                                </div>
+                                <div class="flex gap-2 pt-2 border-t border-gray-200 dark:border-gray-700">
+                                    <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">Apply</button>
+                                    <a href="{{ route('admin.books.index') }}" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-center transition">Clear</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                     <!-- Search Field -->
                     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-6">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
@@ -30,7 +110,7 @@
 
                     <!-- Current Filters Display -->
                     @if(request()->hasAny(['q', 'category', 'language', 'year', 'availability', 'banglish', 'isbn', 'sort']) && (request('sort') != 'latest' || request('availability') != 'all' || request()->hasAny(['q', 'category', 'language', 'year', 'banglish', 'isbn'])))
-                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-6">
+                        <div class="hidden lg:block bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-6">
                             <div class="flex items-center justify-between mb-3">
                                 <h3 class="text-sm font-semibold text-gray-800 dark:text-white flex items-center">
                                     <svg class="w-4 h-4 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -138,7 +218,7 @@
                     @endif
 
                     <!-- Filter Navigation -->
-                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
+                    <div class="hidden lg:block bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
                         <div class="p-4 border-b border-gray-200 dark:border-gray-700">
                             <h3 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center">
                                 <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\SearchController;
 use App\Http\Controllers\Admin\ReportsController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Auth\PasswordChangeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,6 +34,18 @@ use App\Http\Controllers\ProfileController;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/books/{book}', [HomeController::class, 'show'])->name('books.show');
 
+// Authenticated users can access notifications regardless of approval status
+Route::middleware(['auth'])->group(function(){
+    // Notifications (JSON feed + pages + mark read)
+    Route::get('/notifications', [NotificationController::class,'index'])->name('notifications.index');
+    Route::get('/notifications/all', [NotificationController::class,'all'])->name('notifications.all');
+    Route::post('/notifications/read', [NotificationController::class,'markAsRead'])->name('notifications.read');
+
+    // One-time password change
+    Route::get('/password/change', [PasswordChangeController::class,'create'])->name('password.change');
+    Route::post('/password/change', [PasswordChangeController::class,'store'])->name('password.change.store');
+});
+
 Route::middleware(['auth', 'approved'])->group(function(){
     Route::get('/dashboard', [MemberDashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/history', [MemberDashboardController::class, 'history'])->name('dashboard.history');
@@ -41,17 +54,14 @@ Route::middleware(['auth', 'approved'])->group(function(){
     Route::post('/books/{book}/request', [LoanController::class,'request'])->name('books.request');
     Route::post('/loans/{loan}/request-return', [LoanController::class,'requestReturn'])->name('loans.requestReturn');
     Route::post('/books/{book}/reserve', [ReservationController::class,'store'])->name('books.reserve');
-    // Notifications
-    Route::get('/notifications', [NotificationController::class,'index'])->name('notifications.index');
-    Route::get('/notifications/all', [NotificationController::class,'all'])->name('notifications.all');
-    Route::post('/notifications/read', [NotificationController::class,'markAsRead'])->name('notifications.read');
+    // (moved notifications routes to auth-only block above)
 
     // Profile
     Route::get('/profile', [ProfileController::class,'show'])->name('profile.show');
     Route::get('/profile/edit', [ProfileController::class,'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class,'update'])->name('profile.update');
 
-    Route::middleware(['role:Admin|Librarian'])->prefix('admin')->name('admin.')->group(function(){
+    Route::middleware(['redirect.unauthorized'])->prefix('admin')->name('admin.')->group(function(){
         Route::get('/', [DashboardController::class, 'index'])->name('home');
         Route::resource('books', BookController::class);
         Route::resource('authors', AuthorController::class)->except(['show']);
@@ -64,12 +74,15 @@ Route::middleware(['auth', 'approved'])->group(function(){
         Route::post('users/{user}/approve', [UserManagementController::class, 'approve'])->name('users.approve');
         Route::post('users/{user}/reject', [UserManagementController::class, 'reject'])->name('users.reject');
         Route::put('users/{user}/role', [UserManagementController::class, 'updateRole'])->name('users.updateRole');
+        Route::post('users/{user}/revoke', [UserManagementController::class, 'revokeAccess'])->name('users.revoke');
+        Route::post('users/{user}/reset-password', [UserManagementController::class, 'resetPassword'])->name('users.resetPassword');
         Route::delete('users/{user}', [UserManagementController::class, 'destroy'])->name('users.destroy');
         Route::resource('tags', TagController::class)->except(['show']);
 
         Route::get('loans', [LoanController::class,'index'])->name('loans.index');
-        Route::get('loans/{loan}', [LoanController::class,'show'])->name('loans.show');
+        // IMPORTANT: place 'create' BEFORE '{loan}' to avoid route-model binding capturing 'create'
         Route::get('loans/create', [LoanController::class,'create'])->name('loans.create');
+        Route::get('loans/{loan}', [LoanController::class,'show'])->name('loans.show');
         Route::post('loans', [LoanController::class,'store'])->name('loans.store');
         Route::post('loans/{loan}/return', [LoanController::class,'return'])->name('loans.return');
         Route::post('loans/{loan}/approve', [LoanController::class,'approve'])->name('loans.approve');

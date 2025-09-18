@@ -27,6 +27,7 @@ class User extends Authenticatable
         'member_type',
         'job_post',
         'status',
+        'force_password_reset',
     ];
 
     /**

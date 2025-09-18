@@ -88,74 +88,6 @@
 
             <div class="lg:flex lg:gap-8">
                 <aside class="lg:w-1/4 w-full mb-8 lg:mb-0">
-                    <!-- Mobile Filters Dropdown -->
-                    <div x-data="{ open: false }" class="lg:hidden mb-4">
-                        <button @click="open = !open" class="w-full inline-flex items-center justify-between px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
-                            <span class="flex items-center gap-2 text-gray-800 dark:text-gray-200 font-semibold">
-                                <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
-                                Filters
-                            </span>
-                            <svg :class="{'rotate-180': open}" class="w-4 h-4 text-gray-500 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </button>
-                        <div x-show="open" x-transition class="mt-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-                            <form method="GET" action="{{ route('admin.loans.index') }}" class="p-6 space-y-6">
-                                <div class="space-y-3">
-                                    <label class="flex items-center gap-2 text-gray-700 dark:text-gray-300 font-semibold">Search Loans</label>
-                                    <input id="loan-search-mobile" type="text" name="q" value="{{ $search }}" placeholder="User, email, book title, ISBN" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white" />
-                                </div>
-                                <div class="flex items-center justify-between">
-                                    <label class="flex items-center gap-2 text-gray-700 dark:text-gray-300 font-semibold">Quick Filters</label>
-                                    <label class="inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" name="overdue" value="1" {{ ($overdueOnly ?? false) ? 'checked' : '' }} class="sr-only peer">
-                                        <div class="relative w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-checked:bg-red-600 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:bg-white after:rounded-full after:transition-all peer-checked:after:translate-x-full"></div>
-                                        <span class="ml-3 text-sm font-medium text-red-600 dark:text-red-400">Overdue only</span>
-                                    </label>
-                                </div>
-                                <div class="grid grid-cols-1 gap-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
-                                        <select name="status" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white">
-                                            <option value="">All Statuses</option>
-                                            @foreach(['pending','issued','return_requested','returned','declined'] as $s)
-                                                <option value="{{ $s }}" @selected(($status ?? '')===$s)>{{ ucfirst(str_replace('_', ' ', $s)) }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">User</label>
-                                        <select name="user_id" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white">
-                                            <option value="">All Users</option>
-                                            @foreach($users as $u)
-                                                <option value="{{ $u->id }}" @selected(($userId ?? '')==$u->id)>{{ $u->name }} ({{ $u->email }})</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="grid grid-cols-1 gap-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Issued From</label>
-                                        <input type="date" name="issued_from" value="{{ $issuedFrom }}" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white" />
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Issued To</label>
-                                        <input type="date" name="issued_to" value="{{ $issuedTo }}" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white" />
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Due From</label>
-                                        <input type="date" name="due_from" value="{{ $dueFrom }}" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white" />
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Due To</label>
-                                        <input type="date" name="due_to" value="{{ $dueTo }}" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white" />
-                                    </div>
-                                </div>
-                                <div class="flex flex-col gap-3 pt-2 border-t border-gray-200 dark:border-gray-700">
-                                    <button type="submit" class="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold rounded-xl">Apply Filters</button>
-                                    <a href="{{ route('admin.loans.index') }}" class="w-full px-6 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-xl text-center">Clear All</a>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
                     <!-- Modern Filter Sidebar -->
                     <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
                         <div class="bg-gradient-to-r from-purple-600 to-indigo-600 p-6">
@@ -189,7 +121,7 @@
                                         </svg>
                                     </div>
                                 </div>
-                                        </div>
+                            </div>
 
                             <!-- Quick Filters -->
                             <div class="space-y-4">
@@ -204,28 +136,28 @@
                                         <input type="checkbox" name="overdue" value="1" {{ ($overdueOnly ?? false) ? 'checked' : '' }} class="sr-only peer">
                                         <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 dark:peer-focus:ring-red-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-red-600"></div>
                                         <span class="ml-3 text-sm font-medium text-red-600 dark:text-red-400">Overdue only</span>
-                                        </label>
-                                    </div>
+                                    </label>
+                                </div>
 
                                 <div class="grid grid-cols-1 gap-4">
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
                                         <select name="status" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all duration-200">
                                             <option value="">All Statuses</option>
-                                    @foreach(['pending','issued','return_requested','returned','declined'] as $s)
+                                            @foreach(['pending','issued','return_requested','returned','declined'] as $s)
                                                 <option value="{{ $s }}" @selected(($status ?? '')===$s)>{{ ucfirst(str_replace('_', ' ', $s)) }}</option>
-                                        @endforeach
-                                    </select>
+                                            @endforeach
+                                        </select>
                                     </div>
                                     
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">User</label>
                                         <select name="user_id" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all duration-200">
                                             <option value="">All Users</option>
-                                        @foreach($users as $u)
-                                            <option value="{{ $u->id }}" @selected(($userId ?? '')==$u->id)>{{ $u->name }} ({{ $u->email }})</option>
-                                        @endforeach
-                                    </select>
+                                            @foreach($users as $u)
+                                                <option value="{{ $u->id }}" @selected(($userId ?? '')==$u->id)>{{ $u->name }} ({{ $u->email }})</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -272,20 +204,20 @@
                                 <a href="{{ route('admin.loans.index') }}" class="w-full px-6 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 text-center">
                                     Clear All
                                 </a>
-                                </div>
+                            </div>
 
-                                @php
-                                    $active = collect([
-                                        'q' => $search ?? null,
-                                        'status' => $status ?? null,
-                                        'user_id' => $userId ?? null,
-                                        'issued_from' => $issuedFrom ?? null,
-                                        'issued_to' => $issuedTo ?? null,
-                                        'due_from' => $dueFrom ?? null,
-                                        'due_to' => $dueTo ?? null,
-                                    ])->filter(fn($v) => filled($v));
-                                @endphp
-                                @if($active->isNotEmpty())
+                            @php
+                                $active = collect([
+                                    'q' => $search ?? null,
+                                    'status' => $status ?? null,
+                                    'user_id' => $userId ?? null,
+                                    'issued_from' => $issuedFrom ?? null,
+                                    'issued_to' => $issuedTo ?? null,
+                                    'due_from' => $dueFrom ?? null,
+                                    'due_to' => $dueTo ?? null,
+                                ])->filter(fn($v) => filled($v));
+                            @endphp
+                            @if($active->isNotEmpty())
                                 <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
                                     <div class="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
                                         <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -293,26 +225,26 @@
                                         </svg>
                                         Active Filters
                                     </div>
-                                        <div class="flex flex-wrap gap-2">
-                                            @foreach($active as $key => $val)
-                                                @php $q = request()->except($key); @endphp
+                                    <div class="flex flex-wrap gap-2">
+                                        @foreach($active as $key => $val)
+                                            @php $q = request()->except($key); @endphp
                                             <a href="{{ route('admin.loans.index', $q) }}" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs bg-gradient-to-r from-purple-100 to-indigo-100 dark:from-purple-900 dark:to-indigo-900 text-purple-700 dark:text-purple-200 hover:from-purple-200 hover:to-indigo-200 dark:hover:from-purple-800 dark:hover:to-indigo-800 transition-all duration-200">
-                                                    <span>{{ str_replace('_',' ', ucfirst($key)) }}: {{ $val }}</span>
+                                                <span>{{ str_replace('_',' ', ucfirst($key)) }}: {{ $val }}</span>
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 hover:scale-110 transition-transform" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 8.586l4.95-4.95 1.414 1.414L11.414 10l4.95 4.95-1.414 1.414L10 11.414l-4.95 4.95-1.414-1.414L8.586 10l-4.95-4.95L5.05 3.636 10 8.586z" clip-rule="evenodd"/></svg>
-                                                </a>
-                                            @endforeach
+                                            </a>
+                                        @endforeach
                                         <a href="{{ route('admin.loans.index') }}" class="inline-flex items-center px-3 py-1.5 rounded-full text-xs border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200">
                                             Clear All
                                         </a>
                                     </div>
-                                    </div>
-                                @endif
-                            </form>
+                                </div>
+                            @endif
+                        </form>
                     </div>
-                        </aside>
+                </aside>
                 
                 <!-- Main Content Area -->
-                        <section class="lg:w-3/4 w-full">
+                <section class="lg:w-3/4 w-full">
                     <!-- Modern Table Container -->
                     <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
                         <!-- Table Header -->
@@ -338,28 +270,28 @@
                         </div>
 
                         <!-- Table -->
-                            <div class="overflow-x-auto">
+                        <div class="overflow-x-auto">
                             <table class="w-full">
                                 <thead class="bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700">
                                     <tr>
                                         <th class="px-4 py-4 text-left text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-1/4">
                                             User
                                         </th>
-                                        <th class="px-4 py-4 text-left text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-1/5">
+                                        <th class="px-4 py-4 text-left text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-1/4">
                                             Book
                                         </th>
                                         <th class="px-4 py-4 text-left text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-1/4">
                                             Dates
                                         </th>
-                                        <th class="px-4 py-4 text-left text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-1/5">
+                                        <th class="px-4 py-4 text-left text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-1/6">
                                             Status
                                         </th>
                                         <th class="px-4 py-4 text-left text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-1/6">
                                             Actions
                                         </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                                     @foreach($loans as $loan)
                                         <tr class="hover:bg-gradient-to-r hover:from-purple-50 hover:to-indigo-50 dark:hover:from-gray-700 dark:hover:to-gray-600 transition-all duration-200 group">
                                             <!-- User Column -->
@@ -378,15 +310,15 @@
                                             <td class="px-4 py-6">
                                                 <div>
                                                     <a href="{{ route('admin.loans.show', $loan) }}" class="font-medium text-gray-900 dark:text-white hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200 block mb-1">
-                                        @if($loan->book->language && $loan->book->language->code === 'bn' && $loan->book->title_bn)
-                                            {{ $loan->book->title_bn }}
-                                        @else
-                                            {{ $loan->book->title_en }}
-                                        @endif
-                                        </a>
+                                                        @if($loan->book->language && $loan->book->language->code === 'bn' && $loan->book->title_bn)
+                                                            {{ $loan->book->title_bn }}
+                                                        @else
+                                                            {{ $loan->book->title_en }}
+                                                        @endif
+                                                    </a>
                                                     <div class="text-sm text-gray-500 dark:text-gray-400">ISBN: {{ $loan->book->isbn ?? 'N/A' }}</div>
                                                 </div>
-                                    </td>
+                                            </td>
                                             
                                             <!-- Dates Column -->
                                             <td class="px-4 py-6">
@@ -408,24 +340,24 @@
                                                         <div class="text-sm font-medium {{ $loan->due_at && !$loan->returned_at && \Carbon\Carbon::parse($loan->due_at) < now() ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-white' }}">
                                                             {{ $loan->due_at ? \Carbon\Carbon::parse($loan->due_at)->format('M d, Y') : '-' }}
                                                         </div>
-                                                @if($loan->due_at && !$loan->returned_at && \Carbon\Carbon::parse($loan->due_at) < now())
+                                                        @if($loan->due_at && !$loan->returned_at && \Carbon\Carbon::parse($loan->due_at) < now())
                                                             <div class="mt-1">
                                                                 <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
                                                                     Overdue
                                                                 </span>
                                                             </div>
-                                                @endif
+                                                        @endif
                                                     </div>
                                                 </div>
                                             </td>
                                             
                                             <!-- Status Column -->
-                                            <td class="px-2 py-6">
+                                            <td class="px-4 py-6">
                                                 @php
                                                     $statusConfig = [
                                                         'pending' => ['bg' => 'bg-gradient-to-r from-yellow-100 to-orange-100 dark:from-yellow-900 dark:to-orange-900', 'text' => 'text-yellow-800 dark:text-yellow-200'],
                                                         'issued' => ['bg' => 'bg-gradient-to-r from-blue-100 to-indigo-100 dark:from-blue-900 dark:to-indigo-900', 'text' => 'text-blue-800 dark:text-blue-200'],
-                                                        'return_requested' => ['bg' => 'bg-gradient-to-r from-purple-100 to-indigo-100 dark:from-purple-900 dark:to-indigo-900', 'text' => 'text-purple-800 dark:text-purple-200'],
+                                                        'return_requested' => ['bg' => 'bg-gradient-to-r from-orange-100 to-red-100 dark:from-orange-900 dark:to-red-900', 'text' => 'text-orange-800 dark:text-orange-200'],
                                                         'returned' => ['bg' => 'bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900 dark:to-emerald-900', 'text' => 'text-green-800 dark:text-green-200'],
                                                         'declined' => ['bg' => 'bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600', 'text' => 'text-gray-800 dark:text-gray-200']
                                                     ];
@@ -439,29 +371,32 @@
                                             <!-- Actions Column -->
                                             <td class="px-4 py-6">
                                                 @if($loan->status !== 'returned')
-                                            @if($loan->status === 'pending')
+                                                    @if($loan->status === 'pending')
                                                         <div class="flex flex-col space-y-2">
                                                             <button onclick="openApproveModal({{ $loan->id }})" class="w-full px-3 py-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white text-sm font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
                                                                 Approve
                                                             </button>
-                                                            <button type="button" onclick="openDeclineModal({{ $loan->id }})" class="w-full px-3 py-2 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white text-sm font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
-                                                                Decline
-                                                            </button>
+                                                            <form action="{{ route('admin.loans.decline',$loan) }}" method="POST" class="w-full">
+                                                                @csrf
+                                                                <button class="w-full px-3 py-2 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white text-sm font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
+                                                                    Decline
+                                                                </button>
+                                                            </form>
                                                         </div>
-                                            @elseif($loan->status === 'issued')
+                                                    @elseif($loan->status === 'issued')
                                                         <form action="{{ route('admin.loans.return',$loan) }}" method="POST" class="w-full">
                                                             @csrf
                                                             <button class="w-full px-3 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white text-sm font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
                                                                 Mark Returned
                                                             </button>
                                                         </form>
-                                            @elseif($loan->status === 'return_requested')
+                                                    @elseif($loan->status === 'return_requested')
                                                         <form action="{{ route('admin.loans.return',$loan) }}" method="POST" class="w-full">
                                                             @csrf
                                                             <button class="w-full px-3 py-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white text-sm font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
                                                                 Check-in
                                                             </button>
-                                                </form>
+                                                        </form>
                                                     @endif
                                                 @else
                                                     <span class="text-sm text-gray-500 dark:text-gray-400 italic">No actions available</span>
@@ -469,9 +404,9 @@
                                             </td>
                                         </tr>
                                     @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                     <!-- Pagination -->
                     <div class="mt-8 flex justify-center">
@@ -479,58 +414,12 @@
                             {{ $loans->links() }}
                         </div>
                     </div>
-                        </section>
+                </section>
             </div>
         </div>
     </div>
 </div>
 
-    <!-- Decline Modal -->
-    <div id="declineModal" class="fixed inset-0 z-50 overflow-y-auto hidden">
-        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity" onclick="closeDeclineModal()"></div>
-            <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                <form id="declineForm" method="POST" action="">
-                    @csrf
-                    <div class="px-6 py-6">
-                        <div class="sm:flex sm:items-start">
-                            <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-red-900 sm:mx-0 sm:h-10 sm:w-10">
-                                <svg class="h-6 w-6 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                                </svg>
-                            </div>
-                            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                                <h3 class="text-lg leading-6 font-semibold text-gray-900 dark:text-gray-100">Decline Loan Request</h3>
-                                <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">Please provide a reason to decline this loan.</p>
-                                <div class="mt-4">
-                                    <label for="decline_reason" class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Decline Reason *</label>
-                                    <textarea id="decline_reason" name="decline_reason" rows="4" required class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm" placeholder="Enter the reason..."></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-gray-50 dark:bg-gray-700 px-6 py-4 flex flex-col sm:flex-row sm:justify-end gap-3">
-                        <button type="button" onclick="closeDeclineModal()" class="w-full sm:w-auto px-6 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-200">Cancel</button>
-                        <button type="submit" class="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">Confirm Decline</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        function openDeclineModal(loanId){
-            const form = document.getElementById('declineForm');
-            form.action = `/admin/loans/${loanId}/decline`;
-            document.getElementById('decline_reason').value = '';
-            document.getElementById('declineModal').classList.remove('hidden');
-        }
-        function closeDeclineModal(){
-            document.getElementById('declineModal').classList.add('hidden');
-        }
-        document.getElementById('declineModal').addEventListener('click', function(e){ if(e.target===this){ closeDeclineModal(); } });
-        document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closeDeclineModal(); } });
-    </script>
     <!-- Modern Approve Modal -->
     <div id="approveModal" class="fixed inset-0 z-50 overflow-y-auto hidden">
         <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">

@@ -36,7 +36,7 @@
                         </div>
                     </div>
                 </div>
-                <a href="{{ route('admin.loans.index') }}" class="block p-4 rounded-xl shadow-sm text-white bg-gradient-to-r from-purple-500 to-violet-600 hover:from-purple-600 hover:to-violet-700 transition-all duration-200 transform hover:scale-105 cursor-pointer">
+                <a href="{{ route('admin.loans.index', ['q' => '', 'status' => 'pending']) }}" class="block p-4 rounded-xl shadow-sm text-white bg-gradient-to-r from-purple-500 to-violet-600 hover:from-purple-600 hover:to-violet-700 transition-all duration-200 transform hover:scale-105 cursor-pointer">
                     <div class="flex items-center">
                         <div class="p-2 bg-white/10 rounded">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>

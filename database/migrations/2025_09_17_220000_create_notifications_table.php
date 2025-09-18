@@ -16,6 +16,12 @@ return new class extends Migration
             $table->timestamp('read_at')->nullable();
             $table->timestamps();
         });
+        // Add force_password_reset to users if not present
+        if (!Schema::hasColumn('users', 'force_password_reset')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->boolean('force_password_reset')->default(false);
+            });
+        }
     }
 
     public function down(): void

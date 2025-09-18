@@ -1,17 +1,111 @@
 <x-app-layout>
-    <x-slot name="header"><h2 class="font-semibold text-xl text-gray-800 leading-tight">Add Category</h2></x-slot>
-    <div class="py-6">
-        <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    <form action="{{ route('admin.categories.store') }}" method="POST" class="space-y-4">@csrf
-                        <div><label class="block text-sm">Name (EN)</label><input name="name_en" class="mt-1 w-full border rounded p-2" required /></div>
-                        <div><label class="block text-sm">Name (BN)</label><input name="name_bn" class="mt-1 w-full border rounded p-2" required /></div>
-                        <div><label class="block text-sm">Slug</label><input name="slug" class="mt-1 w-full border rounded p-2" required /></div>
-                        <div class="flex justify-end"><button class="px-4 py-2 bg-indigo-600 text-white rounded">Save</button></div>
-                    </form>
+    <x-slot name="header">
+        <div class="flex justify-between items-center">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-white leading-tight">Add New Category</h2>
+            <a href="{{ route('admin.categories.index') }}" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition duration-200 flex items-center">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Back to Categories
+            </a>
+        </div>
+    </x-slot>
+    <div class="py-8">
+        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+            @if($errors->any())
+                <div class="mb-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4">
+                    <div class="flex">
+                        <svg class="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <div class="ml-3">
+                            <h4 class="font-medium text-red-800 dark:text-red-200 mb-2">Please fix the following errors:</h4>
+                            <ul class="text-sm text-red-600 dark:text-red-400 space-y-1">
+                                @foreach($errors->all() as $error)
+                                    <li>• {{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            @endif
+            <form action="{{ route('admin.categories.store') }}" method="POST" class="space-y-8">
+                @csrf
+                <div class="bg-white dark:bg-gray-800 shadow-xl rounded-2xl overflow-hidden">
+                    <div class="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-4">
+                        <h3 class="text-lg font-semibold text-white flex items-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                            </svg>
+                            Category Information
+                        </h3>
+                    </div>
+                    <div class="p-8 space-y-6">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Name (English) *</label>
+                                <input name="name_en" value="{{ old('name_en') }}" required
+                                    class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white transition-all duration-200"
+                                    placeholder="Category name in English">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Name (Bengali)</label>
+                                <input name="name_bn" value="{{ old('name_bn') }}"
+                                    class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white transition-all duration-200"
+                                    placeholder="ক্যাটাগরির নাম বাংলায়">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Slug *</label>
+                                <input id="slug" name="slug" value="{{ old('slug') }}" required
+                                    class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white transition-all duration-200"
+                                    placeholder="auto-generated-from-name">
+                                <p class="text-xs text-gray-500 dark:text-gray-400">You can edit if needed. Lowercase, hyphen-separated.</p>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Description</label>
+                                <input name="description" value="{{ old('description') }}"
+                                    class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white transition-all duration-200"
+                                    placeholder="Brief description (optional)">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between pt-2">
+                    <a href="{{ route('admin.categories.index') }}"
+                       class="inline-flex items-center px-6 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-200 font-medium">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        Cancel
+                    </a>
+                    <button type="submit"
+                            class="inline-flex items-center px-8 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-xl transition duration-200 transform hover:scale-105 shadow-lg font-medium">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                        Create Category
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
+    <script>
+        const nameEnInput = document.querySelector('input[name="name_en"]');
+        const slugInput = document.getElementById('slug');
+        if (nameEnInput && slugInput && !slugInput.value) {
+            nameEnInput.addEventListener('input', function () {
+                const value = this.value || '';
+                const slug = value
+                    .toString()
+                    .trim()
+                    .toLowerCase()
+                    .replace(/[^a-z0-9\s-]/g, '')
+                    .replace(/\s+/g, '-')
+                    .replace(/-+/g, '-');
+                slugInput.value = slug;
+            });
+        }
+    </script>
 </x-app-layout>

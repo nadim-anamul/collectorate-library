@@ -13,6 +13,24 @@ use App\Mail\UserRejected;
 
 class UserManagementController extends Controller
 {
+        public function revokeAccess(User $user)
+        {
+            // Demote user status to rejected and remove all roles except 'Member'
+            $user->status = 'rejected';
+            $user->save();
+            try { $user->syncRoles([]); } catch (\Throwable $e) {}
+            return back()->with('status', 'User access revoked');
+        }
+
+        public function resetPassword(User $user)
+        {
+            $new = Str::random(10);
+            $user->password = bcrypt($new);
+            $user->force_password_reset = true;
+            $user->save();
+            // Return the generated password in session flash for admin to communicate securely
+            return back()->with('generated_password', $new);
+        }
     public function index(Request $request)
     {
         $query = User::query();

@@ -34,6 +34,48 @@
             <div class="flex flex-col lg:flex-row gap-8">
                 <!-- Sidebar Filters -->
                 <div class="lg:w-1/4">
+                    <!-- Mobile Filters Dropdown -->
+                    <div x-data="{ open: false }" class="lg:hidden mb-4">
+                        <button @click="open = !open" class="w-full inline-flex items-center justify-between px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
+                            <span class="flex items-center gap-2 text-gray-800 dark:text-gray-200 font-semibold">
+                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z"></path></svg>
+                                Filters
+                            </span>
+                            <svg :class="{'rotate-180': open}" class="w-4 h-4 text-gray-500 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div x-show="open" x-transition class="mt-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                            <form method="GET" action="{{ route('admin.users.index') }}" class="p-4 space-y-6">
+                                @if(request('search'))
+                                    <input type="hidden" name="search" value="{{ request('search') }}">
+                                @endif
+                                <!-- Status -->
+                                <div>
+                                    <label class="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
+                                    <select name="status" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-gray-700 dark:text-white">
+                                        <option value="">All Statuses</option>
+                                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                                        <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>Approved</option>
+                                        <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                                    </select>
+                                </div>
+                                <!-- Member Type -->
+                                <div>
+                                    <label class="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Member Type</label>
+                                    <select name="member_type" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white">
+                                        <option value="">All Types</option>
+                                        <option value="student" {{ request('member_type') == 'student' ? 'selected' : '' }}>Student</option>
+                                        <option value="teacher" {{ request('member_type') == 'teacher' ? 'selected' : '' }}>Teacher</option>
+                                        <option value="staff" {{ request('member_type') == 'staff' ? 'selected' : '' }}>Staff</option>
+                                        <option value="public" {{ request('member_type') == 'public' ? 'selected' : '' }}>Public</option>
+                                    </select>
+                                </div>
+                                <div class="flex gap-2 pt-2 border-t border-gray-200 dark:border-gray-700">
+                                    <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">Apply</button>
+                                    <a href="{{ route('admin.users.index') }}" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-center transition">Clear</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                     <!-- Search Field -->
                     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-6">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
@@ -50,7 +92,7 @@
 
                     <!-- Current Filters Display -->
                     @if(request()->hasAny(['search','status','member_type']))
-                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-6">
+                        <div class="hidden lg:block bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-6">
                             <div class="flex items-center justify-between mb-3">
                                 <h3 class="text-sm font-semibold text-gray-800 dark:text-white flex items-center">
                                     <svg class="w-4 h-4 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -90,7 +132,7 @@
                     @endif
 
                     <!-- Filter Navigation -->
-                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
+                    <div class="hidden lg:block bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
                         <div class="p-4 border-b border-gray-200 dark:border-gray-700">
                             <h3 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center">
                                 <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

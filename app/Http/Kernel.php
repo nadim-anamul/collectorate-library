@@ -68,5 +68,6 @@ class Kernel extends HttpKernel
         'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
         'approved' => \App\Http\Middleware\EnsureUserIsApproved::class,
         'optimize.image' => \App\Http\Middleware\OptimizeImageUpload::class,
+        'redirect.unauthorized' => \App\Http\Middleware\RedirectUnauthorizedToHome::class,
     ];
 }

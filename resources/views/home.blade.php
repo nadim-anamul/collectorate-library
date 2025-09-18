@@ -10,11 +10,11 @@
         </div>
     </x-slot>
 
-    <div class="py-6">
+    <div class="py-4">
 
         <!-- Main Content - Properly constrained width -->
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col items-center mb-6 p-6 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex flex-col items-center mb-4 p-4 border-b border-gray-200 dark:border-gray-700">
                 <!-- Results Header -->
                     <h2 class="text-xl font-semibold text-gray-800 dark:text-white">
                         {{ $books->total() }} Books Found
@@ -25,9 +25,74 @@
                         </p>
                     @endif
             </div>
-            <div class="flex flex-col lg:flex-row gap-8">
+            <div class="flex flex-col lg:flex-row gap-6">
                 <!-- Sidebar Filters -->
                 <div class="lg:w-1/4">
+                    <!-- Mobile Filters Dropdown -->
+                    <div x-data="{ open: false }" class="lg:hidden mb-4">
+                        <button @click="open = !open" class="w-full inline-flex items-center justify-between px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
+                            <span class="flex items-center gap-2 text-gray-800 dark:text-gray-200 font-semibold">
+                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+                                Filters
+                            </span>
+                            <svg :class="{'rotate-180': open}" class="w-4 h-4 text-gray-500 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div x-show="open" x-transition class="mt-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                            <form method="GET" action="{{ route('home') }}" class="p-4 space-y-6">
+                                @if(request('search'))
+                                    <input type="hidden" name="search" value="{{ request('search') }}">
+                                @endif
+                                <div>
+                                    <label class="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category</label>
+                                    <select name="category" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                        <option value="">All Categories</option>
+                                        @foreach($categories as $category)
+                                            <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>{{ $category->name_en }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Language</label>
+                                    <select name="language" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                        <option value="">All Languages</option>
+                                        @foreach($languages as $language)
+                                            <option value="{{ $language->code }}" {{ request('language') == $language->code ? 'selected' : '' }}>{{ $language->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Publication Year</label>
+                                    <select name="year" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                        <option value="">All Years</option>
+                                        @foreach($years as $year)
+                                            <option value="{{ $year }}" {{ request('year') == $year ? 'selected' : '' }}>{{ $year }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Availability</label>
+                                    <select name="availability" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                        <option value="available" {{ !request('availability') || request('availability') == 'available' ? 'selected' : '' }}>Available Only (Default)</option>
+                                        <option value="all" {{ request('availability') == 'all' ? 'selected' : '' }}>All Books</option>
+                                        <option value="unavailable" {{ request('availability') == 'unavailable' ? 'selected' : '' }}>Unavailable Only</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Sort By</label>
+                                    <select name="sort" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                        <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Latest First</option>
+                                        <option value="title" {{ request('sort') == 'title' ? 'selected' : '' }}>Title A-Z</option>
+                                        <option value="author" {{ request('sort') == 'author' ? 'selected' : '' }}>Author A-Z</option>
+                                        <option value="year" {{ request('sort') == 'year' ? 'selected' : '' }}>Year (Newest)</option>
+                                    </select>
+                                </div>
+                                <div class="flex gap-2 pt-2 border-t border-gray-200 dark:border-gray-700">
+                                    <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">Apply</button>
+                                    <a href="{{ route('home') }}" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-center transition">Clear</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                     <!-- Current Filters Display -->
                     @if(request()->hasAny(['search', 'category', 'language', 'year', 'availability', 'sort']) && (request('sort') != 'latest' || (request('availability') && request('availability') != 'available')))
                         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-6">
@@ -108,7 +173,7 @@
                     @endif
 
                     <!-- Filter Navigation -->
-                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
+                    <div class="hidden lg:block bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
                         <div class="p-4 border-b border-gray-200 dark:border-gray-700">
                             <h3 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center">
                                 <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -236,7 +301,7 @@
                 <!-- Main Content -->
                 <div class="lg:w-3/4">
                     <!-- Search Bar (moved below results header) -->
-                    <div class="mb-8" x-data="homeSearch()" @click.outside="clearSearch()">
+                    <div class="mb-4" x-data="homeSearch()" @click.outside="clearSearch()">
                         <div class="relative group">
                             <input type="text"
                                    x-model="query"
@@ -246,7 +311,7 @@
                                    @keydown.enter="selectResult()"
                                    @keydown.escape="clearSearch()"
                                    placeholder="Search books, authors, ISBN..."
-                                   class="w-full px-5 py-4 pl-14 pr-16 text-gray-700 bg-white border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 focus:shadow-lg transition-all duration-300 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:focus:border-blue-400 dark:focus:ring-blue-400/20">
+                                   class="w-full px-5 py-3 pl-12 pr-14 text-gray-700 bg-white border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 focus:shadow-lg transition-all duration-300 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:focus:border-blue-400 dark:focus:ring-blue-400/20">
 
                             <div class="absolute inset-y-0 left-0 flex items-center pl-5">
                                 <svg class="w-5 h-5 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">

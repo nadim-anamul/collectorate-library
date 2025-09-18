@@ -43,21 +43,21 @@
             <main class="text-gray-900 dark:text-gray-100">
                 @if (session('success'))
                     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-                        <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 rounded-lg px-4 py-3">
+                        <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 rounded-lg px-4 py-3 notification-message">
                             {{ session('success') }}
                         </div>
                     </div>
                 @endif
                 @if (session('status'))
                     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-                        <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 rounded-lg px-4 py-3">
+                        <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 rounded-lg px-4 py-3 notification-message">
                             {{ session('status') }}
                         </div>
                     </div>
                 @endif
                 @if (session('error'))
                     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-                        <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 rounded-lg px-4 py-3">
+                        <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 rounded-lg px-4 py-3 notification-message">
                             {{ session('error') }}
                         </div>
                     </div>
@@ -76,5 +76,21 @@
                 {{ $slot }}
             </main>
         </div>
+
+        <script>
+            // Auto-dismiss session flash messages after 1.5 seconds
+            document.addEventListener('DOMContentLoaded', function() {
+                const notificationMessages = document.querySelectorAll('.notification-message');
+                notificationMessages.forEach(function(notification) {
+                    setTimeout(function() {
+                        notification.style.transition = 'opacity 0.3s ease-out';
+                        notification.style.opacity = '0';
+                        setTimeout(function() {
+                            notification.remove();
+                        }, 300);
+                    }, 1500);
+                });
+            });
+        </script>
     </body>
 </html>

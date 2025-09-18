@@ -15,17 +15,28 @@
                         <li class="p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50">
                             <div class="flex items-start">
                                 <div class="flex-1">
+                                    @role('Admin|Librarian')
+                                    <!-- Admin users can click on notifications -->
                                     <a href="{{ $n->data['url'] ?? '#' }}" class="block">
                                         <p class="text-sm {{ $n->read_at ? 'text-gray-500 dark:text-gray-400' : 'text-gray-800 dark:text-gray-100 font-medium' }}">
                                             {{ $n->data['message'] ?? 'Notification' }}
                                         </p>
                                         <p class="text-xs text-gray-400 mt-1">{{ $n->created_at->toDateTimeString() }}</p>
                                     </a>
+                                    @else
+                                    <!-- Non-admin users see notifications but can't click them -->
+                                    <div class="block">
+                                        <p class="text-sm {{ $n->read_at ? 'text-gray-500 dark:text-gray-400' : 'text-gray-800 dark:text-gray-100 font-medium' }}">
+                                            {{ $n->data['message'] ?? 'Notification' }}
+                                        </p>
+                                        <p class="text-xs text-gray-400 mt-1">{{ $n->created_at->toDateTimeString() }}</p>
+                                    </div>
+                                    @endrole
                                 </div>
                                 @if(!$n->read_at)
                                     <form method="POST" action="{{ route('notifications.read') }}" class="ml-3">@csrf
                                         <input type="hidden" name="id" value="{{ $n->id }}" />
-                                        <button class="text-xs px-2 py-1 rounded border dark:border-gray-600">Mark read</button>
+                                        <button class="text-xs px-2 py-1 rounded border dark:border-gray-600" onclick="setTimeout(()=>window.location.reload(), 100)">Mark read</button>
                                     </form>
                                 @endif
                             </div>
