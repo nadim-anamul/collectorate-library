@@ -13,7 +13,7 @@
     <div class="py-4">
 
         <!-- Main Content - Properly constrained width -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col items-center mb-4 p-4 border-b border-gray-200 dark:border-gray-700">
                 <!-- Results Header -->
                     <h2 class="text-xl font-semibold text-gray-800 dark:text-white">
@@ -425,7 +425,7 @@
 
                     <!-- Enhanced Books Grid -->
                     @if($books->count() > 0)
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             @foreach($books as $book)
                                 <div class="group bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-700 hover:border-blue-200 dark:hover:border-blue-600 hover:-translate-y-1">
                                     <!-- Enhanced Book Cover -->

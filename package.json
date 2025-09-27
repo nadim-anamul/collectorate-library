@@ -3,10 +3,17 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-        "preview": "vite preview"
+        "build:production": "vite build --mode production",
+        "preview": "vite preview",
+        "watch": "vite build --watch",
+        "hot": "vite --host",
+        "analyze": "vite build --mode analyze",
+        "clean": "rm -rf public/build && rm -rf node_modules/.vite"
     },
     "devDependencies": {
+        "@tailwindcss/aspect-ratio": "^0.4.2",
         "@tailwindcss/forms": "^0.5.7",
+        "@tailwindcss/typography": "^0.5.19",
         "alpinejs": "^3.14.1",
         "autoprefixer": "^10.4.20",
         "axios": "^1.12.2",
@@ -14,6 +21,13 @@
         "lodash": "^4.17.21",
         "postcss": "^8.4.47",
         "tailwindcss": "^3.4.13",
-        "vite": "^6.3.6"
-    }
+        "terser": "^5.44.0",
+        "vite": "^6.3.6",
+        "vite-bundle-analyzer": "^0.7.0"
+    },
+    "browserslist": [
+        "> 1%",
+        "last 2 versions",
+        "not dead"
+    ]
 }
