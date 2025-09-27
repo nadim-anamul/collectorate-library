@@ -63,29 +63,29 @@ APP_URL=https://yourdomain.com
 ### Development
 ```bash
 # Start development environment
-docker-compose up -d
+docker compose up -d
 
 # View logs
-docker-compose logs -f
+docker compose logs -f
 
 # Access application shell
-docker-compose exec app bash
+docker compose exec app bash
 
 # Run Laravel commands
-docker-compose exec app php artisan migrate
-docker-compose exec app composer install
+docker compose exec app php artisan migrate
+docker compose exec app composer install
 ```
 
 ### Production
 ```bash
 # Start production environment
-docker-compose -f docker-compose.prod.yml up -d
+docker compose -f docker-compose.prod.yml up -d
 
 # View logs
-docker-compose -f docker-compose.prod.yml logs -f
+docker compose -f docker-compose.prod.yml logs -f
 
 # Access application shell
-docker-compose -f docker-compose.prod.yml exec app bash
+docker compose -f docker-compose.prod.yml exec app bash
 ```
 
 ## Services Included
@@ -109,24 +109,24 @@ docker-compose -f docker-compose.prod.yml exec app bash
 1. **Port conflicts**: Change ports in docker-compose.yml
 2. **Permission errors**: Run `chmod +x docker/deploy.sh`
 3. **Database connection**: Check DB_HOST=mysql in .env
-4. **Build failures**: Run `docker-compose build --no-cache`
+4. **Build failures**: Run `docker compose build --no-cache`
 
 ### Debug Commands
 ```bash
 # Check container status
-docker-compose ps
+docker compose ps
 
 # View detailed logs
-docker-compose logs app
+docker compose logs app
 
 # Access container shell
-docker-compose exec app bash
+docker compose exec app bash
 
 # Check PHP configuration
-docker-compose exec app php -i
+docker compose exec app php -i
 
 # Test database connection
-docker-compose exec app php artisan tinker
+docker compose exec app php artisan tinker
 ```
 
 ## File Structure

@@ -57,9 +57,9 @@ deploy_dev() {
     fi
     
     # Build and start containers
-    docker-compose -f $compose_file down --remove-orphans
-    docker-compose -f $compose_file build --no-cache
-    docker-compose -f $compose_file up -d
+    docker compose -f $compose_file down --remove-orphans
+    docker compose -f $compose_file build --no-cache
+    docker compose -f $compose_file up -d
     
     # Wait for services to be ready
     log_info "Waiting for services to be ready..."
@@ -67,10 +67,10 @@ deploy_dev() {
     
     # Run Laravel setup commands
     log_info "Setting up Laravel application..."
-    docker-compose -f $compose_file exec app composer install
-    docker-compose -f $compose_file exec app php artisan key:generate
-    docker-compose -f $compose_file exec app php artisan migrate --seed
-    docker-compose -f $compose_file exec app php artisan storage:link
+    docker compose -f $compose_file exec app composer install
+    docker compose -f $compose_file exec app php artisan key:generate
+    docker compose -f $compose_file exec app php artisan migrate --seed
+    docker compose -f $compose_file exec app php artisan storage:link
     
     log_success "Development environment deployed successfully!"
     log_info "Application: http://localhost:8989"
@@ -93,9 +93,9 @@ deploy_prod() {
     done
     
     # Build and start containers
-    docker-compose -f docker-compose.prod.yml down --remove-orphans
-    docker-compose -f docker-compose.prod.yml build --no-cache
-    docker-compose -f docker-compose.prod.yml up -d
+    docker compose -f docker-compose.prod.yml down --remove-orphans
+    docker compose -f docker-compose.prod.yml build --no-cache
+    docker compose -f docker-compose.prod.yml up -d
     
     # Wait for services to be ready
     log_info "Waiting for services to be ready..."
@@ -103,10 +103,10 @@ deploy_prod() {
     
     # Run Laravel setup commands
     log_info "Setting up Laravel application..."
-    docker-compose -f docker-compose.prod.yml exec app php artisan key:generate --force
-    docker-compose -f docker-compose.prod.yml exec app php artisan migrate --force
-    docker-compose -f docker-compose.prod.yml exec app php artisan storage:link
-    docker-compose -f docker-compose.prod.yml exec app php artisan optimize:production
+    docker compose -f docker-compose.prod.yml exec app php artisan key:generate --force
+    docker compose -f docker-compose.prod.yml exec app php artisan migrate --force
+    docker compose -f docker-compose.prod.yml exec app php artisan storage:link
+    docker compose -f docker-compose.prod.yml exec app php artisan optimize:production
     
     log_success "Production environment deployed successfully!"
     log_info "Application: https://$DOMAIN"
@@ -141,22 +141,22 @@ case "${1:-help}" in
         ;;
     "stop")
         log_info "Stopping all containers..."
-        docker-compose down
-        docker-compose -f docker-compose.prod.yml down
+        docker compose down
+        docker compose -f docker-compose.prod.yml down
         log_success "All containers stopped!"
         ;;
     "logs")
         if [ "$2" = "prod" ]; then
-            docker-compose -f docker-compose.prod.yml logs -f
+            docker compose -f docker-compose.prod.yml logs -f
         else
-            docker-compose logs -f
+            docker compose logs -f
         fi
         ;;
     "shell")
         if [ "$2" = "prod" ]; then
-            docker-compose -f docker-compose.prod.yml exec app bash
+            docker compose -f docker-compose.prod.yml exec app bash
         else
-            docker-compose exec app bash
+            docker compose exec app bash
         fi
         ;;
     "help"|*)

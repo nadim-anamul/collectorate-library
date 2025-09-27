@@ -164,24 +164,24 @@ AWS_BUCKET=your-bucket
 
 ```bash
 # Build images
-docker-compose build
-docker-compose -f docker-compose.prod.yml build
+docker compose build
+docker compose -f docker-compose.prod.yml build
 
 # Start services
-docker-compose up -d
-docker-compose -f docker-compose.prod.yml up -d
+docker compose up -d
+docker compose -f docker-compose.prod.yml up -d
 
 # View logs
-docker-compose logs -f app
-docker-compose -f docker-compose.prod.yml logs -f app
+docker compose logs -f app
+docker compose -f docker-compose.prod.yml logs -f app
 
 # Execute commands
-docker-compose exec app php artisan migrate
-docker-compose exec app composer install
+docker compose exec app php artisan migrate
+docker compose exec app composer install
 
 # Access containers
-docker-compose exec app bash
-docker-compose exec mysql mysql -u laravel -p
+docker compose exec app bash
+docker compose exec mysql mysql -u laravel -p
 ```
 
 ## 🔒 Security Features
@@ -250,17 +250,17 @@ git pull origin main
 
 ```bash
 # Create backup
-docker-compose exec mysql mysqldump -u root -p collectorate_library > backup.sql
+docker compose exec mysql mysqldump -u root -p collectorate_library > backup.sql
 
 # Restore backup
-docker-compose exec -T mysql mysql -u root -p collectorate_library < backup.sql
+docker compose exec -T mysql mysql -u root -p collectorate_library < backup.sql
 ```
 
 ### Log Rotation
 
 ```bash
 # Clean old logs
-docker-compose exec app find /var/log -name "*.log" -mtime +7 -delete
+docker compose exec app find /var/log -name "*.log" -mtime +7 -delete
 ```
 
 ## 🐛 Troubleshooting
@@ -276,19 +276,19 @@ docker-compose exec app find /var/log -name "*.log" -mtime +7 -delete
 
 ```bash
 # Check container status
-docker-compose ps
+docker compose ps
 
 # View detailed logs
-docker-compose logs app
+docker compose logs app
 
 # Access container shell
-docker-compose exec app bash
+docker compose exec app bash
 
 # Check PHP configuration
-docker-compose exec app php -i
+docker compose exec app php -i
 
 # Test database connection
-docker-compose exec app php artisan tinker
+docker compose exec app php artisan tinker
 ```
 
 ## 📚 Additional Resources
