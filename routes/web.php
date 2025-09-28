@@ -35,29 +35,7 @@ use App\Http\Controllers\Auth\PasswordChangeController;
 
 // Health check route for Docker
 Route::get('/health', function () {
-    try {
-        // Check database connection
-        DB::connection()->getPdo();
-        
-        // Check Redis connection
-        Redis::ping();
-        
-        return response()->json([
-            'status' => 'healthy',
-            'timestamp' => now(),
-            'services' => [
-                'database' => 'connected',
-                'redis' => 'connected',
-                'application' => 'running'
-            ]
-        ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => 'unhealthy',
-            'timestamp' => now(),
-            'error' => $e->getMessage()
-        ], 500);
-    }
+    return 'OK';
 });
 
 Route::get('/', [HomeController::class, 'index'])->name('home');

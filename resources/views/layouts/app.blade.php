@@ -58,7 +58,7 @@
                             {{ session('error') }}
                         </x-alert>
                     @endif
-                    @if ($errors->any())
+                    @if ($errors && $errors->any())
                         <x-alert type="warning" dismissible class="animate-slide-up">
                             <ul class="list-disc list-inside space-y-1">
                                 @foreach ($errors->all() as $error)

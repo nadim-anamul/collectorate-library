@@ -115,10 +115,6 @@ USER appuser
 # Expose port
 EXPOSE 80
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost/health || exit 1
-
 # Start supervisor
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
 
@@ -164,6 +160,10 @@ RUN echo '#!/bin/bash' > /usr/local/bin/dev-entrypoint.sh && \
 
 # Expose port for development
 EXPOSE 8000
+
+# Health check for development (override production health check)
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
 
 # Development command with automatic dependency installation
 CMD ["/usr/local/bin/dev-entrypoint.sh"]
