@@ -332,6 +332,47 @@
                 timer = setTimeout(() => navigateWithQuery(val), 400);
             });
         });
+
+        // Modal helpers for Approve/Reject actions
+        function openApprovalModal(userId, userName) {
+            const modal = document.getElementById('approvalModal');
+            const nameEl = document.getElementById('approvalUserName');
+            const form = document.getElementById('approvalForm');
+            if (nameEl) nameEl.textContent = userName;
+            if (form) form.action = `/admin/users/${userId}/approve`;
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+        }
+
+        function closeApprovalModal() {
+            const modal = document.getElementById('approvalModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function openRejectionModal(userId, userName) {
+            const modal = document.getElementById('rejectionModal');
+            const nameEl = document.getElementById('rejectionUserName');
+            const form = document.getElementById('rejectionForm');
+            if (nameEl) nameEl.textContent = userName;
+            if (form) form.action = `/admin/users/${userId}/reject`;
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+        }
+
+        function closeRejectionModal() {
+            const modal = document.getElementById('rejectionModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
     </script>
 
     <!-- Approval Modal -->

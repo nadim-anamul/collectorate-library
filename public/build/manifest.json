@@ -1,13 +1,20 @@
 {
+  "_vendor-j6H1NlLE.js": {
+    "file": "assets/vendor-j6H1NlLE.js",
+    "name": "vendor"
+  },
   "resources/css/app.css": {
-    "file": "assets/app-DuD4d-Ap.css",
+    "file": "assets/app-XJb2mHOs.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-2YYrcGDc.js",
+    "file": "assets/app-DgPNqik5.js",
     "name": "app",
     "src": "resources/js/app.js",
-    "isEntry": true
+    "isEntry": true,
+    "imports": [
+      "_vendor-j6H1NlLE.js"
+    ]
   }
 }

@@ -1,0 +1,169 @@
+# Multi-stage Dockerfile for Laravel Collectorate Library
+# Stage 1: Build assets (simplified for now)
+FROM node:18-alpine AS assets
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm ci
+
+# Copy source files
+COPY . .
+
+# Build assets (skip for now, will be built in container)
+# RUN npm run build:production
+
+# Stage 2: PHP Base with extensions
+FROM php:8.2-fpm-alpine AS php-base
+
+# Install system dependencies
+RUN apk add --no-cache \
+    curl \
+    libpng-dev \
+    libjpeg-turbo-dev \
+    freetype-dev \
+    libzip-dev \
+    oniguruma-dev \
+    icu-dev \
+    libxml2-dev \
+    sqlite-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) \
+        gd \
+        pdo_mysql \
+        pdo_sqlite \
+        zip \
+        intl \
+        xml \
+        bcmath \
+        opcache
+
+# Install Redis extension
+RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
+    && pecl install redis \
+    && docker-php-ext-enable redis \
+    && apk del .build-deps
+
+# Stage 3: PHP Composer dependencies
+FROM php-base AS vendor
+
+# Install Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+WORKDIR /app
+
+# Copy composer files
+COPY composer.json ./
+COPY composer.lock* ./
+
+# Install PHP dependencies
+RUN composer install \
+    --no-dev \
+    --no-scripts \
+    --no-autoloader \
+    --optimize-autoloader
+
+# Stage 4: Production image
+FROM php-base AS production
+
+# Install additional system dependencies for production
+RUN apk add --no-cache \
+    nginx \
+    supervisor
+
+# Configure PHP
+COPY docker/php/php.ini /usr/local/etc/php/conf.d/99-custom.ini
+COPY docker/php/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
+
+# Create application user
+RUN addgroup -g 1000 -S appgroup && \
+    adduser -u 1000 -S appuser -G appgroup
+
+# Set working directory
+WORKDIR /var/www/html
+
+# Copy application code
+COPY --chown=appuser:appgroup . .
+
+# Copy vendor from composer stage
+COPY --from=vendor --chown=appuser:appgroup /app/vendor ./vendor
+
+# Copy node_modules for asset building
+COPY --from=assets --chown=appuser:appgroup /app/node_modules ./node_modules
+
+# Copy configuration files
+COPY docker/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY docker/nginx/default.conf /etc/nginx/http.d/default.conf
+COPY docker/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Set permissions
+RUN chown -R appuser:appgroup /var/www/html \
+    && chmod -R 755 /var/www/html/storage \
+    && chmod -R 755 /var/www/html/bootstrap/cache
+
+# Create necessary directories
+RUN mkdir -p /var/log/nginx \
+    && mkdir -p /var/log/supervisor \
+    && mkdir -p /run/nginx
+
+# Switch to non-root user
+USER appuser
+
+# Expose port
+EXPOSE 80
+
+# Start supervisor
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+
+# Stage 5: Development image
+FROM production AS development
+
+# Switch back to root for development setup
+USER root
+
+# Install development dependencies
+RUN apk add --no-cache \
+    git \
+    vim \
+    bash
+
+# Install Composer globally
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# Install Node.js for development
+RUN apk add --no-cache nodejs npm
+
+# Copy development configuration
+COPY docker/php/php-dev.ini /usr/local/etc/php/conf.d/99-dev.ini
+
+# Create entrypoint script for development
+RUN echo '#!/bin/bash' > /usr/local/bin/dev-entrypoint.sh && \
+    echo 'set -e' >> /usr/local/bin/dev-entrypoint.sh && \
+    echo 'echo "Fixing permissions..."' >> /usr/local/bin/dev-entrypoint.sh && \
+    echo 'chown -R appuser:appgroup /var/www/html' >> /usr/local/bin/dev-entrypoint.sh && \
+    echo 'chmod -R 755 /var/www/html/storage' >> /usr/local/bin/dev-entrypoint.sh && \
+    echo 'chmod -R 755 /var/www/html/bootstrap/cache' >> /usr/local/bin/dev-entrypoint.sh && \
+    echo 'git config --global --add safe.directory /var/www/html' >> /usr/local/bin/dev-entrypoint.sh && \
+    echo 'echo "Installing Composer dependencies..."' >> /usr/local/bin/dev-entrypoint.sh && \
+    echo 'su -s /bin/bash -c "composer install --no-scripts" appuser' >> /usr/local/bin/dev-entrypoint.sh && \
+    echo 'echo "Generating autoloader..."' >> /usr/local/bin/dev-entrypoint.sh && \
+    echo 'su -s /bin/bash -c "composer dump-autoload --optimize" appuser' >> /usr/local/bin/dev-entrypoint.sh && \
+    echo 'echo "Starting Laravel development server..."' >> /usr/local/bin/dev-entrypoint.sh && \
+    echo 'exec su -s /bin/bash -c "php artisan serve --host=0.0.0.0 --port=8000" appuser' >> /usr/local/bin/dev-entrypoint.sh && \
+    chmod +x /usr/local/bin/dev-entrypoint.sh
+
+# Keep as root for development to avoid permission issues
+# USER appuser
+
+# Expose port for development
+EXPOSE 8000
+
+# Health check for development (override production health check)
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
+
+# Development command with automatic dependency installation
+CMD ["/usr/local/bin/dev-entrypoint.sh"]

@@ -1,0 +1,752 @@
+<?php if (isset($component)) { $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54 = $attributes; } ?>
+<?php $component = App\View\Components\AppLayout::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('app-layout'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\App\View\Components\AppLayout::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+     <?php $__env->slot('header', null, []); ?> 
+        <div class="flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Book Library</h1>
+            <?php if(auth()->guard()->check()): ?>
+                <a href="<?php echo e(route('dashboard')); ?>" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition duration-200">
+                    Dashboard
+                </a>
+            <?php endif; ?>
+        </div>
+     <?php $__env->endSlot(); ?>
+
+    <div class="py-4">
+
+        <!-- Main Content - Properly constrained width -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col items-center mb-4 p-4 border-b border-gray-200 dark:border-gray-700">
+                <!-- Results Header -->
+                    <h2 class="text-xl font-semibold text-gray-800 dark:text-white">
+                        <?php echo e($books->total()); ?> Books Found
+                    </h2>
+                    <?php if(request()->hasAny(['search', 'category', 'language', 'year']) || (request('availability') && request('availability') != 'available')): ?>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            Filtered results
+                        </p>
+                    <?php endif; ?>
+            </div>
+            <div class="flex flex-col lg:flex-row gap-6">
+                <!-- Sidebar Filters -->
+                <div class="lg:w-1/4">
+                    <!-- Mobile Filters Dropdown -->
+                    <div x-data="{ open: false }" class="lg:hidden mb-4">
+                        <button @click="open = !open" class="w-full inline-flex items-center justify-between px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
+                            <span class="flex items-center gap-2 text-gray-800 dark:text-gray-200 font-semibold">
+                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+                                Filters
+                            </span>
+                            <svg :class="{'rotate-180': open}" class="w-4 h-4 text-gray-500 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div x-show="open" x-transition class="mt-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                            <form method="GET" action="<?php echo e(route('home')); ?>" class="p-4 space-y-6">
+                                <?php if(request('search')): ?>
+                                    <input type="hidden" name="search" value="<?php echo e(request('search')); ?>">
+                                <?php endif; ?>
+                                <div>
+                                    <label class="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category</label>
+                                    <select name="category" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                        <option value="">All Categories</option>
+                                        <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <option value="<?php echo e($category->id); ?>" <?php echo e(request('category') == $category->id ? 'selected' : ''); ?>><?php echo e($category->name_en); ?></option>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Language</label>
+                                    <select name="language" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                        <option value="">All Languages</option>
+                                        <?php $__currentLoopData = $languages; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $language): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <option value="<?php echo e($language->code); ?>" <?php echo e(request('language') == $language->code ? 'selected' : ''); ?>><?php echo e($language->name); ?></option>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Publication Year</label>
+                                    <select name="year" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                        <option value="">All Years</option>
+                                        <?php $__currentLoopData = $years; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <option value="<?php echo e($year); ?>" <?php echo e(request('year') == $year ? 'selected' : ''); ?>><?php echo e($year); ?></option>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Availability</label>
+                                    <select name="availability" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                        <option value="available" <?php echo e(!request('availability') || request('availability') == 'available' ? 'selected' : ''); ?>>Available Only (Default)</option>
+                                        <option value="all" <?php echo e(request('availability') == 'all' ? 'selected' : ''); ?>>All Books</option>
+                                        <option value="unavailable" <?php echo e(request('availability') == 'unavailable' ? 'selected' : ''); ?>>Unavailable Only</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Sort By</label>
+                                    <select name="sort" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                        <option value="latest" <?php echo e(request('sort') == 'latest' ? 'selected' : ''); ?>>Latest First</option>
+                                        <option value="title" <?php echo e(request('sort') == 'title' ? 'selected' : ''); ?>>Title A-Z</option>
+                                        <option value="author" <?php echo e(request('sort') == 'author' ? 'selected' : ''); ?>>Author A-Z</option>
+                                        <option value="year" <?php echo e(request('sort') == 'year' ? 'selected' : ''); ?>>Year (Newest)</option>
+                                    </select>
+                                </div>
+                                <div class="flex gap-2 pt-2 border-t border-gray-200 dark:border-gray-700">
+                                    <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">Apply</button>
+                                    <a href="<?php echo e(route('home')); ?>" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-center transition">Clear</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- Current Filters Display -->
+                    <?php if(request()->hasAny(['search', 'category', 'language', 'year', 'availability', 'sort']) && (request('sort') != 'latest' || (request('availability') && request('availability') != 'available'))): ?>
+                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-6">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-sm font-semibold text-gray-800 dark:text-white flex items-center">
+                                    <svg class="w-4 h-4 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                                    </svg>
+                                    Active Filters
+                                </h3>
+                                <a href="<?php echo e(route('home')); ?>" class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                                    Clear All
+                                </a>
+                            </div>
+                            <div class="space-y-2">
+                                <?php if($currentFilters['search']): ?>
+                                    <div class="flex items-center justify-between bg-blue-50 dark:bg-blue-900/20 rounded-md px-3 py-2">
+                                        <span class="text-sm text-blue-800 dark:text-blue-200">Search: "<?php echo e($currentFilters['search']); ?>"</span>
+                                        <a href="<?php echo e(route('home', request()->except('search'))); ?>" class="text-blue-600 hover:text-blue-800">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                <?php endif; ?>
+                                <?php if($currentFilters['category']): ?>
+                                    <div class="flex items-center justify-between bg-green-50 dark:bg-green-900/20 rounded-md px-3 py-2">
+                                        <span class="text-sm text-green-800 dark:text-green-200">Category: <?php echo e($currentFilters['category']->name_en); ?></span>
+                                        <a href="<?php echo e(route('home', request()->except('category'))); ?>" class="text-green-600 hover:text-green-800">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                <?php endif; ?>
+                                <?php if($currentFilters['language']): ?>
+                                    <div class="flex items-center justify-between bg-purple-50 dark:bg-purple-900/20 rounded-md px-3 py-2">
+                                        <span class="text-sm text-purple-800 dark:text-purple-200">Language: <?php echo e($languages->where('code', $currentFilters['language'])->first()->name ?? ucfirst($currentFilters['language'])); ?></span>
+                                        <a href="<?php echo e(route('home', request()->except('language'))); ?>" class="text-purple-600 hover:text-purple-800">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                <?php endif; ?>
+                                <?php if($currentFilters['year']): ?>
+                                    <div class="flex items-center justify-between bg-orange-50 dark:bg-orange-900/20 rounded-md px-3 py-2">
+                                        <span class="text-sm text-orange-800 dark:text-orange-200">Year: <?php echo e($currentFilters['year']); ?></span>
+                                        <a href="<?php echo e(route('home', request()->except('year'))); ?>" class="text-orange-600 hover:text-orange-800">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                <?php endif; ?>
+                                <?php if($currentFilters['availability'] && $currentFilters['availability'] != 'available'): ?>
+                                    <div class="flex items-center justify-between bg-indigo-50 dark:bg-indigo-900/20 rounded-md px-3 py-2">
+                                        <span class="text-sm text-indigo-800 dark:text-indigo-200">Availability: <?php echo e($currentFilters['availability'] == 'all' ? 'All Books' : ucfirst($currentFilters['availability'])); ?></span>
+                                        <a href="<?php echo e(route('home', request()->except('availability'))); ?>" class="text-indigo-600 hover:text-indigo-800">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                <?php endif; ?>
+                                <?php if($currentFilters['sort'] && $currentFilters['sort'] != 'latest'): ?>
+                                    <div class="flex items-center justify-between bg-gray-50 dark:bg-gray-700 rounded-md px-3 py-2">
+                                        <span class="text-sm text-gray-800 dark:text-gray-200">Sort: <?php echo e(ucfirst(str_replace('_', ' ', $currentFilters['sort']))); ?></span>
+                                        <a href="<?php echo e(route('home', request()->except('sort'))); ?>" class="text-gray-600 hover:text-gray-800">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
+                    <!-- Filter Navigation -->
+                    <div class="hidden lg:block bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
+                        <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                            <h3 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                                </svg>
+                                Filters
+                            </h3>
+                        </div>
+                        
+                        <form method="GET" action="<?php echo e(route('home')); ?>" class="p-4 space-y-6">
+                            <!-- Preserve search parameter -->
+                            <?php if(request('search')): ?>
+                                <input type="hidden" name="search" value="<?php echo e(request('search')); ?>">
+                            <?php endif; ?>
+                            
+                            <!-- Category Filter -->
+                            <div>
+                                <label class="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                                    <svg class="w-4 h-4 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                                    </svg>
+                                    Category
+                                </label>
+                                <select name="category" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white transition duration-200">
+                                    <option value="">All Categories</option>
+                                    <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($category->id); ?>" <?php echo e(request('category') == $category->id ? 'selected' : ''); ?>>
+                                            <?php echo e($category->name_en); ?>
+
+                                        </option>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                </select>
+                            </div>
+
+                            <!-- Language Filter -->
+                            <div>
+                                <label class="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                                    <svg class="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path>
+                                    </svg>
+                                    Language
+                                </label>
+                                <select name="language" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white transition duration-200">
+                                    <option value="">All Languages</option>
+                                    <?php $__currentLoopData = $languages; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $language): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($language->code); ?>" <?php echo e(request('language') == $language->code ? 'selected' : ''); ?>>
+                                            <?php echo e($language->name); ?>
+
+                                        </option>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                </select>
+                            </div>
+
+                            <!-- Year Filter -->
+                            <div>
+                                <label class="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                                    <svg class="w-4 h-4 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                    Publication Year
+                                </label>
+                                <select name="year" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white transition duration-200">
+                                    <option value="">All Years</option>
+                                    <?php $__currentLoopData = $years; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($year); ?>" <?php echo e(request('year') == $year ? 'selected' : ''); ?>>
+                                            <?php echo e($year); ?>
+
+                                        </option>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                </select>
+                            </div>
+
+                            <!-- Availability Filter -->
+                            <div>
+                                <label class="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                                    <svg class="w-4 h-4 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    Availability
+                                </label>
+                                <select name="availability" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white transition duration-200">
+                                    <option value="available" <?php echo e(!request('availability') || request('availability') == 'available' ? 'selected' : ''); ?>>
+                                        Available Only (Default)
+                                    </option>
+                                    <option value="all" <?php echo e(request('availability') == 'all' ? 'selected' : ''); ?>>
+                                        All Books
+                                    </option>
+                                    <option value="unavailable" <?php echo e(request('availability') == 'unavailable' ? 'selected' : ''); ?>>
+                                        Unavailable Only
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- Sort Options -->
+                            <div>
+                                <label class="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                                    <svg class="w-4 h-4 mr-2 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+                                    </svg>
+                                    Sort By
+                                </label>
+                                <select name="sort" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white transition duration-200">
+                                    <option value="latest" <?php echo e(request('sort') == 'latest' ? 'selected' : ''); ?>>Latest First</option>
+                                    <option value="title" <?php echo e(request('sort') == 'title' ? 'selected' : ''); ?>>Title A-Z</option>
+                                    <option value="author" <?php echo e(request('sort') == 'author' ? 'selected' : ''); ?>>Author A-Z</option>
+                                    <option value="year" <?php echo e(request('sort') == 'year' ? 'selected' : ''); ?>>Year (Newest)</option>
+                                </select>
+                            </div>
+
+                            <div class="flex space-x-2 pt-4 border-t border-gray-200 dark:border-gray-700">
+                                <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition duration-200 flex items-center justify-center">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                                    </svg>
+                                    Apply
+                                </button>
+                                <a href="<?php echo e(route('home')); ?>" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition duration-200 text-center flex items-center justify-center">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                    Clear
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Main Content -->
+                <div class="lg:w-3/4">
+                    <!-- Search Bar (moved below results header) -->
+                    <div class="mb-4" x-data="homeSearch()" @click.outside="clearSearch()">
+                        <div class="relative group">
+                            <input type="text"
+                                   x-model="query"
+                                   @input="search()"
+                                   @keydown.arrow-down="navigateDown()"
+                                   @keydown.arrow-up="navigateUp()"
+                                   @keydown.enter="selectResult()"
+                                   @keydown.escape="clearSearch()"
+                                   placeholder="Search books, authors, ISBN..."
+                                   class="w-full px-5 py-3 pl-12 pr-14 text-gray-700 bg-white border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 focus:shadow-lg transition-all duration-300 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:focus:border-blue-400 dark:focus:ring-blue-400/20">
+
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-5">
+                                <svg class="w-5 h-5 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </div>
+
+                            <div x-show="query.length > 0" class="absolute inset-y-0 right-0 flex items-center pr-5">
+                                <button @click="clearSearch()" class="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-200 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <div x-show="query.length === 0" class="absolute inset-y-0 right-0 flex items-center pr-5">
+                                <kbd class="px-2 py-1 text-xs font-medium text-gray-500 bg-gray-100 dark:bg-gray-700 dark:text-gray-400 rounded-md border border-gray-200 dark:border-gray-600 shadow-sm">⌘K</kbd>
+                            </div>
+
+                            <div x-show="isSearching" class="absolute inset-y-0 right-0 flex items-center pr-5">
+                                <svg class="w-4 h-4 text-blue-500 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                            </div>
+
+                            <div x-show="results.length > 0"
+                                 x-transition:enter="transition ease-out duration-300"
+                                 x-transition:enter-start="opacity-0 transform scale-95 translate-y-2"
+                                 x-transition:enter-end="opacity-100 transform scale-100 translate-y-0"
+                                 x-transition:leave="transition ease-in duration-200"
+                                 x-transition:leave-start="opacity-100 transform scale-100 translate-y-0"
+                                 x-transition:leave-end="opacity-0 transform scale-95 translate-y-2"
+                                 class="absolute z-50 w-full mt-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl max-h-96 overflow-y-auto backdrop-blur-sm">
+                                <template x-for="(book, index) in results" :key="book.id">
+                                    <div @click="selectBook(book)"
+                                         :class="{ 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800': selectedIndex === index, 'hover:bg-gray-50 dark:hover:bg-gray-700': selectedIndex !== index }"
+                                         class="flex items-start sm:items-center p-4 border-b border-gray-100 dark:border-gray-700 cursor-pointer transition-all duration-200 last:border-b-0 hover:shadow-sm group">
+                                        <div class="flex-shrink-0 w-12 h-16 bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900 dark:to-indigo-900 rounded-lg flex items-center justify-center mr-4 shadow-sm group-hover:shadow-md transition-shadow duration-200">
+                                            <template x-if="book.cover_image">
+                                                <img :src="book.cover_image" :alt="book.title" class="w-full h-full object-cover rounded-lg">
+                                            </template>
+                                            <template x-if="!book.cover_image">
+                                                <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                                </svg>
+                                            </template>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                                                <h3 class="text-sm font-semibold text-gray-900 dark:text-white truncate" x-text="book.title"></h3>
+                                                <div class="flex items-center space-x-2 mt-1 sm:mt-0">
+                                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200" x-text="book.status"></span>
+                                                    <span class="flex items-center text-xs text-gray-500 dark:text-gray-400" x-show="book.publication_year">
+                                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                                        </svg>
+                                                        <span x-text="book.publication_year"></span>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="mt-1 flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-2">
+                                                <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 truncate" x-text="book.primary_author?.name || 'Unknown Author'"></p>
+                                                <span class="hidden sm:inline text-gray-400">•</span>
+                                                <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 truncate" x-text="book.publisher?.name || 'Unknown Publisher'"></p>
+                                            </div>
+                                            <div class="mt-1 flex flex-wrap items-center gap-1 sm:gap-2">
+                                                <template x-if="book.category">
+                                                    <span class="inline-flex items-center px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200" x-text="book.category.name"></span>
+                                                </template>
+                                                <template x-for="tag in book.tags" :key="tag.id">
+                                                    <span class="inline-flex items-center px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200" x-text="tag.name"></span>
+                                                </template>
+                                            </div>
+                                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400 line-clamp-2 hidden sm:block" x-text="book.description || 'No description available'"></p>
+                                        </div>
+                                        <div class="flex-shrink-0 ml-2">
+                                            <svg class="w-5 h-5 text-gray-400 group-hover:text-blue-500 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+
+                            <div x-show="query && results.length === 0 && !isSearching"
+                                 x-transition:enter="transition ease-out duration-300"
+                                 x-transition:enter-start="opacity-0 transform scale-95 translate-y-2"
+                                 x-transition:enter-end="opacity-100 transform scale-100 translate-y-0"
+                                 x-transition:leave="transition ease-in duration-200"
+                                 x-transition:leave-start="opacity-100 transform scale-100 translate-y-0"
+                                 x-transition:leave-end="opacity-0 transform scale-95 translate-y-2"
+                                 class="absolute z-50 w-full mt-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl p-6 text-center backdrop-blur-sm">
+                                <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-1.009-5.824-2.709"></path>
+                                    </svg>
+                                </div>
+                                <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-2">No books found</h3>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Try searching with different keywords or check your spelling.</p>
+                                <div class="text-xs text-gray-400 dark:text-gray-500">
+                                    <span class="font-medium">Suggestions:</span>
+                                    <ul class="mt-1 space-y-1">
+                                        <li>• Try author names</li>
+                                        <li>• Use ISBN numbers</li>
+                                        <li>• Search by category</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Enhanced Books Grid -->
+                    <?php if($books->count() > 0): ?>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <?php $__currentLoopData = $books; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $book): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <div class="group bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-700 hover:border-blue-200 dark:hover:border-blue-600 hover:-translate-y-1">
+                                    <!-- Enhanced Book Cover -->
+                                    <div class="relative aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 overflow-hidden">
+                                        <?php if($book->cover_path): ?>
+                                            <img src="<?php echo e(Storage::url($book->cover_path)); ?>" 
+                                                 alt="<?php echo e($book->title_en); ?>" 
+                                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                        <?php else: ?>
+                                            <div class="w-full h-full flex flex-col items-center justify-center text-gray-400 dark:text-gray-500">
+                                                <div class="w-16 h-16 bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900 dark:to-indigo-900 rounded-lg flex items-center justify-center mb-2 group-hover:scale-110 transition-transform duration-300">
+                                                    <svg class="w-8 h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                                </svg>
+                                                </div>
+                                                <p class="text-xs font-medium">No Cover</p>
+                                            </div>
+                                        <?php endif; ?>
+                                        
+                                        <!-- Availability Badge -->
+                                        <div class="absolute top-2 right-2">
+                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium <?php echo e($book->available_copies > 0 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'); ?>">
+                                                <?php echo e($book->available_copies > 0 ? 'Available' : 'Unavailable'); ?>
+
+                                            </span>
+                                        </div>
+                                        
+                                        <!-- Hover Overlay -->
+                                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 flex items-center justify-center">
+                                            <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                <a href="<?php echo e(route('books.show', $book)); ?>" 
+                                                   class="bg-white dark:bg-gray-800 text-gray-800 dark:text-white px-3 py-2 rounded-lg shadow-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200">
+                                                    View Details
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Enhanced Book Info -->
+                                    <div class="p-3">
+                                        <!-- Title -->
+                                        <h3 class="font-semibold text-base text-gray-900 dark:text-white mb-1 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
+                                            <?php if($book->language && $book->language->code === 'bn' && $book->title_bn): ?>
+                                                <?php echo e($book->title_bn); ?>
+
+                                            <?php else: ?>
+                                            <?php echo e($book->title_en); ?>
+
+                                            <?php endif; ?>
+                                        </h3>
+                                        
+                                        <!-- Author -->
+                                        <?php if($book->primaryAuthor): ?>
+                                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-1 flex items-center">
+                                                <svg class="w-3 h-3 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                                </svg>
+                                                <?php if($book->language && $book->language->code === 'bn' && $book->primaryAuthor->name_bn): ?>
+                                                    <?php echo e($book->primaryAuthor->name_bn); ?>
+
+                                                <?php else: ?>
+                                                    <?php echo e($book->primaryAuthor->name_en); ?>
+
+                                                <?php endif; ?>
+                                            </p>
+                                        <?php elseif($book->primaryAuthor): ?>
+                                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-1 flex items-center">
+                                                <svg class="w-3 h-3 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                                </svg>
+                                                <?php if($book->language && $book->language->code === 'bn' && $book->primaryAuthor->name_bn): ?>
+                                                    <?php echo e($book->primaryAuthor->name_bn); ?>
+
+                                                <?php else: ?>
+                                                    <?php echo e($book->primaryAuthor->name_en); ?>
+
+                                                <?php endif; ?>
+                                            </p>
+                                        <?php endif; ?>
+                                        
+                                        <!-- Category -->
+                                        <?php if($book->category): ?>
+                                            <div class="mb-2">
+                                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                                                    </svg>
+                                                    <?php if($book->language && $book->language->code === 'bn' && $book->category->name_bn): ?>
+                                                        <?php echo e($book->category->name_bn); ?>
+
+                                                    <?php else: ?>
+                                                <?php echo e($book->category->name_en); ?>
+
+                                                    <?php endif; ?>
+                                            </span>
+                                            </div>
+                                        <?php endif; ?>
+                                        
+                                        <!-- Book Details - Fixed Layout -->
+                                        <div class="pt-2 border-t border-gray-100 dark:border-gray-700">
+                                            <div class="flex flex-col space-y-1">
+                                                <!-- Publication Year and Pages -->
+                                                <div class="flex items-center text-xs text-gray-500 dark:text-gray-400">
+                                                <?php if($book->publication_year): ?>
+                                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                                        </svg>
+                                                        <span><?php echo e($book->publication_year); ?></span>
+                                                <?php endif; ?>
+                                                <?php if($book->pages): ?>
+                                                        <span class="mx-2">•</span>
+                                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                                        </svg>
+                                                        <span><?php echo e($book->pages); ?> pages</span>
+                                                <?php endif; ?>
+                                            </div>
+                                                <!-- Available Copies -->
+                                                <div class="flex items-center text-xs font-semibold <?php echo e($book->available_copies > 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'); ?>">
+                                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                    </svg>
+                                                    <span><?php echo e($book->available_copies); ?> <?php echo e($book->available_copies === 1 ? 'copy' : 'copies'); ?> available</span>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Borrow Request Button -->
+                                            <?php if(auth()->guard()->check()): ?>
+                                                <?php if(Auth::user()->status === 'approved'): ?>
+                                                    <?php
+                                                        $existingLoan = \App\Models\Models\Loan::where('user_id', auth()->id())
+                                                            ->where('book_id', $book->id)
+                                                            ->whereIn('status',["pending","issued"])
+                                                            ->first();
+                                                    ?>
+                                                    <div class="mt-2 pt-2 border-t border-gray-100 dark:border-gray-700">
+                                                        <?php if($existingLoan): ?>
+                                                            <div class="text-center">
+                                                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+                                                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                                    </svg>
+                                                                    <?php echo e(ucfirst($existingLoan->status)); ?>
+
+                                                                </span>
+                                                            </div>
+                                                        <?php else: ?>
+                                                            <?php if($book->available_copies > 0): ?>
+                                                                <form action="<?php echo e(route('books.request', $book)); ?>" method="POST" class="w-full">
+                                                                    <?php echo csrf_field(); ?>
+                                                                    <button type="submit" class="w-full inline-flex items-center justify-center px-3 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white text-xs font-medium rounded-lg shadow-sm hover:shadow-md transform hover:scale-105 transition-all duration-200">
+                                                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                                                        </svg>
+                                                                        Borrow
+                                                                    </button>
+                                                                </form>
+                                                            <?php else: ?>
+                                                                <form action="<?php echo e(route('books.reserve', $book)); ?>" method="POST" class="w-full">
+                                                                    <?php echo csrf_field(); ?>
+                                                                    <button type="submit" class="w-full inline-flex items-center justify-center px-3 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-lg shadow-sm hover:shadow-md transform hover:scale-105 transition-all duration-200">
+                                                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                                        </svg>
+                                                                        Reserve
+                                                                    </button>
+                                                                </form>
+                                                            <?php endif; ?>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                <?php else: ?>
+                                                    <div class="mt-2 pt-2 border-t border-gray-100 dark:border-gray-700">
+                                                        <div class="text-center">
+                                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+                                                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                                                </svg>
+                                                                Pending Approval
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                <?php endif; ?>
+                                            <?php else: ?>
+                                                <div class="mt-2 pt-2 border-t border-gray-100 dark:border-gray-700">
+                                                    <a href="<?php echo e(route('login')); ?>" class="w-full inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 text-xs font-medium rounded-lg transition-colors duration-200">
+                                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                                                        </svg>
+                                                        Sign In to Borrow
+                                                    </a>
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </div>
+
+                        <!-- Pagination -->
+                        <div class="mt-8">
+                            <?php echo e($books->links()); ?>
+
+                        </div>
+                    <?php else: ?>
+                        <div class="text-center py-16">
+                            <div class="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                                <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">No books found</h3>
+                            <p class="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">We couldn't find any books matching your criteria. Try adjusting your search or filters.</p>
+                            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                                <a href="<?php echo e(route('home')); ?>" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                    </svg>
+                                    Clear Filters
+                                </a>
+                                <button onclick="document.querySelector('input[x-model=\"query\"]').focus()" class="inline-flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg transition-colors duration-200">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                    </svg>
+                                    Try Different Search
+                                </button>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function homeSearch() {
+            return {
+                query: '',
+                results: [],
+                selectedIndex: -1,
+                searchTimeout: null,
+                isSearching: false,
+
+                search() {
+                    if (this.query.length < 2) {
+                        this.results = [];
+                        this.selectedIndex = -1;
+                        return;
+                    }
+
+                    // Clear previous timeout
+                    if (this.searchTimeout) {
+                        clearTimeout(this.searchTimeout);
+                    }
+
+                    this.isSearching = true;
+
+                    // Debounce search
+                    this.searchTimeout = setTimeout(async () => {
+                        try {
+                            const response = await fetch(`/api/search/books?q=${encodeURIComponent(this.query)}`);
+                            const data = await response.json();
+                            this.results = data.books || [];
+                            this.selectedIndex = -1;
+                        } catch (error) {
+                            console.error('Search error:', error);
+                            this.results = [];
+                        } finally {
+                            this.isSearching = false;
+                        }
+                    }, 300);
+                },
+
+                navigateDown() {
+                    if (this.results.length === 0) return;
+                    this.selectedIndex = Math.min(this.selectedIndex + 1, this.results.length - 1);
+                },
+
+                navigateUp() {
+                    if (this.results.length === 0) return;
+                    this.selectedIndex = Math.max(this.selectedIndex - 1, -1);
+                },
+
+                selectResult() {
+                    if (this.selectedIndex >= 0 && this.results[this.selectedIndex]) {
+                        this.selectBook(this.results[this.selectedIndex]);
+                    }
+                },
+
+                selectBook(book) {
+                    // Navigate to book details
+                    window.location.href = `/books/${book.id}`;
+                },
+
+                clearSearch() {
+                    this.query = '';
+                    this.results = [];
+                    this.selectedIndex = -1;
+                }
+            }
+        }
+    </script>
+ <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
+<?php $attributes = $__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
+<?php unset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
+<?php $component = $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
+<?php unset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
+<?php endif; ?>
+<?php /**PATH /var/www/html/resources/views/home.blade.php ENDPATH**/ ?>

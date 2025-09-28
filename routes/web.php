@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\BookController;
@@ -30,6 +32,11 @@ use App\Http\Controllers\Auth\PasswordChangeController;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+// Health check route for Docker
+Route::get('/health', function () {
+    return 'OK';
+});
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/books/{book}', [HomeController::class, 'show'])->name('books.show');

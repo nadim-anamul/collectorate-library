@@ -7,6 +7,9 @@ use App\Models\Models\Category;
 use App\Models\Models\Member;
 use App\Models\Models\Tag;
 use App\Models\User;
+use App\Models\Author;
+use App\Models\Publisher;
+use App\Models\Language;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
@@ -26,21 +29,37 @@ class DemoSeeder extends Seeder
         $fiction = Category::firstOrCreate(['slug' => 'fiction'], ['name_en' => 'Fiction', 'name_bn' => 'উপন্যাস']);
         $tagClassic = Tag::firstOrCreate(['slug' => 'classic'], ['name' => 'Classic']);
 
+        // Create author
+        $author = Author::firstOrCreate(
+            ['name_en' => 'Rabindranath Tagore'],
+            ['name_bn' => 'রবীন্দ্রনাথ ঠাকুর']
+        );
+
+        // Create publisher
+        $publisher = Publisher::firstOrCreate(
+            ['name_en' => 'Visva-Bharati'],
+            ['name_bn' => 'বিশ্বভারতী']
+        );
+
+        // Create language
+        $language = Language::firstOrCreate(
+            ['code' => 'bn'],
+            ['name' => 'Bengali']
+        );
+
         $book = Book::firstOrCreate([
             'title_en' => 'Shesher Kobita',
             'title_bn' => 'শেষের কবিতা',
         ], [
-            'title_bn_translit' => 'Shesher Kobita',
-            'author_en' => 'Rabindranath Tagore',
-            'author_bn' => 'রবীন্দ্রনাথ ঠাকুর',
+            'primary_author_id' => $author->id,
             'category_id' => $fiction->id,
-            'publisher_en' => 'Visva-Bharati',
-            'publisher_bn' => 'বিশ্বভারতী',
+            'publisher_id' => $publisher->id,
             'isbn' => '9780195661330',
-            'barcode' => '9780195661330',
             'publication_year' => 1929,
             'pages' => 220,
-            'language_primary' => 'bn',
+            'language_id' => $language->id,
+            'description_en' => 'A classic Bengali novel by Rabindranath Tagore',
+            'description_bn' => 'রবীন্দ্রনাথ ঠাকুরের একটি ক্লাসিক বাংলা উপন্যাস',
             'available_copies' => 3,
             'total_copies' => 3,
         ]);

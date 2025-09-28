@@ -23,10 +23,10 @@ class BulkBooksAndLoansSeeder extends Seeder
         $this->seedBaseReferences();
 
         // Create/ensure a pool of approved users
-        $users = $this->ensureApprovedUsers(200);
+        $users = $this->ensureApprovedUsers(20);
 
-        // Create ~1000 books with cover images
-        $books = $this->createBooksWithCovers(1000);
+        // Create ~150 books with cover images
+        $books = $this->createBooksWithCovers(150);
 
         // Generate loan history
         $this->generateLoanHistory($books, $users);
