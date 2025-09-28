@@ -146,16 +146,21 @@ COPY docker/php/php-dev.ini /usr/local/etc/php/conf.d/99-dev.ini
 # Create entrypoint script for development
 RUN echo '#!/bin/bash' > /usr/local/bin/dev-entrypoint.sh && \
     echo 'set -e' >> /usr/local/bin/dev-entrypoint.sh && \
+    echo 'echo "Fixing permissions..."' >> /usr/local/bin/dev-entrypoint.sh && \
+    echo 'chown -R appuser:appgroup /var/www/html' >> /usr/local/bin/dev-entrypoint.sh && \
+    echo 'chmod -R 755 /var/www/html/storage' >> /usr/local/bin/dev-entrypoint.sh && \
+    echo 'chmod -R 755 /var/www/html/bootstrap/cache' >> /usr/local/bin/dev-entrypoint.sh && \
+    echo 'git config --global --add safe.directory /var/www/html' >> /usr/local/bin/dev-entrypoint.sh && \
     echo 'echo "Installing Composer dependencies..."' >> /usr/local/bin/dev-entrypoint.sh && \
-    echo 'composer install --no-scripts' >> /usr/local/bin/dev-entrypoint.sh && \
+    echo 'su -s /bin/bash -c "composer install --no-scripts" appuser' >> /usr/local/bin/dev-entrypoint.sh && \
     echo 'echo "Generating autoloader..."' >> /usr/local/bin/dev-entrypoint.sh && \
-    echo 'composer dump-autoload --optimize' >> /usr/local/bin/dev-entrypoint.sh && \
+    echo 'su -s /bin/bash -c "composer dump-autoload --optimize" appuser' >> /usr/local/bin/dev-entrypoint.sh && \
     echo 'echo "Starting Laravel development server..."' >> /usr/local/bin/dev-entrypoint.sh && \
-    echo 'exec php artisan serve --host=0.0.0.0 --port=8000' >> /usr/local/bin/dev-entrypoint.sh && \
+    echo 'exec su -s /bin/bash -c "php artisan serve --host=0.0.0.0 --port=8000" appuser' >> /usr/local/bin/dev-entrypoint.sh && \
     chmod +x /usr/local/bin/dev-entrypoint.sh
 
-# Switch back to app user
-USER appuser
+# Keep as root for development to avoid permission issues
+# USER appuser
 
 # Expose port for development
 EXPOSE 8000
