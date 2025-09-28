@@ -56,7 +56,8 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /app
 
 # Copy composer files
-COPY composer.json composer.lock ./
+COPY composer.json ./
+COPY composer.lock* ./
 
 # Install PHP dependencies
 RUN composer install \
@@ -142,17 +143,22 @@ RUN apk add --no-cache nodejs npm
 # Copy development configuration
 COPY docker/php/php-dev.ini /usr/local/etc/php/conf.d/99-dev.ini
 
+# Create entrypoint script for development
+RUN echo '#!/bin/bash' > /usr/local/bin/dev-entrypoint.sh && \
+    echo 'set -e' >> /usr/local/bin/dev-entrypoint.sh && \
+    echo 'echo "Installing Composer dependencies..."' >> /usr/local/bin/dev-entrypoint.sh && \
+    echo 'composer install --no-scripts' >> /usr/local/bin/dev-entrypoint.sh && \
+    echo 'echo "Generating autoloader..."' >> /usr/local/bin/dev-entrypoint.sh && \
+    echo 'composer dump-autoload --optimize' >> /usr/local/bin/dev-entrypoint.sh && \
+    echo 'echo "Starting Laravel development server..."' >> /usr/local/bin/dev-entrypoint.sh && \
+    echo 'exec php artisan serve --host=0.0.0.0 --port=8000' >> /usr/local/bin/dev-entrypoint.sh && \
+    chmod +x /usr/local/bin/dev-entrypoint.sh
+
 # Switch back to app user
 USER appuser
-
-# Install development dependencies
-RUN composer install --no-scripts --no-autoloader
-
-# Generate autoloader
-RUN composer dump-autoload --optimize
 
 # Expose port for development
 EXPOSE 8000
 
-# Development command
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+# Development command with automatic dependency installation
+CMD ["/usr/local/bin/dev-entrypoint.sh"]

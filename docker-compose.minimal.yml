@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
   app:
@@ -11,6 +10,7 @@ services:
     working_dir: /var/www/html
     volumes:
       - ./:/var/www/html
+      - vendor_data:/var/www/html/vendor  # Named volume for vendor directory
       - ./docker/php/php-dev.ini:/usr/local/etc/php/conf.d/99-dev.ini
     ports:
       - "8989:8000"  # Laravel app on port 8989
@@ -63,6 +63,7 @@ services:
 volumes:
   mysql_data:
   redis_data:
+  vendor_data:  # Named volume for Composer vendor directory
 
 networks:
   app-network:
