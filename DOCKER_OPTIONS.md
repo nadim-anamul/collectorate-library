@@ -26,7 +26,7 @@
 ./docker/deploy.sh dev minimal
 ```
 **Services**: Laravel + MySQL + Redis
-**Ports**: 8989 (app), 3306 (MySQL), 6379 (Redis)
+**Ports**: 8989 (app), 3307 (MySQL), 6380 (Redis)
 **Size**: ~200MB total
 
 ### **2. Full Setup** (With phpMyAdmin)
@@ -34,7 +34,7 @@
 ./docker/deploy.sh dev full
 ```
 **Services**: Laravel + MySQL + Redis + phpMyAdmin
-**Ports**: 8989 (app), 3306 (MySQL), 6379 (Redis), 8080 (phpMyAdmin)
+**Ports**: 8989 (app), 3307 (MySQL), 6380 (Redis), 8080 (phpMyAdmin)
 **Size**: ~250MB total
 
 ### **3. Default Setup**
@@ -74,8 +74,8 @@
 
 - **Application**: http://localhost:8989
 - **phpMyAdmin**: http://localhost:8080 (full setup only)
-- **MySQL**: localhost:3306
-- **Redis**: localhost:6379
+- **MySQL**: localhost:3307
+- **Redis**: localhost:6380
 
 ## 💡 **Recommendations**
 
