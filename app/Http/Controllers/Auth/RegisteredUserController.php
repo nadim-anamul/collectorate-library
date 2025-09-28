@@ -39,8 +39,8 @@ class RegisteredUserController extends Controller
             'phone' => ['nullable', 'string', 'max:20'],
             'address' => ['nullable', 'string', 'max:500'],
             'job_post' => ['nullable', 'string', 'max:100'],
-            // Strong password: min 8, letters, mixed case, numbers, symbols
-            'password' => ['required', 'confirmed', Rules\Password::min(8)->letters()->mixedCase()->numbers()->symbols()],
+            // Moderate password: min 8, letters, mixed case, numbers (no symbols required)
+            'password' => ['required', 'confirmed', Rules\Password::min(8)->letters()->mixedCase()->numbers()],
         ]);
 
         $user = User::create([

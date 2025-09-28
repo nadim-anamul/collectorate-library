@@ -26,7 +26,7 @@ class ProfileController extends Controller
             'phone' => ['nullable','string','max:20'],
             'address' => ['nullable','string','max:500'],
             'job_post' => ['nullable','string','max:100'],
-            'password' => ['nullable','confirmed', \Illuminate\Validation\Rules\Password::min(8)->letters()->mixedCase()->numbers()->symbols()],
+            'password' => ['nullable','confirmed', \Illuminate\Validation\Rules\Password::min(8)->letters()->mixedCase()->numbers()],
         ]);
 
         $user->fill(collect($validated)->except(['password','password_confirmation'])->toArray());
