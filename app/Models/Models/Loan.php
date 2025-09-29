@@ -19,6 +19,7 @@ class Loan extends Model
         'due_at',
         'returned_at',
         'status',
+        'decline_reason',
     ];
 
     public function book()

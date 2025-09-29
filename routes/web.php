@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\ReportsController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\PasswordChangeController;
+use App\Http\Controllers\LanguageController as AppLanguageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,6 +42,9 @@ Route::get('/health', function () {
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/books/{book}', [HomeController::class, 'show'])->name('books.show');
 
+// Language switching routes
+Route::get('/language/{locale}', [AppLanguageController::class, 'switchLanguage'])->name('language.switch');
+
 // Authenticated users can access notifications regardless of approval status
 Route::middleware(['auth'])->group(function(){
     // Notifications (JSON feed + pages + mark read)
@@ -60,6 +64,7 @@ Route::middleware(['auth', 'approved'])->group(function(){
     // Borrow request from book page
     Route::post('/books/{book}/request', [LoanController::class,'request'])->name('books.request');
     Route::post('/loans/{loan}/request-return', [LoanController::class,'requestReturn'])->name('loans.requestReturn');
+    Route::post('/loans/{loan}/cancel', [LoanController::class,'cancel'])->name('loans.cancel');
     Route::post('/books/{book}/reserve', [ReservationController::class,'store'])->name('books.reserve');
     // (moved notifications routes to auth-only block above)
 

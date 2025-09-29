@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Member;
 use App\Http\Controllers\Controller;
 use App\Models\Models\Book;
 use App\Models\Models\Loan;
+use App\Services\RecommendationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -39,14 +40,9 @@ class DashboardController extends Controller
                           ->limit(5)
                           ->get();
 
-        // Recommended books (that user hasn't borrowed yet)
-        $borrowedBookIds = Loan::where('user_id', $user->id)->pluck('book_id');
-        $recommendedBooks = Book::whereNotIn('id', $borrowedBookIds)
-                               ->where('available_copies', '>', 0)
-                               ->with(['category', 'tags', 'language', 'primaryAuthor', 'publisher'])
-                               ->inRandomOrder()
-                               ->limit(6)
-                               ->get();
+        // Intelligent recommended books using RecommendationService
+        $recommendationService = new RecommendationService($user);
+        $recommendedBooks = $recommendationService->getRecommendations(15);
 
         // Stats
         $stats = [
@@ -71,7 +67,7 @@ class DashboardController extends Controller
         $dueTo = request('due_to');
 
         $query = Loan::where('user_id', $user->id)
-                     ->whereIn('status', ['issued','returned','declined'])
+                     ->whereIn('status', ['issued','returned','declined','pending','cancelled'])
                      ->with(['book.category','book.primaryAuthor','book.language'])
                      ->latest();
 
@@ -84,7 +80,7 @@ class DashboardController extends Controller
                 });
             });
         }
-        if ($status && in_array($status, ['issued','returned','declined'])) {
+        if ($status && in_array($status, ['issued','returned','declined','pending','cancelled'])) {
             $query->where('status',$status);
         }
         if ($issuedFrom) { $query->whereDate('issued_at','>=',$issuedFrom); }
@@ -93,6 +89,15 @@ class DashboardController extends Controller
         if ($dueTo) { $query->whereDate('due_at','<=',$dueTo); }
 
         $history = $query->paginate(12)->appends(request()->query());
-        return view('member.history', compact('history','user','q','status','issuedFrom','issuedTo','dueFrom','dueTo'));
+        
+        // Calculate stats for the stats cards
+        $stats = [
+            'total_books' => Loan::where('user_id', $user->id)->count(),
+            'returned' => Loan::where('user_id', $user->id)->where('status', 'returned')->count(),
+            'currently_out' => Loan::where('user_id', $user->id)->where('status', 'issued')->count(),
+            'pending' => Loan::where('user_id', $user->id)->where('status', 'pending')->count(),
+        ];
+        
+        return view('member.history', compact('history','user','q','status','issuedFrom','issuedTo','dueFrom','dueTo','stats'));
     }
 }

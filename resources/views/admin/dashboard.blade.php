@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-white leading-tight">Admin Dashboard</h2>
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-white leading-tight">{{ __('filters.admin') }} Dashboard</h2>
             <div class="flex items-center gap-2">
                 <a href="{{ route('admin.users.index') }}" class="px-3 py-2 text-sm rounded border border-gray-200 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-700">Users</a>
                 <a href="{{ route('admin.loans.index') }}" class="px-3 py-2 text-sm rounded border border-gray-200 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-700">Loans</a>
@@ -42,7 +42,7 @@
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         </div>
                         <div class="ml-3">
-                            <div class="text-xs opacity-80">Pending Loans</div>
+                            <div class="text-xs opacity-80">{{ __('filters.pending') }} Loans</div>
                             <div class="text-2xl font-bold">{{ $stats['pending_loans'] ?? 0 }}</div>
                         </div>
                     </div>
@@ -64,7 +64,7 @@
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2 2z"/></svg>
                         </div>
                         <div class="ml-3">
-                            <div class="text-xs opacity-80">Active Loans</div>
+                            <div class="text-xs opacity-80">{{ __('filters.active') }} Loans</div>
                             <div class="text-2xl font-bold">{{ $stats['loans_active'] ?? 0 }}</div>
                         </div>
                     </div>
@@ -83,23 +83,23 @@
                                     </svg>
                                 </div>
                                 <div>
-                                    <h3 class="text-lg font-bold text-white">Filters & Search</h3>
+                                    <h3 class="text-lg font-bold text-white">{{ __('filters.filters') }} & {{ __('filters.search') }}</h3>
                                     <p class="text-indigo-100 text-sm">Find specific books</p>
                                 </div>
                             </div>
                         </div>
                         
                         <form method="GET" class="p-6 space-y-6">
-                            <!-- Search Section -->
+                            <!-- {{ __('filters.search') }} Section -->
                             <div class="space-y-3">
                                 <label class="flex items-center gap-2 text-gray-700 dark:text-gray-300 font-semibold">
                                     <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                     </svg>
-                                    Search Books
+                                    {{ __('filters.search') }} Books
                                 </label>
                                 <div class="relative">
-                                    <input type="text" name="search" value="{{ $filters['search'] ?? '' }}" placeholder="Title/Author/ISBN" class="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all duration-200" />
+                                    <input type="text" name="search" value="{{ $filters['search'] ?? '' }}" placeholder="Title/{{ __('filters.author') }}/{{ __('filters.isbn') }}" class="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all duration-200" />
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                         <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -108,20 +108,20 @@
                                 </div>
                             </div>
 
-                            <!-- Filter Options -->
+                            <!-- {{ __('filters.filter_options') }} -->
                             <div class="space-y-4">
                                 <label class="flex items-center gap-2 text-gray-700 dark:text-gray-300 font-semibold">
                                     <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"></path>
                                     </svg>
-                                    Filter Options
+                                    {{ __('filters.filter_options') }}
                                 </label>
                                 
                                 <div class="grid grid-cols-1 gap-4">
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category</label>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('filters.category') }}</label>
                                         <select name="category" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all duration-200">
-                                            <option value="">All Categories</option>
+                                            <option value="">{{ __('filters.all_categories') }}</option>
                                             @foreach($categories as $category)
                                                 <option value="{{ $category->id }}" {{ ($filters['category'] ?? '') == $category->id ? 'selected' : '' }}>{{ $category->name_en }}</option>
                                             @endforeach
@@ -129,9 +129,9 @@
                                     </div>
                                     
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Language</label>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('filters.language') }}</label>
                                         <select name="language" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all duration-200">
-                                            <option value="">All Languages</option>
+                                            <option value="">All {{ __('filters.language') }}s</option>
                                             @foreach($languages as $code)
                                                 <option value="{{ $code }}" {{ ($filters['language'] ?? '') == $code ? 'selected' : '' }}>{{ strtoupper($code) }}</option>
                                             @endforeach
@@ -139,9 +139,9 @@
                                     </div>
                                     
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Publication Year</label>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('filters.publication_year') }}</label>
                                         <select name="year" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all duration-200">
-                                            <option value="">All Years</option>
+                                            <option value="">{{ __('filters.all_years') }}</option>
                                             @foreach($years as $year)
                                                 <option value="{{ $year }}" {{ ($filters['year'] ?? '') == $year ? 'selected' : '' }}>{{ $year }}</option>
                                             @endforeach
@@ -157,23 +157,23 @@
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                         </svg>
-                                        <span>Apply Filters</span>
+                                        <span>Apply {{ __('filters.filters') }}</span>
                                     </div>
                                 </button>
                                 <a href="{{ route('admin.home') }}" class="w-full px-6 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 text-center">
-                                    Clear All
+                                    {{ __('filters.clear_all') }}
                                 </a>
                             </div>
                         </form>
 
-                        <!-- Quick Links Section -->
+                        <!-- {{ __('filters.quick_links') }} Section -->
                         <div class="px-6 pb-6">
                             <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
                                 <div class="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
                                     <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
                                     </svg>
-                                    Quick Links
+                                    {{ __('filters.quick_links') }}
                                 </div>
                                 <div class="space-y-2">
                                     <a href="{{ route('admin.users.index') }}" class="flex items-center px-4 py-3 rounded-xl bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-600 hover:from-gray-100 hover:to-gray-200 dark:hover:from-gray-600 dark:hover:to-gray-500 transition-all duration-200 group">
@@ -182,7 +182,7 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                             </svg>
                                         </div>
-                                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Manage Users</span>
+                                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('filters.manage_users') }}</span>
                                     </a>
                                     <a href="{{ route('admin.loans.index') }}" class="flex items-center px-4 py-3 rounded-xl bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-600 hover:from-gray-100 hover:to-gray-200 dark:hover:from-gray-600 dark:hover:to-gray-500 transition-all duration-200 group">
                                         <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-violet-500 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-200">
@@ -190,7 +190,7 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                                             </svg>
                                         </div>
-                                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Manage Loans</span>
+                                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('filters.manage_loans') }}</span>
                                     </a>
                                     <a href="{{ route('admin.reports.index') }}" class="flex items-center px-4 py-3 rounded-xl bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-600 hover:from-gray-100 hover:to-gray-200 dark:hover:from-gray-600 dark:hover:to-gray-500 transition-all duration-200 group">
                                         <div class="w-8 h-8 bg-gradient-to-br from-emerald-500 to-green-500 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-200">

@@ -18,6 +18,17 @@
                 } catch(e) { /* no-op */ }
             })();
         </script>
+        
+        <!-- Prevent horizontal overflow -->
+        <style>
+            html, body {
+                overflow-x: hidden;
+                max-width: 100vw;
+            }
+            * {
+                box-sizing: border-box;
+            }
+        </style>
         <style>[x-cloak]{display:none!important}</style>
 
         <!-- Fonts -->

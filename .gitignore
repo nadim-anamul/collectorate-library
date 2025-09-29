@@ -13,3 +13,24 @@ npm-debug.log
 yarn-error.log
 /.idea
 /.vscode
+
+# Laravel specific
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/testing/*
+/storage/framework/views/*
+/storage/logs/*
+!/storage/framework/cache/.gitignore
+!/storage/framework/sessions/.gitignore
+!/storage/framework/testing/.gitignore
+!/storage/framework/views/.gitignore
+!/storage/logs/.gitignore
+/storage/app/public/*
+!/storage/app/public/.gitignore
+
+# Bootstrap cache
+/bootstrap/cache/*
+!/bootstrap/cache/.gitignore
+
+# Test files
+test_*.php
