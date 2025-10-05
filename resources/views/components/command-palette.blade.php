@@ -179,7 +179,9 @@ function commandPalette() {
         },
 
         async search() {
-            if (this.query.length < 2) {
+            // Use proper character counting for multi-byte characters like Bangla
+            const charCount = Array.from(this.query).length;
+            if (charCount < 2) {
                 this.results = [];
                 this.selectedIndex = -1;
                 return;

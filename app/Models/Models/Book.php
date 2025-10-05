@@ -25,22 +25,22 @@ class Book extends Model
 
     public function authors()
     {
-        return $this->belongsToMany(Author::class, 'author_book');
+        return $this->belongsToMany(\App\Models\Author::class, 'author_book');
     }
 
     public function primaryAuthor()
     {
-        return $this->belongsTo(Author::class, 'primary_author_id');
+        return $this->belongsTo(\App\Models\Author::class, 'primary_author_id');
     }
 
     public function publisher()
     {
-        return $this->belongsTo(Publisher::class);
+        return $this->belongsTo(\App\Models\Publisher::class);
     }
 
     public function language()
     {
-        return $this->belongsTo(Language::class);
+        return $this->belongsTo(\App\Models\Language::class);
     }
 
     public function tags()

@@ -23,9 +23,6 @@ class HomeController extends Controller
                 // Direct field searches (fastest)
                 $q->where('title_en', 'like', '%'.$search.'%')
                   ->orWhere('title_bn', 'like', '%'.$search.'%')
-                  ->orWhere('author_en', 'like', '%'.$search.'%')
-                  ->orWhere('author_bn', 'like', '%'.$search.'%')
-                  ->orWhere('publisher_en', 'like', '%'.$search.'%')
                   ->orWhere('isbn', 'like', '%'.$search.'%');
                 
                 // Only search descriptions if search term is longer (performance optimization)
@@ -89,7 +86,8 @@ class HomeController extends Controller
                 $query->orderBy('title_en');
                 break;
             case 'author':
-                $query->orderBy('author_en');
+                $query->leftJoin('authors', 'books.primary_author_id', '=', 'authors.id')
+                      ->orderBy('authors.name_en');
                 break;
             case 'year':
                 $query->orderBy('publication_year', 'desc');

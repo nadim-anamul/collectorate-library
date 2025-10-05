@@ -10,7 +10,7 @@
         <!-- Main Content - Properly constrained width -->
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             @auth
-            @if(isset($recommendedBooks) && $recommendedBooks->count() > 0)
+            @if(isset($recommendedBooks) && $recommendedBooks->count() > 0 && !request('search'))
                 <!-- Hero Recommendation Slider -->
                 <div class="mb-8 rounded-2xl bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-gray-900 dark:to-gray-800 border border-gray-200 dark:border-gray-700 overflow-hidden">
                     <div class="px-6 py-5 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
@@ -70,20 +70,31 @@
                                                 @endif
                                                 @auth
                                                 <div class="mt-auto pt-3 border-t border-gray-100 dark:border-gray-700">
-                                                    @php
-                                                        $existingLoan = \App\Models\Models\Loan::where('user_id', auth()->id())->where('book_id', $book->id)->whereIn('status',["pending","issued"]) ->first();
-                                                    @endphp
-                                                    @if($existingLoan)
-                                                        <div class="text-center"><span class="inline-flex items-center px-3 py-2 rounded-lg text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">{{ ucfirst($existingLoan->status) }}</span></div>
+                                                    @if(auth()->user()->hasRole(['Admin', 'Librarian']))
+                                                        <!-- Admin Edit Button -->
+                                                        <a href="{{ route('admin.books.edit', $book) }}" 
+                                                           class="w-full inline-flex items-center justify-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg shadow-sm hover:shadow-md transform hover:scale-105 transition-all duration-200">
+                                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                                            </svg>
+                                                            Edit Book
+                                                        </a>
                                                     @else
-                                                        @if($book->available_copies > 0)
-                                                            <form action="{{ route('books.request', $book->id) }}" method="POST" class="w-full">@csrf
-                                                                <button type="submit" class="w-full inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white text-sm font-medium rounded-lg shadow-sm hover:shadow-md transform hover:scale-105 transition-all duration-200">Quick Borrow</button>
-                                                            </form>
+                                                        @php
+                                                            $existingLoan = \App\Models\Models\Loan::where('user_id', auth()->id())->where('book_id', $book->id)->whereIn('status',["pending","issued"]) ->first();
+                                                        @endphp
+                                                        @if($existingLoan)
+                                                            <div class="text-center"><span class="inline-flex items-center px-3 py-2 rounded-lg text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">{{ ucfirst($existingLoan->status) }}</span></div>
                                                         @else
-                                                            <form action="{{ route('books.reserve', $book->id) }}" method="POST" class="w-full">@csrf
-                                                                <button type="submit" class="w-full inline-flex items-center justify-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg shadow-sm hover:shadow-md transform hover:scale-105 transition-all duration-200">Reserve</button>
-                                                            </form>
+                                                            @if($book->available_copies > 0)
+                                                                <form action="{{ route('books.request', $book->id) }}" method="POST" class="w-full">@csrf
+                                                                    <button type="submit" class="w-full inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white text-sm font-medium rounded-lg shadow-sm hover:shadow-md transform hover:scale-105 transition-all duration-200">Quick Borrow</button>
+                                                                </form>
+                                                            @else
+                                                                <form action="{{ route('books.reserve', $book->id) }}" method="POST" class="w-full">@csrf
+                                                                    <button type="submit" class="w-full inline-flex items-center justify-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg shadow-sm hover:shadow-md transform hover:scale-105 transition-all duration-200">Reserve</button>
+                                                                </form>
+                                                            @endif
                                                         @endif
                                                     @endif
                                                 </div>
@@ -104,16 +115,64 @@
                 </div>
             @endif
             @endauth
-            <div class="flex flex-col items-center mb-4 p-4 border-b border-gray-200 dark:border-gray-700">
-                <!-- Results Header -->
-                    <h2 class="text-xl font-semibold text-gray-800 dark:text-white">
+            <!-- Enhanced Results Header with Search State -->
+            <div class="flex flex-col items-center mb-6 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 rounded-xl border border-gray-200 dark:border-gray-600">
+                @if(request()->filled('search'))
+                    <!-- Search Results State -->
+                    <div class="flex items-center justify-center mb-4">
+                        <div class="flex items-center bg-white dark:bg-gray-800 px-4 py-2 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600">
+                            <svg class="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Search results for:</span>
+                            <span class="ml-2 px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm font-semibold">"{{ request('search') }}"</span>
+                        </div>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+                        {{ $books->total() }} {{ $books->total() === 1 ? 'book' : 'books' }} found
+                    </h2>
+                    <p class="text-gray-600 dark:text-gray-400 text-center max-w-md">
+                        @if($books->total() > 0)
+                            Browse through the search results below or use the filters to refine your search further.
+                        @else
+                            No books match your search criteria. Try different keywords or browse all available books.
+                        @endif
+                    </p>
+                @else
+                    <!-- Default Library State -->
+                    <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">
                         {{ __('ui.books_found', ['count' => $books->total()]) }}
                     </h2>
-                    @if(request()->hasAny(['search', 'category', 'language', 'year']) || (request('availability') && request('availability') != 'available'))
-                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                            {{ __('ui.filtered_results') }}
+                    @if(request()->hasAny(['category', 'language', 'year']) || (request('availability') && request('availability') != 'available'))
+                        <p class="text-gray-600 dark:text-gray-400 text-center max-w-md">
+                            {{ __('ui.filtered_results') }} - Use the search bar above or filters to find specific books.
+                        </p>
+                    @else
+                        <p class="text-gray-600 dark:text-gray-400 text-center max-w-md">
+                            Explore our collection of books. Use the search bar above to find specific titles, authors, or ISBNs.
                         </p>
                     @endif
+                @endif
+                
+                <!-- Quick Actions -->
+                <div class="flex flex-wrap gap-2 mt-4">
+                    @if(request()->filled('search'))
+                        <a href="{{ route('home') }}" class="inline-flex items-center px-3 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 text-sm">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                            </svg>
+                            View All Books
+                        </a>
+                    @endif
+                    @if(request()->hasAny(['category', 'language', 'year', 'availability', 'sort']) && (request('sort') != 'latest' || (request('availability') && request('availability') != 'available')))
+                        <a href="{{ route('home', request()->only('search')) }}" class="inline-flex items-center px-3 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 text-sm">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                            Clear Filters
+                        </a>
+                    @endif
+                </div>
             </div>
             <div class="flex flex-col lg:flex-row gap-6">
                 <!-- Sidebar {{ __('filters.filters') }} -->
@@ -129,15 +188,10 @@
                         </button>
                         <div x-show="open" x-transition class="mt-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
                             <form method="GET" action="{{ route('home') }}" class="p-4 space-y-6">
-                                <div>
-                                    <label class="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                                        </svg>
-                                        Search Books
-                                    </label>
-                                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Title, author, or ISBN..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                </div>
+                                <!-- Preserve search parameter -->
+                                @if(request('search'))
+                                    <input type="hidden" name="search" value="{{ request('search') }}">
+                                @endif
                                 <div>
                                     <label class="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('filters.category') }}</label>
                                     <select name="category" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white">
@@ -168,8 +222,8 @@
                                 <div>
                                     <label class="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('filters.availability') }}</label>
                                     <select name="availability" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                        <option value="available" {{ !request('availability') || request('availability') == 'available' ? 'selected' : '' }}>{{ __('filters.available_only_default') }}</option>
-                                        <option value="all" {{ request('availability') == 'all' ? 'selected' : '' }}>{{ __('filters.all_books') }}</option>
+                                        <option value="all" {{ !request('availability') || request('availability') == 'all' ? 'selected' : '' }}>{{ __('filters.all_books') }}</option>
+                                        <option value="available" {{ request('availability') == 'available' ? 'selected' : '' }}>{{ __('filters.available_only_default') }}</option>
                                         <option value="unavailable" {{ request('availability') == 'unavailable' ? 'selected' : '' }}>{{ __('filters.unavailable_only') }}</option>
                                     </select>
                                 </div>
@@ -348,11 +402,11 @@
                                     {{ __('filters.availability') }}
                                 </label>
                                 <select name="availability" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white transition duration-200">
-                                    <option value="available" {{ !request('availability') || request('availability') == 'available' ? 'selected' : '' }}>
-                                        {{ __('filters.available_only_default') }}
-                                    </option>
-                                    <option value="all" {{ request('availability') == 'all' ? 'selected' : '' }}>
+                                    <option value="all" {{ !request('availability') || request('availability') == 'all' ? 'selected' : '' }}>
                                         {{ __('filters.all_books') }}
+                                    </option>
+                                    <option value="available" {{ request('availability') == 'available' ? 'selected' : '' }}>
+                                        {{ __('filters.available_only_default') }}
                                     </option>
                                     <option value="unavailable" {{ request('availability') == 'unavailable' ? 'selected' : '' }}>
                                         {{ __('filters.unavailable_only') }}
@@ -396,128 +450,6 @@
 
                 <!-- Main Content -->
                 <div class="lg:w-3/4">
-                    <!-- {{ __('filters.search') }} Bar (moved below results header) -->
-                    <div class="mb-4" x-data="homeSearch()" @click.outside="clearSearch()">
-                        <div class="relative group">
-                            <input type="text"
-                                   x-model="query"
-                                   @input="search()"
-                                   @keydown.arrow-down="navigateDown()"
-                                   @keydown.arrow-up="navigateUp()"
-                                   @keydown.enter="selectResult()"
-                                   @keydown.escape="clearSearch()"
-                                   placeholder="{{ __('filters.search') }} books, authors, {{ __('filters.isbn') }}..."
-                                   class="w-full px-5 py-3 pl-12 pr-14 text-gray-700 bg-white border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 focus:shadow-lg transition-all duration-300 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:focus:border-blue-400 dark:focus:ring-blue-400/20">
-
-                            <div class="absolute inset-y-0 left-0 flex items-center pl-5">
-                                <svg class="w-5 h-5 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                                </svg>
-                            </div>
-
-                            <div x-show="query.length > 0" class="absolute inset-y-0 right-0 flex items-center pr-5">
-                                <button @click="clearSearch()" class="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-200 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                    </svg>
-                                </button>
-                            </div>
-
-                            <div x-show="query.length === 0" class="absolute inset-y-0 right-0 flex items-center pr-5">
-                                <kbd class="px-2 py-1 text-xs font-medium text-gray-500 bg-gray-100 dark:bg-gray-700 dark:text-gray-400 rounded-md border border-gray-200 dark:border-gray-600 shadow-sm">⌘K</kbd>
-                            </div>
-
-                            <div x-show="isSearching" class="absolute inset-y-0 right-0 flex items-center pr-5">
-                                <svg class="w-4 h-4 text-blue-500 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                                </svg>
-                            </div>
-
-                            <div x-show="results.length > 0"
-                                 x-transition:enter="transition ease-out duration-300"
-                                 x-transition:enter-start="opacity-0 transform scale-95 translate-y-2"
-                                 x-transition:enter-end="opacity-100 transform scale-100 translate-y-0"
-                                 x-transition:leave="transition ease-in duration-200"
-                                 x-transition:leave-start="opacity-100 transform scale-100 translate-y-0"
-                                 x-transition:leave-end="opacity-0 transform scale-95 translate-y-2"
-                                 class="absolute z-50 w-full mt-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl max-h-96 overflow-y-auto backdrop-blur-sm">
-                                <template x-for="(book, index) in results" :key="book.id">
-                                    <div @click="selectBook(book)"
-                                         :class="{ 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800': selectedIndex === index, 'hover:bg-gray-50 dark:hover:bg-gray-700': selectedIndex !== index }"
-                                         class="flex items-start sm:items-center p-4 border-b border-gray-100 dark:border-gray-700 cursor-pointer transition-all duration-200 last:border-b-0 hover:shadow-sm group">
-                                        <div class="flex-shrink-0 w-12 h-16 bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900 dark:to-indigo-900 rounded-lg flex items-center justify-center mr-4 shadow-sm group-hover:shadow-md transition-shadow duration-200">
-                                            <template x-if="book.cover_image">
-                                                <img :src="book.cover_image" :alt="book.title" class="w-full h-full object-cover rounded-lg">
-                                            </template>
-                                            <template x-if="!book.cover_image">
-                                                <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                                                </svg>
-                                            </template>
-                                        </div>
-                                        <div class="flex-1 min-w-0">
-                                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                                                <h3 class="text-sm font-semibold text-gray-900 dark:text-white truncate" x-text="book.title"></h3>
-                                                <div class="flex items-center space-x-2 mt-1 sm:mt-0">
-                                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200" x-text="book.status"></span>
-                                                    <span class="flex items-center text-xs text-gray-500 dark:text-gray-400" x-show="book.publication_year">
-                                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                                        </svg>
-                                                        <span x-text="book.publication_year"></span>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <div class="mt-1 flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-2">
-                                                <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 truncate" x-text="book.primary_author?.name || 'Unknown {{ __('filters.author') }}'"></p>
-                                                <span class="hidden sm:inline text-gray-400">•</span>
-                                                <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 truncate" x-text="book.publisher?.name || 'Unknown {{ __('filters.publisher') }}'"></p>
-                                            </div>
-                                            <div class="mt-1 flex flex-wrap items-center gap-1 sm:gap-2">
-                                                <template x-if="book.category">
-                                                    <span class="inline-flex items-center px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200" x-text="book.category.name"></span>
-                                                </template>
-                                                <template x-for="tag in book.tags" :key="tag.id">
-                                                    <span class="inline-flex items-center px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200" x-text="tag.name"></span>
-                                                </template>
-                                            </div>
-                                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400 line-clamp-2 hidden sm:block" x-text="book.description || 'No description available'"></p>
-                                        </div>
-                                        <div class="flex-shrink-0 ml-2">
-                                            <svg class="w-5 h-5 text-gray-400 group-hover:text-blue-500 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                            </svg>
-                                        </div>
-                                    </div>
-                                </template>
-                            </div>
-
-                            <div x-show="query && results.length === 0 && !isSearching"
-                                 x-transition:enter="transition ease-out duration-300"
-                                 x-transition:enter-start="opacity-0 transform scale-95 translate-y-2"
-                                 x-transition:enter-end="opacity-100 transform scale-100 translate-y-0"
-                                 x-transition:leave="transition ease-in duration-200"
-                                 x-transition:leave-start="opacity-100 transform scale-100 translate-y-0"
-                                 x-transition:leave-end="opacity-0 transform scale-95 translate-y-2"
-                                 class="absolute z-50 w-full mt-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl p-6 text-center backdrop-blur-sm">
-                                <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-1.009-5.824-2.709"></path>
-                                    </svg>
-                                </div>
-                                <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-2">No books found</h3>
-                                <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Try searching with different keywords or check your spelling.</p>
-                                <div class="text-xs text-gray-400 dark:text-gray-500">
-                                    <span class="font-medium">Suggestions:</span>
-                                    <ul class="mt-1 space-y-1">
-                                        <li>• Try author names</li>
-                                        <li>• Use {{ __('filters.isbn') }} numbers</li>
-                                        <li>• {{ __('filters.search') }} by category</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
                     <!-- Enhanced Books Grid -->
                     @if($books->count() > 0)
@@ -551,10 +483,30 @@
                                         <!-- Hover Overlay -->
                                         <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 flex items-center justify-center">
                                             <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                                <a href="{{ route('books.show', $book) }}" 
-                                                   class="bg-white dark:bg-gray-800 text-gray-800 dark:text-white px-3 py-2 rounded-lg shadow-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200">
-                                                    View Details
-                                                </a>
+                                                @if(auth()->check() && auth()->user()->hasRole(['Admin', 'Librarian']))
+                                                    <div class="flex space-x-2">
+                                                        <a href="{{ route('admin.books.edit', $book) }}" 
+                                                           class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg shadow-lg text-sm font-medium transition-colors duration-200">
+                                                            <svg class="w-4 h-4 mr-1 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                                            </svg>
+                                                            Edit
+                                                        </a>
+                                                        <a href="{{ route('books.show', $book) }}" 
+                                                           class="bg-white dark:bg-gray-800 text-gray-800 dark:text-white px-3 py-2 rounded-lg shadow-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200">
+                                                            <svg class="w-4 h-4 mr-1 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                                            </svg>
+                                                            View
+                                                        </a>
+                                                    </div>
+                                                @else
+                                                    <a href="{{ route('books.show', $book) }}" 
+                                                       class="bg-white dark:bg-gray-800 text-gray-800 dark:text-white px-3 py-2 rounded-lg shadow-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200">
+                                                        View Details
+                                                    </a>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -571,15 +523,15 @@
                                         </h3>
                                         
                                         <!-- {{ __('filters.author') }} -->
-                                        @if($book->primary_author)
+                                        @if($book->primaryAuthor)
                                             <p class="text-sm text-gray-600 dark:text-gray-400 mb-1 flex items-center">
                                                 <svg class="w-3 h-3 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                                 </svg>
-                                                @if($book->language && $book->language->code === 'bn' && $book->primary_author->name_bn)
-                                                    {{ $book->primary_author->name_bn }}
+                                                @if($book->language && $book->language->code === 'bn' && $book->primaryAuthor->name_bn)
+                                                    {{ $book->primaryAuthor->name_bn }}
                                                 @else
-                                                    {{ $book->primary_author->name_en }}
+                                                    {{ $book->primaryAuthor->name_en }}
                                                 @endif
                                             </p>
                                         @endif
@@ -628,9 +580,21 @@
                                                 </div>
                                             </div>
                                             
-                                            <!-- Borrow Request Button -->
+                                            <!-- Action Buttons -->
                                             @auth
-                                                @if(Auth::user()->status === 'approved')
+                                                @if(auth()->user()->hasRole(['Admin', 'Librarian']))
+                                                    <!-- Admin Edit Button -->
+                                                    <div class="mt-2 pt-2 border-t border-gray-100 dark:border-gray-700">
+                                                        <a href="{{ route('admin.books.edit', $book) }}" 
+                                                           class="w-full inline-flex items-center justify-center px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-medium rounded-lg shadow-sm hover:shadow-md transform hover:scale-105 transition-all duration-200">
+                                                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                                            </svg>
+                                                            <span class="hidden sm:inline">Edit Book</span>
+                                                            <span class="sm:hidden">Edit</span>
+                                                        </a>
+                                                    </div>
+                                                @elseif(Auth::user()->status === 'approved')
                                                     @php
                                                         $existingLoan = \App\Models\Models\Loan::where('user_id', auth()->id())
                                                             ->where('book_id', $book->id)
@@ -721,7 +685,7 @@
                                     </svg>
                                     Clear {{ __('filters.filters') }}
                                 </a>
-                                <button onclick="document.querySelector('input[x-model=\"query\"]').focus()" class="inline-flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg transition-colors duration-200">
+                                <button onclick="document.querySelector('nav input[type=\"text\"]').focus()" class="inline-flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg transition-colors duration-200">
                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                     </svg>
@@ -779,73 +743,5 @@
             const slider = Alpine.$data(document.querySelector('[x-data="homeRecommendationSlider()"]'));
             if (slider) slider.updateVisibleSlides();
         });
-    </script>
-    <script>
-        function homeSearch() {
-            return {
-                query: '',
-                results: [],
-                selectedIndex: -1,
-                searchTimeout: null,
-                isSearching: false,
-
-                search() {
-                    if (this.query.length < 2) {
-                        this.results = [];
-                        this.selectedIndex = -1;
-                        return;
-                    }
-
-                    // Clear previous timeout
-                    if (this.searchTimeout) {
-                        clearTimeout(this.searchTimeout);
-                    }
-
-                    this.isSearching = true;
-
-                    // Debounce search
-                    this.searchTimeout = setTimeout(async () => {
-                        try {
-                            const response = await fetch(`/api/search/books?q=${encodeURIComponent(this.query)}`);
-                            const data = await response.json();
-                            this.results = data.books || [];
-                            this.selectedIndex = -1;
-                        } catch (error) {
-                            console.error('Search error:', error);
-                            this.results = [];
-                        } finally {
-                            this.isSearching = false;
-                        }
-                    }, 300);
-                },
-
-                navigateDown() {
-                    if (this.results.length === 0) return;
-                    this.selectedIndex = Math.min(this.selectedIndex + 1, this.results.length - 1);
-                },
-
-                navigateUp() {
-                    if (this.results.length === 0) return;
-                    this.selectedIndex = Math.max(this.selectedIndex - 1, -1);
-                },
-
-                selectResult() {
-                    if (this.selectedIndex >= 0 && this.results[this.selectedIndex]) {
-                        this.selectBook(this.results[this.selectedIndex]);
-                    }
-                },
-
-                selectBook(book) {
-                    // Navigate to book details
-                    window.location.href = `/books/${book.id}`;
-                },
-
-                clearSearch() {
-                    this.query = '';
-                    this.results = [];
-                    this.selectedIndex = -1;
-                }
-            }
-        }
     </script>
 </x-app-layout>
