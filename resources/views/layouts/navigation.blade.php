@@ -1,4 +1,15 @@
-<nav x-data="{ open: false, booksOpen: false, contributorsOpen: false, membersOpen: false }" class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
+<nav x-data="{ 
+        open: false, 
+        booksOpen: false, 
+        contributorsOpen: false, 
+        membersOpen: false,
+        scrolled: false,
+        init() {
+            window.addEventListener('scroll', () => {
+                this.scrolled = window.pageYOffset > 100;
+            });
+        }
+    }" class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Main Navigation Row -->
         <div class="flex justify-between {{ auth()->check() && auth()->user()->hasRole(['Admin', 'Librarian']) ? 'h-16 py-2' : 'h-16' }}">
@@ -561,6 +572,211 @@
             </div>
         </div>
         @endif
+    </div>
+
+    <!-- Sticky Navigation on Scroll -->
+    <div x-show="scrolled" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 -translate-y-full"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-300"
+         x-transition:leave-start="opacity-100 translate-y-0"
+         x-transition:leave-end="opacity-0 -translate-y-full"
+         class="fixed top-0 left-0 right-0 z-40 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-lg"
+         style="display: none;">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            @if(auth()->check() && auth()->user()->hasRole(['Admin', 'Librarian']))
+                <!-- Admin Sticky Nav: Logo + Search Only -->
+                <div class="flex items-center justify-between h-16 py-2">
+                    <!-- Logo -->
+                    <a href="{{ route('home') }}" class="flex items-center space-x-2">
+                        <div class="w-8 h-8 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-lg flex items-center justify-center shadow-md">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            </svg>
+                        </div>
+                        <span class="font-bold text-sm text-gray-800 dark:text-white hidden sm:inline">{{ __('ui.app_name_line1') }}</span>
+                    </a>
+
+                    <!-- Search Bar -->
+                    <div class="flex-1 max-w-xl mx-4" x-data="headerSearch()" @click.outside="clearSearch()">
+                        <div class="relative group">
+                            <input type="text"
+                                   x-model="query"
+                                   @input="search()"
+                                   @keydown.arrow-down="navigateDown()"
+                                   @keydown.arrow-up="navigateUp()"
+                                   @keydown.enter="selectResult()"
+                                   @keydown.escape="clearSearch()"
+                                   placeholder="{{ __('filters.search') }} books, authors, {{ __('filters.isbn') }}..."
+                                   class="w-full px-4 py-2 pl-10 pr-10 text-sm text-gray-700 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:focus:border-blue-400 dark:focus:ring-blue-400/20 transition-all duration-200">
+
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3">
+                                <svg class="w-4 h-4 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </div>
+
+                            <div x-show="query.length > 0" class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                <button @click="clearSearch()" class="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-200 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <div x-show="isSearching" class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                <svg class="w-4 h-4 text-blue-500 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                            </div>
+
+                            <!-- Search Results Dropdown -->
+                            <div x-show="results.length > 0"
+                                 x-transition:enter="transition ease-out duration-200"
+                                 x-transition:enter-start="opacity-0 transform scale-95 translate-y-2"
+                                 x-transition:enter-end="opacity-100 transform scale-100 translate-y-0"
+                                 x-transition:leave="transition ease-in duration-150"
+                                 x-transition:leave-start="opacity-100 transform scale-100 translate-y-0"
+                                 x-transition:leave-end="opacity-0 transform scale-95 translate-y-2"
+                                 class="absolute z-50 w-full mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-80 overflow-y-auto backdrop-blur-sm">
+                                <template x-for="(book, index) in results" :key="book.id">
+                                    <div class="flex items-center px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150 border-b border-gray-100 dark:border-gray-700 last:border-b-0"
+                                         :class="{ 'bg-blue-50 dark:bg-blue-900/20': selectedIndex === index }">
+                                        <div class="flex-shrink-0 w-10 h-14 bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center mr-3">
+                                            <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <h4 class="text-sm font-medium text-gray-900 dark:text-white truncate" x-text="book.title"></h4>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400 truncate" x-text="book.primary_author?.name || 'Unknown Author'"></p>
+                                        </div>
+                                        <div class="flex-shrink-0 ml-2 flex space-x-1">
+                                            <a :href="`/admin/books/${book.id}/edit`" 
+                                               class="inline-flex items-center px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-md transition-colors duration-200"
+                                               @click.stop>
+                                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                                </svg>
+                                                Edit
+                                            </a>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @else
+                <!-- General User Sticky Nav: Full Navigation -->
+                <div class="flex items-center justify-between h-16">
+                    <!-- Logo -->
+                    <a href="{{ route('home') }}" class="flex items-center space-x-2">
+                        <div class="w-8 h-8 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-lg flex items-center justify-center shadow-md">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            </svg>
+                        </div>
+                        <span class="font-bold text-sm text-gray-800 dark:text-white hidden sm:inline">{{ __('ui.app_name_line1') }}</span>
+                    </a>
+
+                    <!-- Search Bar -->
+                    <div class="hidden md:flex items-center flex-1 max-w-md mx-4">
+                        <div class="w-full" x-data="headerSearch()" @click.outside="clearSearch()">
+                            <div class="relative group">
+                                <input type="text"
+                                       x-model="query"
+                                       @input="search()"
+                                       @keydown.arrow-down="navigateDown()"
+                                       @keydown.arrow-up="navigateUp()"
+                                       @keydown.enter="selectResult()"
+                                       @keydown.escape="clearSearch()"
+                                       placeholder="{{ __('filters.search') }} books..."
+                                       class="w-full px-4 py-2 pl-10 pr-10 text-sm text-gray-700 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:focus:border-blue-400 dark:focus:ring-blue-400/20 transition-all duration-200">
+
+                                <div class="absolute inset-y-0 left-0 flex items-center pl-3">
+                                    <svg class="w-4 h-4 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                    </svg>
+                                </div>
+
+                                <div x-show="query.length > 0" class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                    <button @click="clearSearch()" class="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-200 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <div x-show="isSearching" class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                    <svg class="w-4 h-4 text-blue-500 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                    </svg>
+                                </div>
+
+                                <!-- Search Results Dropdown -->
+                                <div x-show="results.length > 0"
+                                     x-transition:enter="transition ease-out duration-200"
+                                     x-transition:enter-start="opacity-0 transform scale-95 translate-y-2"
+                                     x-transition:enter-end="opacity-100 transform scale-100 translate-y-0"
+                                     x-transition:leave="transition ease-in duration-150"
+                                     x-transition:leave-start="opacity-100 transform scale-100 translate-y-0"
+                                     x-transition:leave-end="opacity-0 transform scale-95 translate-y-2"
+                                     class="absolute z-50 w-full mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-80 overflow-y-auto backdrop-blur-sm">
+                                    <template x-for="(book, index) in results" :key="book.id">
+                                        <div @click="selectBook(book)"
+                                             :class="{ 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800': selectedIndex === index, 'hover:bg-gray-50 dark:hover:bg-gray-700': selectedIndex !== index }"
+                                             class="flex items-start p-3 border-b border-gray-100 dark:border-gray-700 cursor-pointer transition-all duration-200 last:border-b-0">
+                                            <div class="flex-shrink-0 w-10 h-12 bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900 dark:to-indigo-900 rounded flex items-center justify-center mr-3">
+                                                <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                                </svg>
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <h3 class="text-sm font-semibold text-gray-900 dark:text-white truncate" x-text="book.title"></h3>
+                                                <p class="text-xs text-gray-600 dark:text-gray-300 truncate mt-1" x-text="book.primary_author?.name || 'Unknown Author'"></p>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Links -->
+                    <div class="hidden md:flex items-center space-x-1">
+                        <a href="{{ route('home') }}" class="flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 {{ request()->routeIs('home') ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-700' }}">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            </svg>
+                            {{ __('navigation.browse_books') }}
+                        </a>
+                        @auth
+                            @unlessrole('Admin|Librarian')
+                            <a href="{{ route('dashboard') }}" class="flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 {{ request()->routeIs('dashboard') ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-700' }}">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v2H8V5z"></path>
+                                </svg>
+                                {{ __('navigation.my_dashboard') }}
+                            </a>
+                            @endunlessrole
+                        @endauth
+                    </div>
+
+                    <!-- Mobile menu button -->
+                    <button @click="open = !open" type="button" class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <svg x-show="!open" class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                        <svg x-show="open" class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            @endif
+        </div>
     </div>
 
     <!-- Mobile Navigation Menu -->
