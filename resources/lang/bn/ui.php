@@ -46,6 +46,9 @@ return [
     'remember_me' => 'আমাকে মনে রাখুন',
     'forgot_password' => 'পাসওয়ার্ড ভুলে গেছেন?',
     'sign_in' => 'সাইন ইন',
+    'welcome_back' => 'স্বাগতম',
+    'sign_in_to_library' => 'আপনার লাইব্রেরি অ্যাকাউন্টে সাইন ইন করুন',
+    'browse_as_guest' => 'অতিথি হিসেবে ব্রাউজ করুন',
     'dont_have_account' => 'অ্যাকাউন্ট নেই?',
     'register_here' => 'এখানে নিবন্ধন করুন',
     
@@ -536,4 +539,10 @@ return [
     // Additional Member & Profile Page Terms
     'member' => 'সদস্য',
     'request_return' => 'ফেরতের অনুরোধ',
+
+    'cancelled' => 'বাতিল',
+    
+    // Book Management Specific Terms
+    'total_copies' => 'মোট কপি',
+    'available_copies' => 'উপলব্ধ কপি',
 ];

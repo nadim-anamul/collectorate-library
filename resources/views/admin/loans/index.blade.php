@@ -367,7 +367,7 @@
                                                 <div>
                                                     <div class="font-semibold text-gray-900 dark:text-white mb-1">
                                                         <a href="{{ route('admin.loans.show', $loan) }}" class="hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200">
-                                                            {{ optional($loan->user)->name ?? 'Unknown {{ __('ui.user') }}' }}
+                                                            {{ optional($loan->user)->name ?? __('ui.unknown_user') }}
                                                         </a>
                                                     </div>
                                                     <div class="text-sm text-gray-500 dark:text-gray-400">{{ optional($loan->user)->email ?? 'No email' }}</div>
