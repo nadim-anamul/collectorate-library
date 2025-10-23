@@ -1,8 +1,8 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-white leading-tight">Categories</h2>
-            <a href="{{ route('admin.categories.create') }}" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition duration-200 text-center">Add Category</a>
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-white leading-tight">{{ __('ui.categories') }}</h2>
+            <a href="{{ route('admin.categories.create') }}" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition duration-200 text-center">{{ __('ui.add_category') }}</a>
         </div>
     </x-slot>
     <div class="py-6">
@@ -13,10 +13,10 @@
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                             <thead class="bg-gray-50 dark:bg-gray-700">
                                 <tr>
-                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Name (EN)</th>
-                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden sm:table-cell">Name (BN)</th>
-                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden md:table-cell">Slug</th>
-                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ __('ui.name_en') }}</th>
+                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden sm:table-cell">{{ __('ui.name_bn') }}</th>
+                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden md:table-cell">{{ __('ui.slug') }}</th>
+                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ __('ui.actions') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -39,14 +39,14 @@
                                             <div class="flex flex-col sm:flex-row gap-2">
                                                 <a href="{{ route('admin.categories.edit',$category) }}" 
                                                    class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 text-xs sm:text-sm">
-                                                    Edit
+                                                    {{ __('ui.edit') }}
                                                 </a>
                                                 <form action="{{ route('admin.categories.destroy',$category) }}" method="POST" class="inline">
                                                     @csrf 
                                                     @method('DELETE')
                                                     <button class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 text-xs sm:text-sm" 
-                                                            onclick="return confirm('Delete?')">
-                                                        Delete
+                                                            onclick="return confirm('{{ __('ui.delete_category_confirm') }}')">
+                                                        {{ __('ui.delete') }}
                                                     </button>
                                                 </form>
                                             </div>

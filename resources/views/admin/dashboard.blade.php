@@ -1,11 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-white leading-tight">{{ __('filters.admin') }} Dashboard</h2>
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-white leading-tight">{{ __('filters.admin') }} {{ __('ui.admin_dashboard') }}</h2>
             <div class="flex items-center gap-2">
-                <a href="{{ route('admin.users.index') }}" class="px-3 py-2 text-sm rounded border border-gray-200 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-700">Users</a>
-                <a href="{{ route('admin.loans.index') }}" class="px-3 py-2 text-sm rounded border border-gray-200 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-700">Loans</a>
-                <a href="{{ route('admin.reports.index') }}" class="px-3 py-2 text-sm rounded border border-gray-200 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-700">Reports</a>
+                <a href="{{ route('admin.users.index') }}" class="px-3 py-2 text-sm rounded border border-gray-200 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-700">{{ __('ui.users') }}</a>
+                <a href="{{ route('admin.loans.index') }}" class="px-3 py-2 text-sm rounded border border-gray-200 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-700">{{ __('navigation.loans') }}</a>
+                <a href="{{ route('admin.reports.index') }}" class="px-3 py-2 text-sm rounded border border-gray-200 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-700">{{ __('ui.reports') }}</a>
             </div>
         </div>
     </x-slot>
@@ -20,7 +20,7 @@
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                         </div>
                         <div class="ml-3">
-                            <div class="text-xs opacity-80">Total Books</div>
+                            <div class="text-xs opacity-80">{{ __('ui.total_books') }}</div>
                             <div class="text-2xl font-bold">{{ $stats['books'] ?? 0 }}</div>
                         </div>
                     </div>
@@ -31,7 +31,7 @@
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         </div>
                         <div class="ml-3">
-                            <div class="text-xs opacity-80">Available</div>
+                            <div class="text-xs opacity-80">{{ __('ui.available') }}</div>
                             <div class="text-2xl font-bold">{{ $stats['available_books'] ?? 0 }}</div>
                         </div>
                     </div>
@@ -42,7 +42,7 @@
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         </div>
                         <div class="ml-3">
-                            <div class="text-xs opacity-80">{{ __('filters.pending') }} Loans</div>
+                            <div class="text-xs opacity-80">{{ __('ui.pending_loans') }}</div>
                             <div class="text-2xl font-bold">{{ $stats['pending_loans'] ?? 0 }}</div>
                         </div>
                     </div>
@@ -53,7 +53,7 @@
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                         </div>
                         <div class="ml-3">
-                            <div class="text-xs opacity-80">Users</div>
+                            <div class="text-xs opacity-80">{{ __('ui.users') }}</div>
                             <div class="text-2xl font-bold">{{ $stats['users'] ?? 0 }}</div>
                         </div>
                     </div>
@@ -64,7 +64,7 @@
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2 2z"/></svg>
                         </div>
                         <div class="ml-3">
-                            <div class="text-xs opacity-80">{{ __('filters.active') }} Loans</div>
+                            <div class="text-xs opacity-80">{{ __('ui.active_loans') }}</div>
                             <div class="text-2xl font-bold">{{ $stats['loans_active'] ?? 0 }}</div>
                         </div>
                     </div>
@@ -83,8 +83,8 @@
                                     </svg>
                                 </div>
                                 <div>
-                                    <h3 class="text-lg font-bold text-white">{{ __('filters.filters') }} & {{ __('filters.search') }}</h3>
-                                    <p class="text-indigo-100 text-sm">Find specific books</p>
+                                    <h3 class="text-lg font-bold text-white">{{ __('ui.filters_and_search') }}</h3>
+                                    <p class="text-indigo-100 text-sm">{{ __('ui.find_specific_books') }}</p>
                                 </div>
                             </div>
                         </div>
@@ -96,10 +96,10 @@
                                     <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                     </svg>
-                                    {{ __('filters.search') }} Books
+                                    {{ __('ui.search_books') }}
                                 </label>
                                 <div class="relative">
-                                    <input type="text" name="search" value="{{ $filters['search'] ?? '' }}" placeholder="Title/{{ __('filters.author') }}/{{ __('filters.isbn') }}" class="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all duration-200" />
+                                    <input type="text" name="search" value="{{ $filters['search'] ?? '' }}" placeholder="{{ __('ui.title_author_isbn') }}" class="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all duration-200" />
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                         <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -114,7 +114,7 @@
                                     <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"></path>
                                     </svg>
-                                    {{ __('filters.filter_options') }}
+                                    {{ __('ui.filter_options') }}
                                 </label>
                                 
                                 <div class="grid grid-cols-1 gap-4">
@@ -157,7 +157,7 @@
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                         </svg>
-                                        <span>Apply {{ __('filters.filters') }}</span>
+                                        <span>{{ __('ui.apply_filters') }}</span>
                                     </div>
                                 </button>
                                 <a href="{{ route('admin.home') }}" class="w-full px-6 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 text-center">
@@ -173,7 +173,7 @@
                                     <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
                                     </svg>
-                                    {{ __('filters.quick_links') }}
+                                    {{ __('ui.quick_links') }}
                                 </div>
                                 <div class="space-y-2">
                                     <a href="{{ route('admin.users.index') }}" class="flex items-center px-4 py-3 rounded-xl bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-600 hover:from-gray-100 hover:to-gray-200 dark:hover:from-gray-600 dark:hover:to-gray-500 transition-all duration-200 group">
@@ -182,7 +182,7 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                             </svg>
                                         </div>
-                                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('filters.manage_users') }}</span>
+                                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('ui.manage_users') }}</span>
                                     </a>
                                     <a href="{{ route('admin.loans.index') }}" class="flex items-center px-4 py-3 rounded-xl bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-600 hover:from-gray-100 hover:to-gray-200 dark:hover:from-gray-600 dark:hover:to-gray-500 transition-all duration-200 group">
                                         <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-violet-500 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-200">
@@ -190,7 +190,7 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                                             </svg>
                                         </div>
-                                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('filters.manage_loans') }}</span>
+                                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('ui.manage_loans') }}</span>
                                     </a>
                                     <a href="{{ route('admin.reports.index') }}" class="flex items-center px-4 py-3 rounded-xl bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-600 hover:from-gray-100 hover:to-gray-200 dark:hover:from-gray-600 dark:hover:to-gray-500 transition-all duration-200 group">
                                         <div class="w-8 h-8 bg-gradient-to-br from-emerald-500 to-green-500 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-200">
@@ -198,7 +198,7 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                                             </svg>
                                         </div>
-                                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Reports</span>
+                                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('ui.reports') }}</span>
                                     </a>
                                 </div>
                             </div>
@@ -210,8 +210,8 @@
                 <div class="lg:w-3/4 space-y-6">
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden">
                         <div class="p-4 border-b dark:border-gray-700 flex items-center justify-between">
-                            <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Books</h3>
-                            <a href="{{ route('admin.books.create') }}" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">Add Book</a>
+                            <h3 class="text-lg font-semibold text-gray-800 dark:text-white">{{ __('ui.books') }}</h3>
+                            <a href="{{ route('admin.books.create') }}" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">{{ __('ui.add_book') }}</a>
                         </div>
                         <div class="p-4">
                             @if(isset($books) && $books->count())
@@ -225,18 +225,18 @@
                                                     <div class="w-full h-full flex items-center justify-center">
                                                         <div class="text-center">
                                                             <svg class="w-12 h-12 mx-auto text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                                                            <p class="text-xs font-medium text-gray-400 dark:text-gray-500">No Cover</p>
+                                                            <p class="text-xs font-medium text-gray-400 dark:text-gray-500">{{ __('ui.no_cover') }}</p>
                                                         </div>
                                                     </div>
                                                 @endif
                                                 <div class="absolute top-2 right-2">
                                                     <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $book->available_copies > 0 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' }}">
-                                                        {{ $book->available_copies > 0 ? 'Available' : 'Unavailable' }}
+                                                        {{ $book->available_copies > 0 ? __('ui.available') : __('ui.unavailable') }}
                                                     </span>
                                                 </div>
                                                 <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 flex items-center justify-center">
                                                     <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                                        <a href="{{ route('admin.books.edit', $book) }}" class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-200">Edit</a>
+                                                        <a href="{{ route('admin.books.edit', $book) }}" class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-200">{{ __('ui.edit') }}</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -256,24 +256,24 @@
                                                             {{ $book->primaryAuthor->name_en }}
                                                         @endif
                                                     @else
-                                                        {{ $book->primaryAuthor ? ($book->primaryAuthor->name_en ?? $book->primaryAuthor->name_bn) : 'Unknown Author' }}
+                                                        {{ $book->primaryAuthor ? ($book->primaryAuthor->name_en ?? $book->primaryAuthor->name_bn) : __('ui.unknown_author') }}
                                                     @endif
                                                 </p>
-                                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ $book->publication_year }} • {{ $book->available_copies }}/{{ $book->total_copies }} copies</p>
+                                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ $book->publication_year }} • {{ $book->available_copies }}/{{ $book->total_copies }} {{ __('ui.copies') }}</p>
                                             </div>
                                         </div>
                                     @endforeach
                                 </div>
                                 <div class="mt-4">{{ $books->links() }}</div>
                             @else
-                                <div class="text-gray-600 dark:text-gray-400">No books found.</div>
+                                <div class="text-gray-600 dark:text-gray-400">{{ __('ui.no_books_found') }}</div>
                             @endif
                         </div>
                     </div>
 
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden">
                         <div class="p-4 border-b dark:border-gray-700">
-                            <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Recent Activity</h3>
+                            <h3 class="text-lg font-semibold text-gray-800 dark:text-white">{{ __('ui.recent_activity') }}</h3>
                         </div>
                         <div class="p-4 divide-y dark:divide-gray-700">
                             @forelse(($activities ?? []) as $activity)
@@ -285,7 +285,7 @@
                                     <span class="text-gray-400">{{ $activity->created_at->diffForHumans() }}</span>
                                 </div>
                             @empty
-                                <div class="py-6 text-gray-600 dark:text-gray-400">No recent activity.</div>
+                                <div class="py-6 text-gray-600 dark:text-gray-400">{{ __('ui.no_recent_activity') }}</div>
                             @endforelse
                         </div>
                     </div>

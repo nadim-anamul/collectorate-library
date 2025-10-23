@@ -1,8 +1,8 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-white leading-tight">Books</h2>
-            <a href="{{ route('admin.books.create') }}" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition duration-200 text-center">Add Book</a>
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-white leading-tight">{{ __('ui.books') }}</h2>
+            <a href="{{ route('admin.books.create') }}" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition duration-200 text-center">{{ __('ui.add_book') }}</a>
         </div>
     </x-slot>
 
@@ -97,11 +97,11 @@
                             <svg class="w-4 h-4 inline mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                             </svg>
-                            {{ __('filters.search') }} Books
+                            {{ __('ui.search_books') }}
                         </label>
                         <div class="relative">
                             <input type="text" name="q" id="q" value="{{ request('q') }}" 
-                                   placeholder="{{ __('filters.search') }} title/author (EN/BN)" 
+                                   placeholder="{{ __('ui.title_author_isbn') }}" 
                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white" 
                                    autocomplete="off" />
                             <div id="suggestions" class="absolute z-10 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg mt-1 hidden shadow-lg max-h-60 overflow-y-auto"></div>
@@ -116,7 +116,7 @@
                                     <svg class="w-4 h-4 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
                                     </svg>
-                                    {{ __('filters.active') }} {{ __('filters.filters') }}
+                                    {{ __('ui.active_filters') }}
                                 </h3>
                                 <a href="{{ route('admin.books.index') }}" class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
                                     {{ __('filters.clear_all') }}
@@ -125,7 +125,7 @@
                             <div class="space-y-2">
                                 @if(request('q'))
                                     <div class="flex items-center justify-between bg-blue-50 dark:bg-blue-900/20 rounded-md px-3 py-2">
-                                        <span class="text-sm text-blue-800 dark:text-blue-200">{{ __('filters.search') }}: "{{ request('q') }}"</span>
+                                        <span class="text-sm text-blue-800 dark:text-blue-200">{{ __('ui.search') }}: "{{ request('q') }}"</span>
                                         <a href="{{ route('admin.books.index', request()->except('q')) }}" class="text-blue-600 hover:text-blue-800">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -139,7 +139,7 @@
                                     @endphp
                                     @if($selectedCategory)
                                         <div class="flex items-center justify-between bg-green-50 dark:bg-green-900/20 rounded-md px-3 py-2">
-                                            <span class="text-sm text-green-800 dark:text-green-200">{{ __('filters.category') }}: {{ $selectedCategory->name_en }}</span>
+                                            <span class="text-sm text-green-800 dark:text-green-200">{{ __('ui.category') }}: {{ $selectedCategory->name_en }}</span>
                                             <a href="{{ route('admin.books.index', request()->except('category')) }}" class="text-green-600 hover:text-green-800">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -154,7 +154,7 @@
                                     @endphp
                                     @if($selectedLanguage)
                                         <div class="flex items-center justify-between bg-purple-50 dark:bg-purple-900/20 rounded-md px-3 py-2">
-                                            <span class="text-sm text-purple-800 dark:text-purple-200">{{ __('filters.language') }}: {{ $selectedLanguage->name }}</span>
+                                            <span class="text-sm text-purple-800 dark:text-purple-200">{{ __('ui.language') }}: {{ $selectedLanguage->name }}</span>
                                             <a href="{{ route('admin.books.index', request()->except('language')) }}" class="text-purple-600 hover:text-purple-800">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -165,7 +165,7 @@
                                 @endif
                                 @if(request('year'))
                                     <div class="flex items-center justify-between bg-orange-50 dark:bg-orange-900/20 rounded-md px-3 py-2">
-                                        <span class="text-sm text-orange-800 dark:text-orange-200">Year: {{ request('year') }}</span>
+                                        <span class="text-sm text-orange-800 dark:text-orange-200">{{ __('ui.year') }}: {{ request('year') }}</span>
                                         <a href="{{ route('admin.books.index', request()->except('year')) }}" class="text-orange-600 hover:text-orange-800">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -175,7 +175,7 @@
                                 @endif
                                 @if(request('availability') && request('availability') != 'all')
                                     <div class="flex items-center justify-between bg-indigo-50 dark:bg-indigo-900/20 rounded-md px-3 py-2">
-                                        <span class="text-sm text-indigo-800 dark:text-indigo-200">{{ __('filters.availability') }}: {{ ucfirst(request('availability')) }}</span>
+                                        <span class="text-sm text-indigo-800 dark:text-indigo-200">{{ __('ui.available') }}: {{ ucfirst(request('availability')) }}</span>
                                         <a href="{{ route('admin.books.index', request()->except('availability')) }}" class="text-indigo-600 hover:text-indigo-800">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -185,7 +185,7 @@
                                 @endif
                                 @if(request('banglish'))
                                     <div class="flex items-center justify-between bg-orange-50 dark:bg-orange-900/20 rounded-md px-3 py-2">
-                                        <span class="text-sm text-orange-800 dark:text-orange-200">Banglish: "{{ request('banglish') }}"</span>
+                                        <span class="text-sm text-orange-800 dark:text-orange-200">{{ __('ui.banglish') }}: "{{ request('banglish') }}"</span>
                                         <a href="{{ route('admin.books.index', request()->except('banglish')) }}" class="text-orange-600 hover:text-orange-800">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -195,7 +195,7 @@
                                 @endif
                                 @if(request('isbn'))
                                     <div class="flex items-center justify-between bg-teal-50 dark:bg-teal-900/20 rounded-md px-3 py-2">
-                                        <span class="text-sm text-teal-800 dark:text-teal-200">{{ __('filters.isbn') }}: "{{ request('isbn') }}"</span>
+                                        <span class="text-sm text-teal-800 dark:text-teal-200">{{ __('ui.isbn') }}: "{{ request('isbn') }}"</span>
                                         <a href="{{ route('admin.books.index', request()->except('isbn')) }}" class="text-teal-600 hover:text-teal-800">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -205,7 +205,7 @@
                                 @endif
                                 @if(request('sort') && request('sort') != 'latest')
                                     <div class="flex items-center justify-between bg-pink-50 dark:bg-pink-900/20 rounded-md px-3 py-2">
-                                        <span class="text-sm text-pink-800 dark:text-pink-200">Sort: {{ ucfirst(str_replace('_', ' ', request('sort'))) }}</span>
+                                        <span class="text-sm text-pink-800 dark:text-pink-200">{{ __('ui.sort_by') }}: {{ ucfirst(str_replace('_', ' ', request('sort'))) }}</span>
                                         <a href="{{ route('admin.books.index', request()->except('sort')) }}" class="text-pink-600 hover:text-pink-800">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -356,13 +356,13 @@
                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z"></path>
                                     </svg>
-                                    Apply
+                                    {{ __('ui.apply') }}
                                 </button>
                                 <a href="{{ route('admin.books.index') }}" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition duration-200 flex items-center justify-center">
                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                     </svg>
-                                    Clear
+                                    {{ __('ui.clear') }}
                                 </a>
                             </div>
                         </form>
@@ -378,11 +378,11 @@
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                             <thead class="bg-gray-50 dark:bg-gray-700">
                                 <tr>
-                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Title (EN)</th>
-                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden sm:table-cell">Title (BN)</th>
-                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden md:table-cell">{{ __('filters.category') }}</th>
-                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden lg:table-cell">{{ __('filters.isbn') }}</th>
-                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ __('ui.title_en') }}</th>
+                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden sm:table-cell">{{ __('ui.title_bn') }}</th>
+                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden md:table-cell">{{ __('ui.category') }}</th>
+                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden lg:table-cell">{{ __('ui.isbn') }}</th>
+                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ __('ui.actions') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -409,15 +409,15 @@
                                             <div class="flex flex-col sm:flex-row gap-2">
                                                 <a href="{{ route('admin.books.edit',$book) }}" 
                                                    class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 text-xs sm:text-sm">
-                                                    Edit
+                                                    {{ __('ui.edit') }}
                                                 </a>
                                                 <form action="{{ route('admin.books.destroy',$book) }}" method="POST" class="inline">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" 
                                                             class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 text-xs sm:text-sm" 
-                                                            onclick="return confirm('Delete this book?')">
-                                                        Delete
+                                                            onclick="return confirm('{{ __('ui.delete_this_book') }}')">
+                                                        {{ __('ui.delete') }}
                                                     </button>
                                                 </form>
                                             </div>

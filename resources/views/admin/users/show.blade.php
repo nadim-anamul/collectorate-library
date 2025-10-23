@@ -1,10 +1,10 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-white leading-tight">User • {{ $user->name }}</h2>
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-white leading-tight">{{ __('ui.user') }} • {{ $user->name }}</h2>
             <a href="{{ route('admin.users.index') }}" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition duration-200 flex items-center">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                Back to Users
+                {{ __('ui.back_to_users') }}
             </a>
         </div>
     </x-slot>
@@ -19,34 +19,34 @@
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div class="lg:col-span-2 bg-white dark:bg-gray-800 shadow-xl rounded-2xl overflow-hidden">
                     <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4">
-                        <h3 class="text-lg font-semibold text-white">Profile</h3>
+                        <h3 class="text-lg font-semibold text-white">{{ __('ui.profile') }}</h3>
                     </div>
                     <div class="p-6 space-y-3">
                         <div class="text-lg font-semibold text-gray-900 dark:text-white">{{ $user->name }}</div>
                         <div class="text-sm text-gray-600 dark:text-gray-300">{{ $user->email }}</div>
                         @if($user->phone)
-                            <div class="text-sm text-gray-600 dark:text-gray-300">Phone: {{ $user->phone }}</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-300">{{ __('ui.phone') }}: {{ $user->phone }}</div>
                         @endif
-                        <div class="text-sm text-gray-600 dark:text-gray-300">Status: <span class="font-semibold">{{ ucfirst($user->status) }}</span></div>
+                        <div class="text-sm text-gray-600 dark:text-gray-300">{{ __('ui.status') }}: <span class="font-semibold">{{ ucfirst($user->status) }}</span></div>
                         @if($user->roles->count())
-                            <div class="text-sm text-gray-600 dark:text-gray-300">Role: {{ $user->roles->pluck('name')->join(', ') }}</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-300">{{ __('ui.role') }}: {{ $user->roles->pluck('name')->join(', ') }}</div>
                         @endif
                     </div>
                 </div>
 
                 <div class="bg-white dark:bg-gray-800 shadow-xl rounded-2xl overflow-hidden">
                     <div class="bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-4">
-                        <h3 class="text-lg font-semibold text-white">Admin Actions</h3>
+                        <h3 class="text-lg font-semibold text-white">{{ __('ui.admin_actions') }}</h3>
                     </div>
                     <div class="p-6 space-y-4">
                         <form method="POST" action="{{ route('admin.users.revoke', $user) }}" onsubmit="return confirm('Revoke access for this user?')">
                             @csrf
-                            <button class="w-full inline-flex items-center justify-center px-4 py-3 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white rounded-xl transition duration-200">Revoke Access</button>
+                            <button class="w-full inline-flex items-center justify-center px-4 py-3 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white rounded-xl transition duration-200">{{ __('ui.revoke_access') }}</button>
                         </form>
 
                         <form method="POST" action="{{ route('admin.users.resetPassword', $user) }}" onsubmit="return confirm('Reset password for this user? A one-time password will be generated.')">
                             @csrf
-                            <button class="w-full inline-flex items-center justify-center px-4 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl transition duration-200">Reset Password</button>
+                            <button class="w-full inline-flex items-center justify-center px-4 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl transition duration-200">{{ __('ui.reset_password') }}</button>
                         </form>
                         @if($user->force_password_reset)
                             <p class="text-xs text-gray-500 dark:text-gray-400">User is flagged to change password on next login.</p>
@@ -66,7 +66,7 @@
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
-                Back to Users
+                {{ __('ui.back_to_users') }}
             </a>
         </div>
     </x-slot>

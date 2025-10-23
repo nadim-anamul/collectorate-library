@@ -8,8 +8,8 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                     </svg>
                 </div>
-                <h2 class="mt-6 text-3xl font-bold text-gray-900 dark:text-white">Join Our Library</h2>
-                <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Create your account and get access to thousands of books</p>
+                <h2 class="mt-6 text-3xl font-bold text-gray-900 dark:text-white">{{ __('ui.join_our_library') }}</h2>
+                <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">{{ __('ui.create_account_access') }}</p>
             </div>
 
             <!-- Registration Form -->
@@ -20,7 +20,7 @@
                     <!-- Name -->
                     <div>
                         <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Full Name
+                            {{ __('ui.full_name') }}
                         </label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -30,7 +30,7 @@
                             </div>
                             <input id="name" name="name" type="text" value="{{ old('name') }}" required
                                 class="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-xl shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition duration-200"
-                                placeholder="Enter your full name">
+                                placeholder="{{ __('ui.enter_full_name') }}">
                         </div>
                         @error('name')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -40,7 +40,7 @@
                     <!-- Email -->
                     <div>
                         <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Email Address
+                            {{ __('ui.email_address') }}
                         </label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -50,7 +50,7 @@
                             </div>
                             <input id="email" name="email" type="email" value="{{ old('email') }}" required
                                 class="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-xl shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition duration-200"
-                                placeholder="Enter your email address">
+                                placeholder="{{ __('ui.enter_email') }}">
                         </div>
                         @error('email')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -60,7 +60,7 @@
                     <!-- Phone -->
                     <div>
                         <label for="phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Phone Number
+                            {{ __('ui.phone_number') }}
                         </label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -70,7 +70,7 @@
                             </div>
                             <input id="phone" name="phone" type="tel" value="{{ old('phone') }}"
                                 class="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-xl shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition duration-200"
-                                placeholder="Enter your phone number">
+                                placeholder="{{ __('ui.enter_phone') }}">
                         </div>
                         @error('phone')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -80,11 +80,11 @@
                     <!-- Job Post -->
                     <div>
                         <label for="job_post" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Job Post (optional)
+                            {{ __('ui.job_post_optional') }}
                         </label>
                         <input id="job_post" name="job_post" type="text" value="{{ old('job_post') }}"
                             class="block w-full px-3 py-3 border border-gray-300 dark:border-gray-600 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition duration-200"
-                            placeholder="e.g., Assistant Librarian, Lecturer, Student">
+                            placeholder="{{ __('ui.job_post_placeholder') }}">
                         @error('job_post')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                         @enderror
@@ -93,11 +93,11 @@
                     <!-- Address -->
                     <div>
                         <label for="address" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Address
+                            {{ __('ui.address') }}
                         </label>
                         <textarea id="address" name="address" rows="3"
                             class="block w-full px-3 py-3 border border-gray-300 dark:border-gray-600 rounded-xl shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition duration-200"
-                            placeholder="Enter your complete address">{{ old('address') }}</textarea>
+                            placeholder="{{ __('ui.enter_address') }}">{{ old('address') }}</textarea>
                         @error('address')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                         @enderror
@@ -106,7 +106,7 @@
                     <!-- Password -->
                     <div>
                         <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Password
+                            {{ __('ui.password') }}
                         </label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -116,7 +116,7 @@
                             </div>
                             <input id="password" name="password" type="password" required
                                 class="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-xl shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition duration-200"
-                                placeholder="Create a strong password">
+                                placeholder="{{ __('ui.create_password') }}">
                         </div>
                         @error('password')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -126,7 +126,7 @@
                     <!-- Confirm Password -->
                     <div>
                         <label for="password_confirmation" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Confirm Password
+                            {{ __('ui.confirm_password') }}
                         </label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -136,7 +136,7 @@
                             </div>
                             <input id="password_confirmation" name="password_confirmation" type="password" required
                                 class="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-xl shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition duration-200"
-                                placeholder="Confirm your password">
+                                placeholder="{{ __('ui.confirm_password_placeholder') }}">
                         </div>
                     </div>
 
@@ -149,7 +149,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
                                 </svg>
                             </span>
-                            Create Account
+                            {{ __('ui.create_account') }}
                         </button>
                     </div>
 
@@ -161,7 +161,7 @@
                             </svg>
                             <div class="ml-3">
                                 <p class="text-sm text-blue-700 dark:text-blue-300">
-                                    Your account will be reviewed by an administrator before you can access the library. You'll receive an email once approved.
+                                    {{ __('ui.account_review_message') }}
                                 </p>
                             </div>
                         </div>
@@ -171,9 +171,9 @@
                 <!-- Login Link -->
                 <div class="mt-6 text-center">
                     <p class="text-sm text-gray-600 dark:text-gray-400">
-                        Already have an account?
+                        {{ __('ui.already_have_account') }}
                         <a href="{{ route('login') }}" class="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 transition duration-200">
-                            Sign in here
+                            {{ __('ui.sign_in_here') }}
                         </a>
                     </p>
                 </div>

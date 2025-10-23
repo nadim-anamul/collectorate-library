@@ -17,9 +17,9 @@
                         <div>
                             <h2 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center">
                                 <svg class="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-                                Recommended for you, {{ auth()->user()->name }}
+                                {{ __('ui.recommended_for_you') }}, {{ auth()->user()->name }}
                             </h2>
-                            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Handpicked suggestions based on your reading</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ __('ui.handpicked_suggestions') }}</p>
                         </div>
                     </div>
                     <div class="p-3 sm:p-6" x-data="homeRecommendationSlider()" x-init="init()">
@@ -47,7 +47,7 @@
                                                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
                                                 <!-- Badges -->
                                                 <div class="absolute top-3 right-3">
-                                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 shadow-sm"><span class="w-2 h-2 bg-green-500 rounded-full mr-1 animate-pulse"></span>Available</span>
+                                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 shadow-sm"><span class="w-2 h-2 bg-green-500 rounded-full mr-1 animate-pulse"></span>{{ __('ui.available') }}</span>
                                                 </div>
                                                 <div class="absolute top-3 left-3">
                                                     <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 shadow-sm">Recommended</span>
@@ -88,7 +88,7 @@
                                                         @else
                                                             @if($book->available_copies > 0)
                                                                 <form action="{{ route('books.request', $book->id) }}" method="POST" class="w-full">@csrf
-                                                                    <button type="submit" class="w-full inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white text-sm font-medium rounded-lg shadow-sm hover:shadow-md transform hover:scale-105 transition-all duration-200">Quick Borrow</button>
+                                                                    <button type="submit" class="w-full inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white text-sm font-medium rounded-lg shadow-sm hover:shadow-md transform hover:scale-105 transition-all duration-200">{{ __('ui.quick_borrow') }}</button>
                                                                 </form>
                                                             @else
                                                                 <form action="{{ route('books.reserve', $book->id) }}" method="POST" class="w-full">@csrf
@@ -124,18 +124,18 @@
                             <svg class="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                             </svg>
-                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Search results for:</span>
+                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('ui.search_results_for') }}</span>
                             <span class="ml-2 px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm font-semibold">"{{ request('search') }}"</span>
                         </div>
                     </div>
                     <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">
-                        {{ $books->total() }} {{ $books->total() === 1 ? 'book' : 'books' }} found
+                        {{ $books->total() === 1 ? __('ui.books_found_single', ['count' => $books->total()]) : __('ui.books_found_multiple', ['count' => $books->total()]) }}
                     </h2>
                     <p class="text-gray-600 dark:text-gray-400 text-center max-w-md">
                         @if($books->total() > 0)
-                            Browse through the search results below or use the filters to refine your search further.
+                            {{ __('ui.browse_through_results') }}
                         @else
-                            No books match your search criteria. Try different keywords or browse all available books.
+                            {{ __('ui.no_books_match') }}
                         @endif
                     </p>
                 @else
@@ -149,7 +149,7 @@
                         </p>
                     @else
                         <p class="text-gray-600 dark:text-gray-400 text-center max-w-md">
-                            Explore our collection of books. Use the search bar above to find specific titles, authors, or ISBNs.
+                            {{ __('ui.explore_collection_message') }}
                         </p>
                     @endif
                 @endif
@@ -161,7 +161,7 @@
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                             </svg>
-                            View All Books
+                            {{ __('ui.view_all_books') }}
                         </a>
                     @endif
                     @if(request()->hasAny(['category', 'language', 'year', 'availability', 'sort']) && (request('sort') != 'latest' || (request('availability') && request('availability') != 'available')))
@@ -169,7 +169,7 @@
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
-                            Clear Filters
+                            {{ __('ui.clear_filters') }}
                         </a>
                     @endif
                 </div>
@@ -476,7 +476,7 @@
                                         <!-- {{ __('filters.availability') }} Badge -->
                                         <div class="absolute top-2 right-2">
                                             <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $book->available_copies > 0 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' }}">
-                                                {{ $book->available_copies > 0 ? 'Available' : 'Unavailable' }}
+                                                {{ $book->available_copies > 0 ? __('ui.available') : __('ui.unavailable') }}
                                             </span>
                                         </div>
                                         
@@ -568,7 +568,7 @@
                                                         <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                                                         </svg>
-                                                        <span>{{ $book->pages }} pages</span>
+                                                        <span>{{ $book->pages }} {{ __('ui.pages') }}</span>
                                                 @endif
                                             </div>
                                                 <!-- Available Copies -->
@@ -619,8 +619,8 @@
                                                                         <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                                                         </svg>
-                                                                        <span class="hidden sm:inline">Borrow</span>
-                                                                        <span class="sm:hidden">Get</span>
+                                                                        <span class="hidden sm:inline">{{ __('ui.borrow') }}</span>
+                                                                        <span class="sm:hidden">{{ __('ui.get') }}</span>
                                                                     </button>
                                                                 </form>
                                                             @else
@@ -655,7 +655,7 @@
                                                         <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
                                                         </svg>
-                                                        Sign In to Borrow
+                                                        {{ __('ui.sign_in_to_borrow') }}
                                                     </a>
                                                 </div>
                                             @endauth
@@ -676,8 +676,8 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                             </svg>
                             </div>
-                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">No books found</h3>
-                            <p class="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">We couldn't find any books matching your criteria. Try adjusting your search or filters.</p>
+                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">{{ __('ui.no_books_found_title') }}</h3>
+                            <p class="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">{{ __('ui.no_books_found_message') }}</p>
                             <div class="flex flex-col sm:flex-row gap-3 justify-center">
                                 <a href="{{ route('home') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200">
                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

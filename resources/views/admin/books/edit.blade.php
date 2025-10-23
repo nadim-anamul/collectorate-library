@@ -1,12 +1,12 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-white leading-tight">Edit Book: {{ $book->title_en }}</h2>
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-white leading-tight">{{ __('ui.edit_book') }}: {{ $book->title_en }}</h2>
             <a href="{{ route('admin.books.index') }}" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition duration-200 flex items-center">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                 </svg>
-                Back to Books
+                {{ __('ui.back_to_books') }}
             </a>
         </div>
     </x-slot>
@@ -42,7 +42,7 @@
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                             </svg>
-                            Book Information
+                            {{ __('ui.book_information') }}
                         </h3>
                     </div>
                     
@@ -55,12 +55,12 @@
                                         <svg class="w-4 h-4 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2h4a1 1 0 110 2h-1v12a2 2 0 01-2 2H6a2 2 0 01-2-2V6H3a1 1 0 110-2h4z"></path>
                                         </svg>
-                                        Title (English) *
+                                        {{ __('ui.title_english') }} *
                                     </span>
                                 </label>
                                 <input name="title_en" value="{{ old('title_en', $book->title_en) }}" required
                                     class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-all duration-200"
-                                    placeholder="Enter the book title in English">
+                                    placeholder="{{ __('ui.enter_book_title_english') }}">
                             </div>
                             <div class="space-y-2">
                                 <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300">
@@ -68,12 +68,12 @@
                                         <svg class="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                         </svg>
-                                        Title (Bengali)
+                                        {{ __('ui.title_bengali') }}
                                     </span>
                                 </label>
                                 <input name="title_bn" value="{{ old('title_bn', $book->title_bn) }}"
                                     class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-all duration-200"
-                                    placeholder="বইয়ের নাম বাংলায়">
+                                    placeholder="{{ __('ui.book_title_bengali') }}">
                             </div>
                         </div>
 
@@ -83,7 +83,7 @@
                                     <svg class="w-4 h-4 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
                                     </svg>
-                                    Transliteration
+                                    {{ __('ui.transliteration') }}
                                 </span>
                             </label>
                             <!-- Transliteration field removed - column no longer exists -->
@@ -98,7 +98,7 @@
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                             </svg>
-                            Authors & Contributors
+                            {{ __('ui.authors_contributors') }}
                         </h3>
                     </div>
                     
@@ -112,14 +112,14 @@
                                             <svg class="w-4 h-4 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                                             </svg>
-                                            Authors
+                                            {{ __('ui.authors') }}
                                         </span>
                                     </label>
                                     <button type="button" onclick="openAuthorModal()" class="inline-flex items-center text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg transition duration-200 shadow-sm">
                                         <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                         </svg>
-                                        Add New
+                                        {{ __('ui.add_new') }}
                                     </button>
                                 </div>
                                 <select id="authorsSelect" name="authors[]" multiple size="4"
@@ -131,7 +131,7 @@
                                         </option>
                                     @endforeach
                                 </select>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">Hold Cmd/Ctrl to select multiple authors</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ __('ui.hold_cmd_ctrl_multiple') }}</p>
                             </div>
 
                             <!-- Primary Author -->
@@ -141,12 +141,12 @@
                                         <svg class="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                         </svg>
-                                        Primary Author
+                                        {{ __('ui.primary_author') }}
                                     </span>
                                 </label>
                                 <select id="primaryAuthorSelect" name="primary_author_id"
                                     class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-all duration-200">
-                                    <option value="">-- Select Primary Author --</option>
+                                    <option value="">{{ __('ui.select_primary_author') }}</option>
                                     @foreach($authors as $a)
                                         <option value="{{ $a->id }}" {{ old('primary_author_id', $book->primary_author_id) == $a->id ? 'selected' : '' }}>
                                             {{ $a->name_en }} @if($a->name_bn)({{ $a->name_bn }})@endif
@@ -165,7 +165,7 @@
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                             </svg>
-                            Publication Details
+                            {{ __('ui.publication_details') }}
                         </h3>
                     </div>
                     
@@ -179,19 +179,19 @@
                                             <svg class="w-4 h-4 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
                                             </svg>
-                                            Category
+                                            {{ __('ui.category') }}
                                         </span>
                                     </label>
                                     <button type="button" onclick="openCategoryModal()" class="inline-flex items-center text-xs bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-lg transition duration-200 shadow-sm">
                                         <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                         </svg>
-                                        Add New
+                                        {{ __('ui.add_new') }}
                                     </button>
                                 </div>
                                 <select id="categorySelect" name="category_id"
                                     class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-all duration-200">
-                                    <option value="">-- Select Category --</option>
+                                    <option value="">{{ __('ui.select_category') }}</option>
                                     @foreach($categories as $cat)
                                         <option value="{{ $cat->id }}" {{ old('category_id', $book->category_id) == $cat->id ? 'selected' : '' }}>
                                             {{ $cat->name_en }} @if($cat->name_bn)({{ $cat->name_bn }})@endif
@@ -208,19 +208,19 @@
                                             <svg class="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                                             </svg>
-                                            Publisher
+                                            {{ __('ui.publisher') }}
                                         </span>
                                     </label>
                                     <button type="button" onclick="openPublisherModal()" class="inline-flex items-center text-xs bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg transition duration-200 shadow-sm">
                                         <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                         </svg>
-                                        Add New
+                                        {{ __('ui.add_new') }}
                                     </button>
                                 </div>
                                 <select id="publisherSelect" name="publisher_id"
                                     class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-all duration-200">
-                                    <option value="">-- Select Publisher --</option>
+                                    <option value="">{{ __('ui.select_publisher') }}</option>
                                     @foreach($publishers as $p)
                                         <option value="{{ $p->id }}" {{ old('publisher_id', $book->publisher_id) == $p->id ? 'selected' : '' }}>
                                             {{ $p->name_en }} @if($p->name_bn)({{ $p->name_bn }})@endif
@@ -238,12 +238,12 @@
                                         <svg class="w-4 h-4 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path>
                                         </svg>
-                                        Language
+                                        {{ __('ui.language') }}
                                     </span>
                                 </label>
                                 <select name="language_id"
                                     class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-all duration-200">
-                                    <option value="">-- Select Language --</option>
+                                    <option value="">{{ __('ui.select_language') }}</option>
                                     @foreach($languages as $l)
                                         <option value="{{ $l->id }}" {{ old('language_id', $book->language_id) == $l->id ? 'selected' : '' }}>
                                             {{ $l->name }} ({{ $l->code }})
@@ -259,7 +259,7 @@
                                         <svg class="w-4 h-4 mr-2 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                         </svg>
-                                        Publication Year
+                                        {{ __('ui.publication_year') }}
                                     </span>
                                 </label>
                                 <input type="number" name="publication_year" value="{{ old('publication_year', $book->publication_year) }}"
@@ -274,7 +274,7 @@
                                         <svg class="w-4 h-4 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                         </svg>
-                                        Pages
+                                        {{ __('ui.pages') }}
                                     </span>
                                 </label>
                                 <input type="number" name="pages" value="{{ old('pages', $book->pages) }}"
@@ -290,7 +290,7 @@
                                     <svg class="w-4 h-4 mr-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path>
                                     </svg>
-                                    ISBN
+                                    {{ __('ui.isbn') }}
                                 </span>
                             </label>
                             <input name="isbn" value="{{ old('isbn', $book->isbn) }}"
@@ -307,7 +307,7 @@
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                             </svg>
-                            Descriptions & Inventory
+                            {{ __('ui.descriptions_inventory') }}
                         </h3>
                     </div>
                     
@@ -320,12 +320,12 @@
                                         <svg class="w-4 h-4 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path>
                                         </svg>
-                                        Description (English)
+                                        {{ __('ui.description_english') }}
                                     </span>
                                 </label>
                                 <textarea name="description_en" rows="5"
                                     class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-all duration-200 resize-none"
-                                    placeholder="Describe the book content, themes, and key points...">{{ old('description_en', $book->description_en) }}</textarea>
+                                    placeholder="{{ __('ui.describe_book_content') }}">{{ old('description_en', $book->description_en) }}</textarea>
                             </div>
                             <div class="space-y-2">
                                 <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300">
@@ -333,12 +333,12 @@
                                         <svg class="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path>
                                         </svg>
-                                        Description (Bengali)
+                                        {{ __('ui.description_bengali') }}
                                     </span>
                                 </label>
                                 <textarea name="description_bn" rows="5"
                                     class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-all duration-200 resize-none"
-                                    placeholder="বইয়ের বিষয়বস্তু, মূল বিষয় এবং গুরুত্বপূর্ণ পয়েন্ট বর্ণনা করুন...">{{ old('description_bn', $book->description_bn) }}</textarea>
+                                    placeholder="{{ __('ui.describe_book_content') }}">{{ old('description_bn', $book->description_bn) }}</textarea>
                             </div>
                         </div>
 
@@ -350,7 +350,7 @@
                                         <svg class="w-4 h-4 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2h4a1 1 0 110 2h-1v12a2 2 0 01-2 2H6a2 2 0 01-2-2V6H3a1 1 0 110-2h4z"></path>
                                         </svg>
-                                        Total Copies *
+                                        {{ __('ui.total_copies') }} *
                                     </span>
                                 </label>
                                 <input type="number" name="total_copies" value="{{ old('total_copies', $book->total_copies) }}" required
@@ -363,7 +363,7 @@
                                         <svg class="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                         </svg>
-                                        Available Copies *
+                                        {{ __('ui.available_copies') }} *
                                     </span>
                                 </label>
                                 <input type="number" name="available_copies" value="{{ old('available_copies', $book->available_copies) }}" required
@@ -376,18 +376,18 @@
                                         <svg class="w-4 h-4 mr-2 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                         </svg>
-                                        Cover Image
+                                        {{ __('ui.cover_image') }}
                                     </span>
                                 </label>
                                 @if($book->cover_path)
                                     <div class="mb-3">
                                         <img src="{{ Storage::url($book->cover_path) }}" alt="Current cover" class="w-20 h-28 object-cover rounded shadow-lg">
-                                        <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">Current cover image</p>
+                                        <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">{{ __('ui.current_cover_image') }}</p>
                                     </div>
                                 @endif
                                 <input type="file" name="cover" accept="image/*"
                                     class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-all duration-200 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Upload new cover to replace current (JPG, PNG, max 2MB)</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ __('ui.upload_new_cover_replace') }}</p>
                             </div>
                         </div>
                     </div>
@@ -400,14 +400,14 @@
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
-                        Cancel
+                        {{ __('ui.cancel') }}
                     </a>
                     <button type="submit" 
                             class="inline-flex items-center px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl transition duration-200 transform hover:scale-105 shadow-lg font-medium">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
                         </svg>
-                        Update Book
+                        {{ __('ui.update_book') }}
                     </button>
                 </div>
             </form>
@@ -448,7 +448,7 @@
                 </div>
                 <div class="flex justify-end space-x-3 mt-6">
                     <button type="button" onclick="closeCategoryModal()" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-600 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500">
-                        Cancel
+                        {{ __('ui.cancel') }}
                     </button>
                     <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700">
                         Add Category
@@ -491,7 +491,7 @@
                 </div>
                 <div class="flex justify-end space-x-3 mt-6">
                     <button type="button" onclick="closeAuthorModal()" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-600 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500">
-                        Cancel
+                        {{ __('ui.cancel') }}
                     </button>
                     <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">
                         Add Author
@@ -534,7 +534,7 @@
                 </div>
                 <div class="flex justify-end space-x-3 mt-6">
                     <button type="button" onclick="closePublisherModal()" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-600 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500">
-                        Cancel
+                        {{ __('ui.cancel') }}
                     </button>
                     <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700">
                         Add Publisher

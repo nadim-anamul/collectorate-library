@@ -3,19 +3,19 @@
         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-3 sm:space-y-0">
             <div>
                 <h2 class="font-semibold text-lg sm:text-xl text-gray-800 dark:text-white leading-tight">
-                    Welcome, {{ $user->name }}
+                    {{ __('ui.welcome_user', ['name' => $user->name]) }}
                 </h2>
                 <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">
-                    {{ ucfirst($user->member_type) }} Member • Member since {{ $user->created_at->format('M Y') }}
+                    {{ ucfirst($user->member_type) }} {{ __('ui.member') }} • {{ __('ui.member_since', ['date' => $user->created_at->format('M Y')]) }}
                 </p>
             </div>
             <div class="flex flex-wrap gap-2">
                 <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300">
-                    {{ $stats['current_loans'] }} Active
+                    {{ $stats['current_loans'] }} {{ __('ui.active') }}
                 </span>
                 @if($stats['overdue_books'] > 0)
                     <span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">
-                        {{ $stats['overdue_books'] }} Overdue
+                        {{ $stats['overdue_books'] }} {{ __('ui.overdue') }}
                     </span>
                 @endif
             </div>
@@ -26,7 +26,7 @@
         @if($stats['overdue_books'] > 0)
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mb-4">
                 <div class="p-4 rounded-lg bg-red-50 border border-red-200 text-red-800 dark:bg-red-900/20 dark:text-red-200 dark:border-red-800">
-                    You have {{ $stats['overdue_books'] }} overdue {{ $stats['overdue_books'] === 1 ? 'book' : 'books' }}. Please return them as soon as possible.
+                    {{ __('ui.you_have_overdue', ['count' => $stats['overdue_books']]) }}
                 </div>
             </div>
         @endif
@@ -41,7 +41,7 @@
                             </svg>
                         </div>
                         <div class="ml-4">
-                            <p class="text-blue-100">Current Loans</p>
+                            <p class="text-blue-100">{{ __('ui.current_loans') }}</p>
                             <p class="text-3xl font-bold">{{ $stats['current_loans'] }}</p>
                         </div>
                     </div>
@@ -55,12 +55,12 @@
                             </svg>
                         </div>
                         <div class="ml-4">
-                            <p class="text-purple-100">Reading Status</p>
+                            <p class="text-purple-100">{{ __('ui.reading_status') }}</p>
                             <p class="text-3xl font-bold">
                                 @if($stats['overdue_books'] > 0)
-                                    {{ $stats['overdue_books'] }} Overdue
+                                    {{ $stats['overdue_books'] }} {{ __('ui.overdue') }}
                                 @else
-                                    Up to Date
+                                    {{ __('ui.up_to_date') }}
                                 @endif
                             </p>
                         </div>
@@ -75,7 +75,7 @@
                             </svg>
                         </div>
                         <div class="ml-4">
-                            <p class="text-green-100">Total Borrowed</p>
+                            <p class="text-green-100">{{ __('ui.total_borrowed') }}</p>
                             <p class="text-3xl font-bold">{{ $stats['total_borrowed'] }}</p>
                         </div>
                     </div>
@@ -88,7 +88,7 @@
                 <!-- Current Loans -->
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden">
                     <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Current Loans</h3>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ __('ui.current_loans') }}</h3>
                     </div>
                     <div class="p-6">
                         @forelse($currentLoans as $loan)
@@ -130,7 +130,7 @@
                                                     {{ $loan->book->primaryAuthor->name_en }}
                                                 @endif
                                             @else
-                                                Unknown Author
+                                                {{ __('ui.unknown_author') }}
                                             @endif
                                         @endif
                                     </p>
@@ -139,14 +139,14 @@
                                             <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                             </svg>
-                                            Due: {{ \Carbon\Carbon::parse($loan->due_at)->format('M d, Y') }}
+                                            {{ __('ui.due') }}: {{ \Carbon\Carbon::parse($loan->due_at)->format('M d, Y') }}
                                         </span>
                                         @if(\Carbon\Carbon::parse($loan->due_at) < now())
                                             <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400">
                                                 <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                                     <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
                                                 </svg>
-                                                Overdue
+                                                {{ __('ui.overdue') }}
                                             </span>
                                         @endif
                                     </p>
@@ -154,10 +154,10 @@
                                 <div class="flex-shrink-0">
                                     @if($loan->status === 'issued')
                                         <form action="{{ route('loans.requestReturn', $loan) }}" method="POST">@csrf
-                                            <button class="px-3 py-2 text-sm bg-yellow-600 hover:bg-yellow-700 text-white rounded">Request Return</button>
+                                            <button class="px-3 py-2 text-sm bg-yellow-600 hover:bg-yellow-700 text-white rounded">{{ __('ui.request_return') }}</button>
                                         </form>
                                     @elseif($loan->status === 'return_requested')
-                                        <span class="px-3 py-2 text-sm rounded bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">Return Requested</span>
+                                        <span class="px-3 py-2 text-sm rounded bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">{{ __('ui.return_requested') }}</span>
                                     @endif
                                 </div>
                             </div>
@@ -166,10 +166,10 @@
                                 <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                                 </svg>
-                                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">No current loans</h3>
-                                <p class="text-gray-600 dark:text-gray-400 mb-4">Browse our collection to borrow your first book!</p>
+                                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">{{ __('ui.no_current_loans') }}</h3>
+                                <p class="text-gray-600 dark:text-gray-400 mb-4">{{ __('ui.browse_collection_first_book') }}</p>
                                 <a href="{{ route('home') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition duration-200">
-                                    Browse Books
+                                    {{ __('ui.browse_books') }}
                                 </a>
                             </div>
                         @endforelse
@@ -179,7 +179,7 @@
                 <!-- Pending Requests -->
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden">
                     <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Pending Requests</h3>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ __('ui.pending_requests') }}</h3>
                     </div>
                     <div class="p-6">
                         @forelse($pendingRequests as $loan)
@@ -221,19 +221,19 @@
                                                     {{ $loan->book->primaryAuthor->name_en }}
                                                 @endif
                                             @else
-                                                Unknown Author
+                                                {{ __('ui.unknown_author') }}
                                             @endif
                                         @endif
                                     </p>
                                     <p class="text-xs text-gray-400 dark:text-gray-500">
-                                        Requested: {{ \Carbon\Carbon::parse($loan->requested_at)->format('M d, Y') }}
+                                        {{ __('ui.requested') }}: {{ \Carbon\Carbon::parse($loan->requested_at)->format('M d, Y') }}
                                         @if($loan->requested_due_at)
-                                            • Requested Due: {{ \Carbon\Carbon::parse($loan->requested_due_at)->format('M d, Y') }}
+                                            • {{ __('ui.requested_due') }}: {{ \Carbon\Carbon::parse($loan->requested_due_at)->format('M d, Y') }}
                                         @endif
                                     </p>
                                 </div>
                                 <div class="flex-shrink-0 flex items-center space-x-3">
-                                    <span class="px-3 py-2 text-sm rounded bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">Pending</span>
+                                    <span class="px-3 py-2 text-sm rounded bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">{{ __('ui.pending') }}</span>
                                     <form method="POST" action="{{ route('loans.cancel', $loan) }}" class="inline" onsubmit="return confirm('{{ __('ui.cancel_request_confirm') }}')">
                                         @csrf
                                         <button type="submit" class="px-3 py-2 text-sm rounded bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 hover:bg-red-200 dark:hover:bg-red-800 transition-colors duration-200 flex items-center space-x-1 group" title="{{ __('ui.cancel_request') }}">
@@ -250,8 +250,8 @@
                                 <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                                 </svg>
-                                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">No pending requests</h3>
-                                <p class="text-gray-600 dark:text-gray-400 mb-4">Request a book from its details page to see it here.</p>
+                                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">{{ __('ui.no_pending_requests') }}</h3>
+                                <p class="text-gray-600 dark:text-gray-400 mb-4">{{ __('ui.request_book_details_page') }}</p>
                             </div>
                         @endforelse
                     </div>
@@ -261,8 +261,8 @@
             <!-- Reading History -->
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden">
                 <div class="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Recent Reading History</h3>
-                    <a href="{{ route('dashboard.history') }}" class="text-sm px-3 py-1 rounded border dark:border-gray-600">View all</a>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ __('ui.recent_reading_history') }}</h3>
+                    <a href="{{ route('dashboard.history') }}" class="text-sm px-3 py-1 rounded border dark:border-gray-600">{{ __('ui.view_all') }}</a>
                 </div>
                 <div class="p-6">
                     @forelse($loanHistory as $loan)
@@ -304,7 +304,7 @@
                                                 {{ $loan->book->primaryAuthor->name_en }}
                                             @endif
                                         @else
-                                            Unknown Author
+                                            {{ __('ui.unknown_author') }}
                                         @endif
                                     @endif
                                 </p>
@@ -313,7 +313,7 @@
                                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                         </svg>
-                                        Returned: {{ \Carbon\Carbon::parse($loan->returned_at)->format('M d, Y') }}
+                                        {{ __('ui.returned') }}: {{ \Carbon\Carbon::parse($loan->returned_at)->format('M d, Y') }}
                                     </span>
                                     @if($loan->book->publication_year)
                                         <span class="flex items-center">
@@ -338,7 +338,7 @@
                                     <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                                     </svg>
-                                    Completed
+                                    {{ __('ui.completed') }}
                                 </span>
                             </div>
                         </div>
@@ -347,8 +347,8 @@
                             <svg class="w-20 h-20 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
-                            <h3 class="text-xl font-medium text-gray-900 dark:text-white mb-2">No reading history yet</h3>
-                            <p class="text-gray-600 dark:text-gray-400 mb-6">Your completed books will appear here once you return them.</p>
+                            <h3 class="text-xl font-medium text-gray-900 dark:text-white mb-2">{{ __('ui.no_reading_history_yet') }}</h3>
+                            <p class="text-gray-600 dark:text-gray-400 mb-6">{{ __('ui.completed_books_appear_here') }}</p>
                             <a href="{{ route('home') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition duration-200">
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
@@ -370,13 +370,13 @@
                                     <svg class="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
                                     </svg>
-                                    Recommended for You
+                                    {{ __('ui.recommended_for_you') }}
                                 </h3>
-                                <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">Books you might enjoy based on your reading preferences</p>
+                                <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">{{ __('ui.books_might_enjoy') }}</p>
                             </div>
                             <a href="{{ route('home') }}" class="inline-flex items-center text-xs sm:text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                                <span class="hidden sm:inline">See all books</span>
-                                <span class="sm:hidden">All books</span>
+                                <span class="hidden sm:inline">{{ __('ui.see_all_books') }}</span>
+                                <span class="sm:hidden">{{ __('ui.all_books') }}</span>
                                 <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                                 </svg>
@@ -408,7 +408,7 @@
                                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                                                                     </svg>
                                                                 </div>
-                                                                <p class="text-xs font-medium text-gray-400 dark:text-gray-500">No Cover</p>
+                                                                <p class="text-xs font-medium text-gray-400 dark:text-gray-500">{{ __('ui.no_cover') }}</p>
                                                             </div>
                                                         </div>
                                                     @endif
@@ -417,7 +417,7 @@
                                                     <div class="absolute top-3 right-3">
                                                         <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 shadow-sm">
                                                             <div class="w-2 h-2 bg-green-500 rounded-full mr-1 animate-pulse"></div>
-                                                            Available
+                                                            {{ __('ui.available') }}
                                                         </span>
                                                     </div>
                                                     
@@ -427,7 +427,7 @@
                                                             <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
                                                             </svg>
-                                                            Recommended
+                                                            {{ __('ui.recommended') }}
                                                         </span>
                                                     </div>
                                                     
@@ -503,7 +503,7 @@
                                                                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                                                                 </svg>
-                                                                                Quick Borrow
+                                                                                {{ __('ui.quick_borrow') }}
                                                                             </button>
                                                                         </form>
                                                                     @else
@@ -513,7 +513,7 @@
                                                                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                                                                 </svg>
-                                                                                Reserve
+                                                                                {{ __('ui.reserve') }}
                                                                             </button>
                                                                         </form>
                                                                     @endif
