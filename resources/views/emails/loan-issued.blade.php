@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ __('ui.account_approved_title') }}</title>
+    <title>Book Loan Issued</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -43,6 +43,12 @@
             padding: 15px;
             margin: 20px 0;
         }
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+        }
         .footer {
             text-align: center;
             color: #666;
@@ -53,45 +59,53 @@
 </head>
 <body>
     <div class="header">
-        <h1>{{ __('ui.welcome_to_library') }}</h1>
-        <p>{{ __('ui.account_approved_subtitle') }}</p>
+        <h1>📚 Book Loan Issued</h1>
+        <p>Your requested book is ready!</p>
     </div>
     
     <div class="content">
-        <h2>{{ __('ui.hello_user', ['name' => $userName]) }}</h2>
+        <h2>Hello {{ $userName }},</h2>
         
-        <p>{{ __('ui.great_news') }}</p>
+        <p>Great news! Your book loan has been issued successfully.</p>
         
         <div class="info-box">
-            <h3>{{ __('ui.account_details') }}</h3>
+            <h3>📖 Loan Details</h3>
             <ul>
-                <li><strong>{{ __('ui.email') }}:</strong> {{ $userEmail }}</li>
-                <li><strong>{{ __('ui.role') }}:</strong> {{ $role }}</li>
-                <li><strong>{{ __('ui.status') }}:</strong> {{ __('ui.active') }}</li>
+                <li><strong>Book Title:</strong> {{ $bookTitle }}</li>
+                @if($bookTitleBn)
+                <li><strong>বই শিরোনাম:</strong> {{ $bookTitleBn }}</li>
+                @endif
+                <li><strong>Loan ID:</strong> #{{ $loanId }}</li>
+                <li><strong>Issued Date:</strong> {{ $issuedAt }}</li>
+                <li><strong>Due Date:</strong> {{ $dueAt }}</li>
             </ul>
         </div>
         
-        <p>{{ __('ui.you_can_now') }}</p>
+        <div class="warning-box">
+            <h3>⚠️ Important Reminder</h3>
+            <p>Please return the book by <strong>{{ $dueAt }}</strong> to avoid late fees. You can return it at the library circulation desk during working hours.</p>
+        </div>
+        
+        <h3>📋 What to Do Next:</h3>
         <ul>
-            <li>{{ __('ui.browse_collection') }}</li>
-            <li>{{ __('ui.borrow_books_online') }}</li>
-            <li>{{ __('ui.track_reading_history') }}</li>
-            <li>{{ __('ui.access_dashboard') }}</li>
+            <li>Visit the library to collect your book</li>
+            <li>Show your loan ID (#{{ $loanId }}) at the circulation desk</li>
+            <li>Remember to return the book before the due date</li>
+            <li>Check your dashboard for all your active loans</li>
         </ul>
         
         <div style="text-align: center;">
-            <a href="{{ $loginUrl }}" class="button">{{ __('ui.login_to_account') }}</a>
+            <a href="{{ $dashboardUrl }}" class="button">View My Dashboard</a>
         </div>
         
-        <p>{{ __('ui.contact_library_staff') }}</p>
+        <p>Thank you for using our library services!</p>
         
-        <p>{{ __('ui.happy_reading') }}</p>
-        
-        <p><strong>{{ __('ui.library_team') }}</strong></p>
+        <p><strong>Library Team</strong></p>
     </div>
     
     <div class="footer">
-        <p>{{ __('ui.automated_email_no_reply') }}</p>
+        <p>This is an automated email. Please do not reply directly to this message.</p>
     </div>
 </body>
 </html>
+

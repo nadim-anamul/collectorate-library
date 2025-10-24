@@ -18,7 +18,25 @@ class LoanEventNotification extends Notification implements ShouldQueue
 
     public function via(object $notifiable): array
     {
-        return ['database'];
+        // Send to both database and mail channels
+        return ['database', 'mail'];
+    }
+
+    public function toMail(object $notifiable): MailMessage
+    {
+        $message = (new MailMessage)
+            ->subject($this->getMailSubject())
+            ->line($this->payload['message'] ?? 'New notification');
+
+        if (isset($this->payload['book_title'])) {
+            $message->line('Book: ' . $this->payload['book_title']);
+        }
+
+        if (isset($this->payload['url'])) {
+            $message->action('View Details', url($this->payload['url']));
+        }
+
+        return $message->line('Thank you for using our library system!');
     }
 
     public function toArray(object $notifiable): array
@@ -33,6 +51,17 @@ class LoanEventNotification extends Notification implements ShouldQueue
             'by_user_name' => $this->payload['by_user_name'] ?? null,
             'url' => $this->payload['url'] ?? null,
         ];
+    }
+
+    private function getMailSubject(): string
+    {
+        return match ($this->event) {
+            'loan.requested' => 'New Book Loan Request',
+            'loan.approved' => 'Book Loan Request Approved',
+            'loan.returned' => 'Book Returned',
+            'loan.declined' => 'Book Loan Request Declined',
+            default => 'Library Notification',
+        };
     }
 }
 

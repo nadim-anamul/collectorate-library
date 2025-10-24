@@ -14,6 +14,9 @@ use Illuminate\Support\Facades\Mail;
 use App\Notifications\LoanEventNotification;
 use App\Models\Models\Reservation;
 use Illuminate\Support\Facades\Log;
+use App\Mail\LoanIssued;
+use App\Mail\LoanApproved;
+use App\Mail\LoanDeclined;
 
 class LoanController extends Controller
 {
@@ -124,9 +127,14 @@ class LoanController extends Controller
 
         $book->decrement('available_copies');
         ActivityLogger::log('loan.issued','Loan',$loan->id,['book_id' => $book->id, 'user_id' => $validated['user_id']]);
+        
+        // Send email notification to borrower
         try {
-            Mail::raw("Your loan for '{$book->title_en}' has been issued.", function($m) use ($borrower){ $m->to($borrower->email)->subject('Loan Issued'); });
-        } catch (\Throwable $e) { Log::error($e->getMessage()); }
+            Mail::to($borrower->email)->send(new LoanIssued($loan));
+        } catch (\Throwable $e) { 
+            Log::error('Failed to send loan issued email: ' . $e->getMessage()); 
+        }
+        
         return redirect()->route('admin.loans.index')->with('status','Book issued');
     }
 
@@ -251,9 +259,16 @@ class LoanController extends Controller
         ]);
         $book->decrement('available_copies');
         ActivityLogger::log('loan.approved','Loan',$loan->id,[]);
-        // Notify borrower about approval
+        
+        // Send email notification to borrower
         try {
-            $borrower = $loan->user; $book = $loan->book;
+            $borrower = $loan->user;
+            $book = $loan->book;
+            
+            // Send detailed email using Mail class
+            Mail::to($borrower->email)->send(new LoanApproved($loan));
+            
+            // Also send notification to database
             $borrower->notify(new LoanEventNotification('loan.approved', [
                 'message' => "Your borrow request for '{$book->title_en}' has been approved.",
                 'loan_id' => $loan->id,
@@ -263,7 +278,10 @@ class LoanController extends Controller
                 'by_user_name' => Auth::user()->name,
                 'url' => route('admin.loans.show', $loan),
             ]));
-        } catch (\Throwable $e) { Log::error($e->getMessage()); }
+        } catch (\Throwable $e) { 
+            Log::error('Failed to send loan approval notification: ' . $e->getMessage()); 
+        }
+        
         return back()->with('status','Loan approved and issued.');
     }
 
@@ -281,9 +299,16 @@ class LoanController extends Controller
             'decline_reason' => $validated['decline_reason'] ?? null,
         ]);
         ActivityLogger::log('loan.declined','Loan',$loan->id,[]);
-        // Notify borrower about decline
+        
+        // Send email notification to borrower
         try {
-            $borrower = $loan->user; $book = $loan->book;
+            $borrower = $loan->user;
+            $book = $loan->book;
+            
+            // Send detailed email using Mail class
+            Mail::to($borrower->email)->send(new LoanDeclined($loan, $validated['decline_reason']));
+            
+            // Also send notification to database
             $borrower->notify(new LoanEventNotification('loan.declined', [
                 'message' => "Your borrow request for '{$book->title_en}' has been declined.",
                 'loan_id' => $loan->id,
@@ -293,7 +318,10 @@ class LoanController extends Controller
                 'by_user_name' => Auth::user()->name,
                 'url' => route('admin.loans.show', $loan),
             ]));
-        } catch (\Throwable $e) { Log::error($e->getMessage()); }
+        } catch (\Throwable $e) { 
+            Log::error('Failed to send loan decline notification: ' . $e->getMessage()); 
+        }
+        
         return back()->with('status','Loan request declined.');
     }
 
