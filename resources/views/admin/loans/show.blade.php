@@ -72,7 +72,7 @@
                             @endphp
                             <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold {{ $statusConfig[$loan->status] ?? $statusConfig['pending'] }}">{{ ucfirst(str_replace('_',' ',$loan->status)) }}</span>
                             @if($loan->decline_reason)
-                                <div class="mt-2 text-sm text-gray-600 dark:text-gray-300"><span class="font-semibold">{{ __('ui.decline') }} reason:</span> {{ $loan->decline_reason }}</div>
+                                <div class="mt-2 text-sm text-gray-600 dark:text-gray-300"><span class="font-semibold">{{ __('ui.decline_reason') }}:</span> {{ $loan->decline_reason }}</div>
                             @endif
                         </div>
                     </div>
@@ -119,19 +119,19 @@
                                     </form>
                                 </div>
 
-                                <!-- {{ __('ui.decline') }} Card -->
+                                <!-- Decline Card -->
                                 <div class="bg-white dark:bg-gray-800 shadow-xl rounded-2xl overflow-hidden">
                                     <div class="bg-gradient-to-r from-red-600 to-pink-600 px-6 py-4">
                                         <h3 class="text-lg font-semibold text-white flex items-center">
                                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
-                                            {{ __('ui.decline') }}
+                                            {{ __('ui.decline_loan') }}
                                         </h3>
                                     </div>
                                     <div class="p-6">
                                         <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">Open a confirmation form to provide a decline reason.</p>
-                                        <button onclick="open{{ __('ui.decline') }}Modal()" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white rounded-xl transition duration-200 transform hover:scale-105 shadow-lg font-medium">
+                                        <button onclick="openDeclineModal()" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white rounded-xl transition duration-200 transform hover:scale-105 shadow-lg font-medium">
                                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
-                                            {{ __('ui.decline') }} Loan
+                                            {{ __('ui.decline_loan') }}
                                         </button>
                                     </div>
                                 </div>
@@ -171,10 +171,10 @@
         </div>
     </div>
 
-    <!-- {{ __('ui.decline') }} Modal -->
+    <!-- Decline Modal -->
     <div id="declineModal" class="fixed inset-0 z-50 overflow-y-auto hidden">
         <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onclick="close{{ __('ui.decline') }}Modal()"></div>
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onclick="closeDeclineModal()"></div>
             
             <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                 <form method="POST" action="{{ route('admin.loans.decline', $loan) }}">
@@ -188,7 +188,7 @@
                             </div>
                             <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
                                 <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-gray-100">
-                                    {{ __('ui.decline') }} Loan Request
+                                    {{ __('ui.decline_loan_request') }}
                                 </h3>
                                 <div class="mt-2">
                                     <p class="text-sm text-gray-500 dark:text-gray-400">
@@ -196,7 +196,7 @@
                                     </p>
                                 </div>
                                 <div class="mt-4">
-                                    <label for="decline_reason" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('ui.decline') }} Reason *</label>
+                                    <label for="decline_reason" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('ui.decline_reason') }} *</label>
                                     <textarea 
                                         id="decline_reason" 
                                         name="decline_reason" 
@@ -214,10 +214,10 @@
                     </div>
                     <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                         <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
-                            {{ __('ui.decline') }} Loan
+                            {{ __('ui.decline_loan') }}
                         </button>
-                        <button type="button" onclick="close{{ __('ui.decline') }}Modal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-800 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                            Cancel
+                        <button type="button" onclick="closeDeclineModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-800 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                            {{ __('ui.cancel') }}
                         </button>
                     </div>
                 </form>
@@ -226,25 +226,25 @@
     </div>
 
     <script>
-        function open{{ __('ui.decline') }}Modal() {
+        function openDeclineModal() {
             document.getElementById('declineModal').classList.remove('hidden');
         }
 
-        function close{{ __('ui.decline') }}Modal() {
+        function closeDeclineModal() {
             document.getElementById('declineModal').classList.add('hidden');
         }
 
         // Close modal when clicking outside
         document.getElementById('declineModal').addEventListener('click', function(e) {
             if (e.target === this) {
-                close{{ __('ui.decline') }}Modal();
+                closeDeclineModal();
             }
         });
 
         // Close modal with Escape key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
-                close{{ __('ui.decline') }}Modal();
+                closeDeclineModal();
             }
         });
     </script>

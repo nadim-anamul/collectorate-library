@@ -441,11 +441,11 @@
                                                 @if($loan->status !== 'returned')
                                             @if($loan->status === 'pending')
                                                         <div class="flex flex-col space-y-2">
-                                                            <button onclick="open{{ __('ui.approve') }}Modal({{ $loan->id }})" class="w-full px-3 py-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white text-sm font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
+                                                            <button onclick="openApproveModal({{ $loan->id }})" class="w-full px-3 py-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white text-sm font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
                                                                 {{ __('ui.approve') }}
                                                             </button>
-                                                            <button type="button" onclick="open{{ __('ui.decline') }}Modal({{ $loan->id }})" class="w-full px-3 py-2 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white text-sm font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
-                                                                {{ __('ui.decline') }}
+                                                            <button type="button" onclick="openDeclineModal({{ $loan->id }})" class="w-full px-3 py-2 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white text-sm font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
+                                                                {{ __('ui.decline_loan') }}
                                                             </button>
                                                         </div>
                                             @elseif($loan->status === 'issued')
@@ -485,10 +485,10 @@
     </div>
 </div>
 
-    <!-- {{ __('ui.decline') }} Modal -->
+    <!-- Decline Modal -->
     <div id="declineModal" class="fixed inset-0 z-50 overflow-y-auto hidden">
         <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity" onclick="close{{ __('ui.decline') }}Modal()"></div>
+            <div class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity" onclick="closeDeclineModal()"></div>
             <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                 <form id="declineForm" method="POST" action="">
                     @csrf
@@ -500,18 +500,18 @@
                                 </svg>
                             </div>
                             <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                                <h3 class="text-lg leading-6 font-semibold text-gray-900 dark:text-gray-100">{{ __('ui.decline') }} Loan Request</h3>
+                                <h3 class="text-lg leading-6 font-semibold text-gray-900 dark:text-gray-100">{{ __('ui.decline_loan_request') }}</h3>
                                 <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">Please provide a reason to decline this loan.</p>
                                 <div class="mt-4">
-                                    <label for="decline_reason" class="block text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('ui.decline') }} Reason *</label>
+                                    <label for="decline_reason" class="block text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('ui.decline_reason') }} *</label>
                                     <textarea id="decline_reason" name="decline_reason" rows="4" required class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm" placeholder="Enter the reason..."></textarea>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="bg-gray-50 dark:bg-gray-700 px-6 py-4 flex flex-col sm:flex-row sm:justify-end gap-3">
-                        <button type="button" onclick="close{{ __('ui.decline') }}Modal()" class="w-full sm:w-auto px-6 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-200">Cancel</button>
-                        <button type="submit" class="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">Confirm {{ __('ui.decline') }}</button>
+                        <button type="button" onclick="closeDeclineModal()" class="w-full sm:w-auto px-6 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-200">{{ __('ui.cancel') }}</button>
+                        <button type="submit" class="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">{{ __('ui.decline_loan') }}</button>
                     </div>
                 </form>
             </div>
@@ -519,22 +519,22 @@
     </div>
 
     <script>
-        function open{{ __('ui.decline') }}Modal(loanId){
+        function openDeclineModal(loanId){
             const form = document.getElementById('declineForm');
             form.action = `/admin/loans/${loanId}/decline`;
             document.getElementById('decline_reason').value = '';
             document.getElementById('declineModal').classList.remove('hidden');
         }
-        function close{{ __('ui.decline') }}Modal(){
+        function closeDeclineModal(){
             document.getElementById('declineModal').classList.add('hidden');
         }
-        document.getElementById('declineModal').addEventListener('click', function(e){ if(e.target===this){ close{{ __('ui.decline') }}Modal(); } });
-        document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ close{{ __('ui.decline') }}Modal(); } });
+        document.getElementById('declineModal').addEventListener('click', function(e){ if(e.target===this){ closeDeclineModal(); } });
+        document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closeDeclineModal(); } });
     </script>
-    <!-- Modern {{ __('ui.approve') }} Modal -->
+    <!-- Approve Modal -->
     <div id="approveModal" class="fixed inset-0 z-50 overflow-y-auto hidden">
         <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity" onclick="close{{ __('ui.approve') }}Modal()"></div>
+            <div class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity" onclick="closeApproveModal()"></div>
             
             <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                 <!-- Modal Header -->
@@ -546,7 +546,7 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="text-lg font-bold text-white">{{ __('ui.approve') }} Loan Request</h3>
+                            <h3 class="text-lg font-bold text-white">{{ __('ui.approve_loan_request') }}</h3>
                             <p class="text-green-100 text-sm">Set issue and due dates for this loan</p>
                         </div>
                     </div>
@@ -616,15 +616,15 @@
                     
                     <!-- Modal Footer -->
                     <div class="bg-gray-50 dark:bg-gray-700 px-6 py-4 flex flex-col sm:flex-row sm:justify-end space-y-3 sm:space-y-0 sm:space-x-3">
-                        <button type="button" onclick="close{{ __('ui.approve') }}Modal()" class="w-full sm:w-auto px-6 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-200">
-                            Cancel
+                        <button type="button" onclick="closeApproveModal()" class="w-full sm:w-auto px-6 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-200">
+                            {{ __('ui.cancel') }}
                         </button>
                         <button type="submit" class="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
                             <div class="flex items-center justify-center space-x-2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
-                                <span>Confirm Approval</span>
+                                <span>{{ __('ui.confirm_approval') }}</span>
                             </div>
                         </button>
                     </div>
@@ -634,28 +634,28 @@
     </div>
 
     <script>
-        function open{{ __('ui.approve') }}Modal(loanId) {
+        function openApproveModal(loanId) {
             const modal = document.getElementById('approveModal');
             const form = document.getElementById('approveForm');
             form.action = `/admin/loans/${loanId}/approve`;
             modal.classList.remove('hidden');
         }
 
-        function close{{ __('ui.approve') }}Modal() {
+        function closeApproveModal() {
             document.getElementById('approveModal').classList.add('hidden');
         }
 
         // Close modal when clicking outside
         document.getElementById('approveModal').addEventListener('click', function(e) {
             if (e.target === this) {
-                close{{ __('ui.approve') }}Modal();
+                closeApproveModal();
             }
         });
 
         // Close modal with Escape key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
-                close{{ __('ui.approve') }}Modal();
+                closeApproveModal();
             }
         });
     </script>

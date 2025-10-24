@@ -28,6 +28,16 @@ return [
     'cancel_request' => 'Cancel Request',
     'cancel_request_confirm' => 'Are you sure you want to cancel this request?',
     'request_cancelled' => 'Loan request cancelled successfully',
+    
+    // Decline/Rejection
+    'decline' => 'Decline',
+    'decline_loan' => 'Decline Loan',
+    'decline_loan_request' => 'Decline Loan Request',
+    'decline_reason' => 'Decline Reason',
+    
+    // Approve
+    'approve_loan_request' => 'Approve Loan Request',
+    'confirm_approval' => 'Confirm Approval',
 ];
 
 
