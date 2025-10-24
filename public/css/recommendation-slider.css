@@ -1,0 +1,144 @@
+/* Recommendation Slider Styles */
+
+/* Smooth transitions for all slider elements */
+.recommendation-slider {
+    scroll-behavior: smooth;
+}
+
+/* Custom scrollbar for slider container */
+.recommendation-slider::-webkit-scrollbar {
+    display: none;
+}
+
+.recommendation-slider {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Enhanced hover effects for book cards */
+.book-card-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.book-card-hover:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Gradient overlay for better text readability */
+.book-cover-overlay {
+    background: linear-gradient(
+        180deg,
+        rgba(0, 0, 0, 0) 0%,
+        rgba(0, 0, 0, 0.1) 50%,
+        rgba(0, 0, 0, 0.6) 100%
+    );
+}
+
+/* Pulse animation for availability indicator */
+@keyframes pulse-green {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.availability-pulse {
+    animation: pulse-green 2s infinite;
+}
+
+/* Slider navigation button hover effects */
+.slider-nav-btn {
+    transition: all 0.2s ease-in-out;
+}
+
+.slider-nav-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Slider indicator animations */
+.slider-indicator {
+    transition: all 0.3s ease-in-out;
+}
+
+.slider-indicator.active {
+    transform: scale(1.2);
+}
+
+/* Recommendation badge glow effect */
+.recommendation-badge {
+    position: relative;
+    overflow: hidden;
+}
+
+.recommendation-badge::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
+    transition: left 0.5s;
+}
+
+.recommendation-badge:hover::before {
+    left: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .book-card-hover:hover {
+        transform: translateY(-4px) scale(1.01);
+    }
+    
+    .slider-nav-btn {
+        padding: 0.5rem;
+    }
+}
+
+/* Dark mode enhancements */
+@media (prefers-color-scheme: dark) {
+    .book-card-hover:hover {
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+}
+
+/* Loading state for slider */
+.slider-loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* Smooth slide transitions */
+.slide-transition {
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced focus states for accessibility */
+.slider-nav-btn:focus,
+.slider-indicator:focus {
+    outline: 2px solid #8b5cf6;
+    outline-offset: 2px;
+}
+
+/* Book cover image loading optimization */
+.book-cover img {
+    transition: opacity 0.3s ease-in-out;
+}
+
+.book-cover img[data-loaded="false"] {
+    opacity: 0;
+}
+
+.book-cover img[data-loaded="true"] {
+    opacity: 1;
+}

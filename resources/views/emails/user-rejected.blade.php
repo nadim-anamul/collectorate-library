@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Account Application Update</title>
+    <title>{{ __('ui.account_rejected_title') }}</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -51,41 +51,41 @@
 </head>
 <body>
     <div class="header">
-        <h1>📧 Application Update</h1>
-        <p>Regarding your library account application</p>
+        <h1>{{ __('ui.application_update') }}</h1>
+        <p>{{ __('ui.regarding_application') }}</p>
     </div>
     
     <div class="content">
-        <h2>Hello {{ $userName }},</h2>
+        <h2>{{ __('ui.hello_user', ['name' => $userName]) }}</h2>
         
-        <p>Thank you for your interest in joining our library. After reviewing your application, we regret to inform you that we cannot approve your account at this time.</p>
+        <p>{{ __('ui.thank_you_interest') }}</p>
         
         <div class="warning-box">
-            <h3>Reason for Rejection:</h3>
+            <h3>{{ __('ui.reason_for_rejection') }}</h3>
             <p>{{ $reason }}</p>
         </div>
         
-        <p>If you believe this decision was made in error or if you have additional information that might help with your application, please feel free to contact us.</p>
+        <p>{{ __('ui.decision_error') }}</p>
         
-        <p><strong>What you can do:</strong></p>
+        <p><strong>{{ __('ui.what_you_can_do') }}</strong></p>
         <ul>
-            <li>Review the rejection reason above</li>
-            <li>Contact our library staff for clarification</li>
-            <li>Reapply once you've addressed the concerns</li>
-            <li>Visit our library in person for assistance</li>
+            <li>{{ __('ui.review_rejection_reason') }}</li>
+            <li>{{ __('ui.contact_library_staff_clarification') }}</li>
+            <li>{{ __('ui.reapply_address_concerns') }}</li>
+            <li>{{ __('ui.visit_library_person') }}</li>
         </ul>
         
-        <p>You can still browse our public book catalog without an account, though borrowing privileges require approval.</p>
+        <p>{{ __('ui.browse_public_catalog') }}</p>
         
-        <p>If you have any questions, please contact us at: <strong>{{ $contactEmail }}</strong></p>
+        <p>{{ __('ui.contact_us_at') }} <strong>{{ $contactEmail }}</strong></p>
         
-        <p>Thank you for your understanding.</p>
+        <p>{{ __('ui.thank_you_understanding') }}</p>
         
-        <p><strong>The Library Team</strong></p>
+        <p><strong>{{ __('ui.library_team') }}</strong></p>
     </div>
     
     <div class="footer">
-        <p>This is an automated email. You can reply to this message for further assistance.</p>
+        <p>{{ __('ui.automated_email_can_reply') }}</p>
     </div>
 </body>
 </html>

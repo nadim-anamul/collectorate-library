@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Account Approved</title>
+    <title>{{ __('ui.account_approved_title') }}</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -51,45 +51,45 @@
 </head>
 <body>
     <div class="header">
-        <h1>🎉 Welcome to Our Library!</h1>
-        <p>Your account has been approved</p>
+        <h1>{{ __('ui.welcome_to_library') }}</h1>
+        <p>{{ __('ui.account_approved_subtitle') }}</p>
     </div>
     
     <div class="content">
-        <h2>Hello {{ $userName }},</h2>
+        <h2>{{ __('ui.hello_user', ['name' => $userName]) }}</h2>
         
-        <p>Great news! Your library account application has been <strong>approved</strong>. You now have full access to our library system.</p>
+        <p>{{ __('ui.great_news') }}</p>
         
         <div class="info-box">
-            <h3>Account Details:</h3>
+            <h3>{{ __('ui.account_details') }}</h3>
             <ul>
-                <li><strong>Email:</strong> {{ $userEmail }}</li>
-                <li><strong>Role:</strong> {{ $role }}</li>
-                <li><strong>Status:</strong> Active</li>
+                <li><strong>{{ __('ui.email') }}:</strong> {{ $userEmail }}</li>
+                <li><strong>{{ __('ui.role') }}:</strong> {{ $role }}</li>
+                <li><strong>{{ __('ui.status') }}:</strong> {{ __('ui.active') }}</li>
             </ul>
         </div>
         
-        <p>You can now:</p>
+        <p>{{ __('ui.you_can_now') }}</p>
         <ul>
-            <li>Browse our extensive book collection</li>
-            <li>Borrow books online</li>
-            <li>Track your reading history</li>
-            <li>Access your personalized dashboard</li>
+            <li>{{ __('ui.browse_collection') }}</li>
+            <li>{{ __('ui.borrow_books_online') }}</li>
+            <li>{{ __('ui.track_reading_history') }}</li>
+            <li>{{ __('ui.access_dashboard') }}</li>
         </ul>
         
         <div style="text-align: center;">
-            <a href="{{ $loginUrl }}" class="button">Login to Your Account</a>
+            <a href="{{ $loginUrl }}" class="button">{{ __('ui.login_to_account') }}</a>
         </div>
         
-        <p>If you have any questions or need assistance, please don't hesitate to contact our library staff.</p>
+        <p>{{ __('ui.contact_library_staff') }}</p>
         
-        <p>Happy reading!</p>
+        <p>{{ __('ui.happy_reading') }}</p>
         
-        <p><strong>The Library Team</strong></p>
+        <p><strong>{{ __('ui.library_team') }}</strong></p>
     </div>
     
     <div class="footer">
-        <p>This is an automated email. Please do not reply to this message.</p>
+        <p>{{ __('ui.automated_email_no_reply') }}</p>
     </div>
 </body>
 </html>

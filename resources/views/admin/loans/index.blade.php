@@ -9,8 +9,8 @@
                         </svg>
                     </div>
                     <div>
-                        <h2 class="font-bold text-2xl text-gray-800 dark:text-white leading-tight">Loan Management</h2>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">Manage book loans and returns</p>
+                        <h2 class="font-bold text-2xl text-gray-800 dark:text-white leading-tight">{{ __('ui.loan_management') }}</h2>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">{{ __('ui.manage_book_loans_returns') }}</p>
                     </div>
                 </div>
             </div>
@@ -19,20 +19,20 @@
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                     </svg>
-                    <span>Issue New Book</span>
+                    <span>{{ __('filters.issue_new_book') }}</span>
                 </div>
             </a>
         </div>
     </x-slot>
     
     <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="container-responsive">
             <!-- Stats Cards -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                 <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-6 text-white shadow-xl">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-blue-100 text-sm font-medium">Total Loans</p>
+                            <p class="text-blue-100 text-sm font-medium">{{ __('ui.total_loans') }}</p>
                             <p class="text-3xl font-bold">{{ $loans->total() }}</p>
                         </div>
                         <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
@@ -46,7 +46,7 @@
                 <div class="bg-gradient-to-br from-yellow-500 to-orange-500 rounded-2xl p-6 text-white shadow-xl">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-yellow-100 text-sm font-medium">Pending</p>
+                            <p class="text-yellow-100 text-sm font-medium">{{ __('filters.pending') }}</p>
                             <p class="text-3xl font-bold">{{ $loans->where('status', 'pending')->count() }}</p>
                         </div>
                         <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
@@ -60,7 +60,7 @@
                 <div class="bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl p-6 text-white shadow-xl">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-green-100 text-sm font-medium">Active</p>
+                            <p class="text-green-100 text-sm font-medium">{{ __('filters.active') }}</p>
                             <p class="text-3xl font-bold">{{ $loans->where('status', 'issued')->count() }}</p>
                         </div>
                         <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
@@ -74,7 +74,7 @@
                 <div class="bg-gradient-to-br from-red-500 to-pink-500 rounded-2xl p-6 text-white shadow-xl">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-red-100 text-sm font-medium">Overdue</p>
+                            <p class="text-red-100 text-sm font-medium">{{ __('filters.overdue') }}</p>
                             <p class="text-3xl font-bold">{{ $loans->filter(function($loan) { return $loan->due_at && !$loan->returned_at && \Carbon\Carbon::parse($loan->due_at) < now(); })->count() }}</p>
                         </div>
                         <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
@@ -88,43 +88,43 @@
 
             <div class="lg:flex lg:gap-8">
                 <aside class="lg:w-1/4 w-full mb-8 lg:mb-0">
-                    <!-- Mobile Filters Dropdown -->
+                    <!-- Mobile {{ __('filters.filters') }} Dropdown -->
                     <div x-data="{ open: false }" class="lg:hidden mb-4">
                         <button @click="open = !open" class="w-full inline-flex items-center justify-between px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
                             <span class="flex items-center gap-2 text-gray-800 dark:text-gray-200 font-semibold">
                                 <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
-                                Filters
+                                {{ __('filters.filters') }}
                             </span>
                             <svg :class="{'rotate-180': open}" class="w-4 h-4 text-gray-500 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
                         <div x-show="open" x-transition class="mt-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
                             <form method="GET" action="{{ route('admin.loans.index') }}" class="p-6 space-y-6">
                                 <div class="space-y-3">
-                                    <label class="flex items-center gap-2 text-gray-700 dark:text-gray-300 font-semibold">Search Loans</label>
-                                    <input id="loan-search-mobile" type="text" name="q" value="{{ $search }}" placeholder="User, email, book title, ISBN" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white" />
+                                    <label class="flex items-center gap-2 text-gray-700 dark:text-gray-300 font-semibold">{{ __('filters.search') }} Loans</label>
+                                    <input id="loan-search-mobile" type="text" name="q" value="{{ $search }}" placeholder="{{ __('ui.user') }}, email, book title, {{ __('filters.isbn') }}" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white" />
                                 </div>
                                 <div class="flex items-center justify-between">
-                                    <label class="flex items-center gap-2 text-gray-700 dark:text-gray-300 font-semibold">Quick Filters</label>
+                                    <label class="flex items-center gap-2 text-gray-700 dark:text-gray-300 font-semibold">Quick {{ __('filters.filters') }}</label>
                                     <label class="inline-flex items-center cursor-pointer">
                                         <input type="checkbox" name="overdue" value="1" {{ ($overdueOnly ?? false) ? 'checked' : '' }} class="sr-only peer">
                                         <div class="relative w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-checked:bg-red-600 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:bg-white after:rounded-full after:transition-all peer-checked:after:translate-x-full"></div>
-                                        <span class="ml-3 text-sm font-medium text-red-600 dark:text-red-400">Overdue only</span>
+                                        <span class="ml-3 text-sm font-medium text-red-600 dark:text-red-400">{{ __('ui.overdue_only') }}</span>
                                     </label>
                                 </div>
                                 <div class="grid grid-cols-1 gap-4">
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('ui.status') }}</label>
                                         <select name="status" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white">
-                                            <option value="">All Statuses</option>
+                                            <option value="">{{ __('ui.all_statuses') }}</option>
                                             @foreach(['pending','issued','return_requested','returned','declined'] as $s)
                                                 <option value="{{ $s }}" @selected(($status ?? '')===$s)>{{ ucfirst(str_replace('_', ' ', $s)) }}</option>
                                             @endforeach
                                         </select>
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">User</label>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('ui.user') }}</label>
                                         <select name="user_id" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white">
-                                            <option value="">All Users</option>
+                                            <option value="">{{ __('ui.all_users') }}</option>
                                             @foreach($users as $u)
                                                 <option value="{{ $u->id }}" @selected(($userId ?? '')==$u->id)>{{ $u->name }} ({{ $u->email }})</option>
                                             @endforeach
@@ -133,25 +133,25 @@
                                 </div>
                                 <div class="grid grid-cols-1 gap-4">
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Issued From</label>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('filters.issued') }} From</label>
                                         <input type="date" name="issued_from" value="{{ $issuedFrom }}" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white" />
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Issued To</label>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('filters.issued') }} To</label>
                                         <input type="date" name="issued_to" value="{{ $issuedTo }}" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white" />
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Due From</label>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('ui.due') }} From</label>
                                         <input type="date" name="due_from" value="{{ $dueFrom }}" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white" />
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Due To</label>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('ui.due') }} To</label>
                                         <input type="date" name="due_to" value="{{ $dueTo }}" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white" />
                                     </div>
                                 </div>
                                 <div class="flex flex-col gap-3 pt-2 border-t border-gray-200 dark:border-gray-700">
-                                    <button type="submit" class="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold rounded-xl">Apply Filters</button>
-                                    <a href="{{ route('admin.loans.index') }}" class="w-full px-6 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-xl text-center">Clear All</a>
+                                    <button type="submit" class="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold rounded-xl">Apply {{ __('filters.filters') }}</button>
+                                    <a href="{{ route('admin.loans.index') }}" class="w-full px-6 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-xl text-center">{{ __('filters.clear_all') }}</a>
                                 </div>
                             </form>
                         </div>
@@ -166,23 +166,23 @@
                                     </svg>
                                 </div>
                                 <div>
-                                    <h3 class="text-lg font-bold text-white">Filters & Search</h3>
+                                    <h3 class="text-lg font-bold text-white">{{ __('filters.filters') }} & {{ __('filters.search') }}</h3>
                                     <p class="text-purple-100 text-sm">Find specific loans</p>
                                 </div>
                             </div>
                         </div>
                         
                         <form method="GET" action="{{ route('admin.loans.index') }}" class="p-6 space-y-6">
-                            <!-- Search Section -->
+                            <!-- {{ __('filters.search') }} Section -->
                             <div class="space-y-3">
                                 <label class="flex items-center gap-2 text-gray-700 dark:text-gray-300 font-semibold">
                                     <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                     </svg>
-                                    Search Loans
+                                    {{ __('filters.search') }} Loans
                                 </label>
                                 <div class="relative">
-                                    <input id="loan-search" type="text" name="q" value="{{ $search }}" placeholder="User, email, book title, ISBN" class="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all duration-200" />
+                                    <input id="loan-search" type="text" name="q" value="{{ $search }}" placeholder="{{ __('ui.user') }}, email, book title, {{ __('filters.isbn') }}" class="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all duration-200" />
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                         <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -191,27 +191,27 @@
                                 </div>
                                         </div>
 
-                            <!-- Quick Filters -->
+                            <!-- Quick {{ __('filters.filters') }} -->
                             <div class="space-y-4">
                                 <div class="flex items-center justify-between">
                                     <label class="flex items-center gap-2 text-gray-700 dark:text-gray-300 font-semibold">
                                         <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"></path>
                                         </svg>
-                                        Quick Filters
+                                        Quick {{ __('filters.filters') }}
                                     </label>
                                     <label class="inline-flex items-center cursor-pointer">
                                         <input type="checkbox" name="overdue" value="1" {{ ($overdueOnly ?? false) ? 'checked' : '' }} class="sr-only peer">
                                         <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 dark:peer-focus:ring-red-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-red-600"></div>
-                                        <span class="ml-3 text-sm font-medium text-red-600 dark:text-red-400">Overdue only</span>
+                                        <span class="ml-3 text-sm font-medium text-red-600 dark:text-red-400">{{ __('ui.overdue_only') }}</span>
                                         </label>
                                     </div>
 
                                 <div class="grid grid-cols-1 gap-4">
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('ui.status') }}</label>
                                         <select name="status" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all duration-200">
-                                            <option value="">All Statuses</option>
+                                            <option value="">{{ __('ui.all_statuses') }}</option>
                                     @foreach(['pending','issued','return_requested','returned','declined'] as $s)
                                                 <option value="{{ $s }}" @selected(($status ?? '')===$s)>{{ ucfirst(str_replace('_', ' ', $s)) }}</option>
                                         @endforeach
@@ -219,9 +219,9 @@
                                     </div>
                                     
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">User</label>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('ui.user') }}</label>
                                         <select name="user_id" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all duration-200">
-                                            <option value="">All Users</option>
+                                            <option value="">{{ __('ui.all_users') }}</option>
                                         @foreach($users as $u)
                                             <option value="{{ $u->id }}" @selected(($userId ?? '')==$u->id)>{{ $u->name }} ({{ $u->email }})</option>
                                         @endforeach
@@ -230,7 +230,7 @@
                                 </div>
                             </div>
 
-                            <!-- Date Range Filters -->
+                            <!-- Date Range {{ __('filters.filters') }} -->
                             <div class="space-y-4">
                                 <label class="flex items-center gap-2 text-gray-700 dark:text-gray-300 font-semibold">
                                     <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -241,19 +241,19 @@
                                 
                                 <div class="grid grid-cols-1 gap-4">
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Issued From</label>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('filters.issued') }} From</label>
                                         <input type="date" name="issued_from" value="{{ $issuedFrom }}" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all duration-200" />
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Issued To</label>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('filters.issued') }} To</label>
                                         <input type="date" name="issued_to" value="{{ $issuedTo }}" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all duration-200" />
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Due From</label>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('ui.due') }} From</label>
                                         <input type="date" name="due_from" value="{{ $dueFrom }}" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all duration-200" />
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Due To</label>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('ui.due') }} To</label>
                                         <input type="date" name="due_to" value="{{ $dueTo }}" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all duration-200" />
                                     </div>
                                 </div>
@@ -266,11 +266,11 @@
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                         </svg>
-                                        <span>Apply Filters</span>
+                                        <span>Apply {{ __('filters.filters') }}</span>
                                     </div>
                                 </button>
                                 <a href="{{ route('admin.loans.index') }}" class="w-full px-6 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 text-center">
-                                    Clear All
+                                    {{ __('filters.clear_all') }}
                                 </a>
                                 </div>
 
@@ -291,7 +291,7 @@
                                         <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
                                         </svg>
-                                        Active Filters
+                                        {{ __('filters.active') }} {{ __('filters.filters') }}
                                     </div>
                                         <div class="flex flex-wrap gap-2">
                                             @foreach($active as $key => $val)
@@ -302,7 +302,7 @@
                                                 </a>
                                             @endforeach
                                         <a href="{{ route('admin.loans.index') }}" class="inline-flex items-center px-3 py-1.5 rounded-full text-xs border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200">
-                                            Clear All
+                                            {{ __('filters.clear_all') }}
                                         </a>
                                     </div>
                                     </div>
@@ -325,13 +325,13 @@
                                         </svg>
                                     </div>
                                     <div>
-                                        <h3 class="text-lg font-bold text-gray-900 dark:text-white">Loan Records</h3>
-                                        <p class="text-sm text-gray-600 dark:text-gray-400">{{ $loans->total() }} total loans</p>
+                                        <h3 class="text-lg font-bold text-gray-900 dark:text-white">{{ __('ui.loan_records') }}</h3>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">{{ $loans->total() }} {{ __('ui.total_loans_count') }}</p>
                                     </div>
                                 </div>
                                 <div class="flex items-center space-x-2">
                                     <div class="text-sm text-gray-500 dark:text-gray-400">
-                                        Showing {{ $loans->firstItem() ?? 0 }}-{{ $loans->lastItem() ?? 0 }} of {{ $loans->total() }}
+                                        {{ __('ui.showing') }} {{ $loans->firstItem() ?? 0 }}-{{ $loans->lastItem() ?? 0 }} {{ __('ui.of') }} {{ $loans->total() }}
                                     </div>
                                 </div>
                             </div>
@@ -343,38 +343,38 @@
                                 <thead class="bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700">
                                     <tr>
                                         <th class="px-4 py-4 text-left text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-1/4">
-                                            User
+                                            {{ __('ui.user') }}
                                         </th>
                                         <th class="px-4 py-4 text-left text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-1/5">
-                                            Book
+                                            {{ __('ui.book') }}
                                         </th>
                                         <th class="px-4 py-4 text-left text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-1/4">
-                                            Dates
+                                            {{ __('ui.dates') }}
                                         </th>
                                         <th class="px-4 py-4 text-left text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-1/5">
-                                            Status
+                                            {{ __('ui.status') }}
                                         </th>
                                         <th class="px-4 py-4 text-left text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-1/6">
-                                            Actions
+                                            {{ __('ui.actions') }}
                                         </th>
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                                     @foreach($loans as $loan)
                                         <tr class="hover:bg-gradient-to-r hover:from-purple-50 hover:to-indigo-50 dark:hover:from-gray-700 dark:hover:to-gray-600 transition-all duration-200 group">
-                                            <!-- User Column -->
+                                            <!-- {{ __('ui.user') }} Column -->
                                             <td class="px-4 py-6">
                                                 <div>
                                                     <div class="font-semibold text-gray-900 dark:text-white mb-1">
                                                         <a href="{{ route('admin.loans.show', $loan) }}" class="hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200">
-                                                            {{ optional($loan->user)->name ?? 'Unknown User' }}
+                                                            {{ optional($loan->user)->name ?? __('ui.unknown_user') }}
                                                         </a>
                                                     </div>
                                                     <div class="text-sm text-gray-500 dark:text-gray-400">{{ optional($loan->user)->email ?? 'No email' }}</div>
                                                 </div>
                                             </td>
                                             
-                                            <!-- Book Column -->
+                                            <!-- {{ __('ui.book') }} Column -->
                                             <td class="px-4 py-6">
                                                 <div>
                                                     <a href="{{ route('admin.loans.show', $loan) }}" class="font-medium text-gray-900 dark:text-white hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200 block mb-1">
@@ -384,34 +384,34 @@
                                             {{ $loan->book->title_en }}
                                         @endif
                                         </a>
-                                                    <div class="text-sm text-gray-500 dark:text-gray-400">ISBN: {{ $loan->book->isbn ?? 'N/A' }}</div>
+                                                    <div class="text-sm text-gray-500 dark:text-gray-400">{{ __('filters.isbn') }}: {{ $loan->book->isbn ?? 'N/A' }}</div>
                                                 </div>
                                     </td>
                                             
-                                            <!-- Dates Column -->
+                                            <!-- {{ __('ui.dates') }} Column -->
                                             <td class="px-4 py-6">
                                                 <div class="space-y-2">
                                                     <div>
-                                                        <div class="text-xs text-gray-500 dark:text-gray-400 font-medium">Requested</div>
+                                                        <div class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ __('ui.requested') }}</div>
                                                         <div class="text-sm font-medium text-gray-900 dark:text-white">
                                                             {{ $loan->requested_at ? \Carbon\Carbon::parse($loan->requested_at)->format('M d, Y') : '-' }}
                                                         </div>
                                                     </div>
                                                     <div>
-                                                        <div class="text-xs text-gray-500 dark:text-gray-400 font-medium">Issued</div>
+                                                        <div class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ __('filters.issued') }}</div>
                                                         <div class="text-sm font-medium text-gray-900 dark:text-white">
                                                             {{ $loan->issued_at ? \Carbon\Carbon::parse($loan->issued_at)->format('M d, Y') : '-' }}
                                                         </div>
                                                     </div>
                                                     <div>
-                                                        <div class="text-xs text-gray-500 dark:text-gray-400 font-medium">Due</div>
+                                                        <div class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ __('ui.due') }}</div>
                                                         <div class="text-sm font-medium {{ $loan->due_at && !$loan->returned_at && \Carbon\Carbon::parse($loan->due_at) < now() ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-white' }}">
                                                             {{ $loan->due_at ? \Carbon\Carbon::parse($loan->due_at)->format('M d, Y') : '-' }}
                                                         </div>
                                                 @if($loan->due_at && !$loan->returned_at && \Carbon\Carbon::parse($loan->due_at) < now())
                                                             <div class="mt-1">
                                                                 <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
-                                                                    Overdue
+                                                                    {{ __('filters.overdue') }}
                                                                 </span>
                                                             </div>
                                                 @endif
@@ -419,7 +419,7 @@
                                                 </div>
                                             </td>
                                             
-                                            <!-- Status Column -->
+                                            <!-- {{ __('ui.status') }} Column -->
                                             <td class="px-2 py-6">
                                                 @php
                                                     $statusConfig = [
@@ -436,35 +436,35 @@
                                                 </span>
                                             </td>
                                             
-                                            <!-- Actions Column -->
+                                            <!-- {{ __('ui.actions') }} Column -->
                                             <td class="px-4 py-6">
                                                 @if($loan->status !== 'returned')
                                             @if($loan->status === 'pending')
                                                         <div class="flex flex-col space-y-2">
-                                                            <button onclick="openApproveModal({{ $loan->id }})" class="w-full px-3 py-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white text-sm font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
-                                                                Approve
+                                                            <button onclick="open{{ __('ui.approve') }}Modal({{ $loan->id }})" class="w-full px-3 py-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white text-sm font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
+                                                                {{ __('ui.approve') }}
                                                             </button>
-                                                            <button type="button" onclick="openDeclineModal({{ $loan->id }})" class="w-full px-3 py-2 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white text-sm font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
-                                                                Decline
+                                                            <button type="button" onclick="open{{ __('ui.decline') }}Modal({{ $loan->id }})" class="w-full px-3 py-2 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white text-sm font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
+                                                                {{ __('ui.decline') }}
                                                             </button>
                                                         </div>
                                             @elseif($loan->status === 'issued')
                                                         <form action="{{ route('admin.loans.return',$loan) }}" method="POST" class="w-full">
                                                             @csrf
                                                             <button class="w-full px-3 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white text-sm font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
-                                                                Mark Returned
+                                                                {{ __('ui.mark_returned') }}
                                                             </button>
                                                         </form>
                                             @elseif($loan->status === 'return_requested')
                                                         <form action="{{ route('admin.loans.return',$loan) }}" method="POST" class="w-full">
                                                             @csrf
                                                             <button class="w-full px-3 py-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white text-sm font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
-                                                                Check-in
+                                                                {{ __('ui.check_in') }}
                                                             </button>
                                                 </form>
                                                     @endif
                                                 @else
-                                                    <span class="text-sm text-gray-500 dark:text-gray-400 italic">No actions available</span>
+                                                    <span class="text-sm text-gray-500 dark:text-gray-400 italic">{{ __('ui.no_actions_available') }}</span>
                                                 @endif
                                             </td>
                                         </tr>
@@ -485,10 +485,10 @@
     </div>
 </div>
 
-    <!-- Decline Modal -->
+    <!-- {{ __('ui.decline') }} Modal -->
     <div id="declineModal" class="fixed inset-0 z-50 overflow-y-auto hidden">
         <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity" onclick="closeDeclineModal()"></div>
+            <div class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity" onclick="close{{ __('ui.decline') }}Modal()"></div>
             <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                 <form id="declineForm" method="POST" action="">
                     @csrf
@@ -500,18 +500,18 @@
                                 </svg>
                             </div>
                             <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                                <h3 class="text-lg leading-6 font-semibold text-gray-900 dark:text-gray-100">Decline Loan Request</h3>
+                                <h3 class="text-lg leading-6 font-semibold text-gray-900 dark:text-gray-100">{{ __('ui.decline') }} Loan Request</h3>
                                 <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">Please provide a reason to decline this loan.</p>
                                 <div class="mt-4">
-                                    <label for="decline_reason" class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Decline Reason *</label>
+                                    <label for="decline_reason" class="block text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('ui.decline') }} Reason *</label>
                                     <textarea id="decline_reason" name="decline_reason" rows="4" required class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm" placeholder="Enter the reason..."></textarea>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="bg-gray-50 dark:bg-gray-700 px-6 py-4 flex flex-col sm:flex-row sm:justify-end gap-3">
-                        <button type="button" onclick="closeDeclineModal()" class="w-full sm:w-auto px-6 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-200">Cancel</button>
-                        <button type="submit" class="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">Confirm Decline</button>
+                        <button type="button" onclick="close{{ __('ui.decline') }}Modal()" class="w-full sm:w-auto px-6 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-200">Cancel</button>
+                        <button type="submit" class="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">Confirm {{ __('ui.decline') }}</button>
                     </div>
                 </form>
             </div>
@@ -519,22 +519,22 @@
     </div>
 
     <script>
-        function openDeclineModal(loanId){
+        function open{{ __('ui.decline') }}Modal(loanId){
             const form = document.getElementById('declineForm');
             form.action = `/admin/loans/${loanId}/decline`;
             document.getElementById('decline_reason').value = '';
             document.getElementById('declineModal').classList.remove('hidden');
         }
-        function closeDeclineModal(){
+        function close{{ __('ui.decline') }}Modal(){
             document.getElementById('declineModal').classList.add('hidden');
         }
-        document.getElementById('declineModal').addEventListener('click', function(e){ if(e.target===this){ closeDeclineModal(); } });
-        document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closeDeclineModal(); } });
+        document.getElementById('declineModal').addEventListener('click', function(e){ if(e.target===this){ close{{ __('ui.decline') }}Modal(); } });
+        document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ close{{ __('ui.decline') }}Modal(); } });
     </script>
-    <!-- Modern Approve Modal -->
+    <!-- Modern {{ __('ui.approve') }} Modal -->
     <div id="approveModal" class="fixed inset-0 z-50 overflow-y-auto hidden">
         <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity" onclick="closeApproveModal()"></div>
+            <div class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity" onclick="close{{ __('ui.approve') }}Modal()"></div>
             
             <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                 <!-- Modal Header -->
@@ -546,7 +546,7 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="text-lg font-bold text-white">Approve Loan Request</h3>
+                            <h3 class="text-lg font-bold text-white">{{ __('ui.approve') }} Loan Request</h3>
                             <p class="text-green-100 text-sm">Set issue and due dates for this loan</p>
                         </div>
                     </div>
@@ -563,7 +563,7 @@
                                             <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                             </svg>
-                                            <span>Issued Date *</span>
+                                            <span>{{ __('filters.issued') }} Date *</span>
                                         </div>
                                     </label>
                                     <input 
@@ -581,7 +581,7 @@
                                             <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                             </svg>
-                                            <span>Due Date *</span>
+                                            <span>{{ __('ui.due') }} Date *</span>
                                         </div>
                                     </label>
                                     <input 
@@ -616,7 +616,7 @@
                     
                     <!-- Modal Footer -->
                     <div class="bg-gray-50 dark:bg-gray-700 px-6 py-4 flex flex-col sm:flex-row sm:justify-end space-y-3 sm:space-y-0 sm:space-x-3">
-                        <button type="button" onclick="closeApproveModal()" class="w-full sm:w-auto px-6 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-200">
+                        <button type="button" onclick="close{{ __('ui.approve') }}Modal()" class="w-full sm:w-auto px-6 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-200">
                             Cancel
                         </button>
                         <button type="submit" class="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
@@ -634,28 +634,28 @@
     </div>
 
     <script>
-        function openApproveModal(loanId) {
+        function open{{ __('ui.approve') }}Modal(loanId) {
             const modal = document.getElementById('approveModal');
             const form = document.getElementById('approveForm');
             form.action = `/admin/loans/${loanId}/approve`;
             modal.classList.remove('hidden');
         }
 
-        function closeApproveModal() {
+        function close{{ __('ui.approve') }}Modal() {
             document.getElementById('approveModal').classList.add('hidden');
         }
 
         // Close modal when clicking outside
         document.getElementById('approveModal').addEventListener('click', function(e) {
             if (e.target === this) {
-                closeApproveModal();
+                close{{ __('ui.approve') }}Modal();
             }
         });
 
         // Close modal with Escape key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
-                closeApproveModal();
+                close{{ __('ui.approve') }}Modal();
             }
         });
     </script>

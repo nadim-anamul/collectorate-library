@@ -1,16 +1,16 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-white leading-tight">User Management</h2>
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-white leading-tight">{{ __('ui.user_management') }}</h2>
             <div class="flex flex-wrap gap-2">
                 <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-yellow-900 dark:text-yellow-300">
-                    {{ $pendingCount }} Pending
+                    {{ $pendingCount }} {{ __('ui.pending') }}
                 </span>
                 <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">
-                    {{ $approvedCount }} Approved
+                    {{ $approvedCount }} {{ __('ui.approved') }}
                 </span>
                 <span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">
-                    {{ $rejectedCount }} Rejected
+                    {{ $rejectedCount }} {{ __('ui.rejected') }}
                 </span>
             </div>
         </div>
@@ -39,7 +39,7 @@
                         <button @click="open = !open" class="w-full inline-flex items-center justify-between px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
                             <span class="flex items-center gap-2 text-gray-800 dark:text-gray-200 font-semibold">
                                 <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z"></path></svg>
-                                Filters
+                                {{ __('filters.filters') }}
                             </span>
                             <svg :class="{'rotate-180': open}" class="w-4 h-4 text-gray-500 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
@@ -82,10 +82,10 @@
                             <svg class="w-4 h-4 inline mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                             </svg>
-                            Search Users
+                            {{ __('ui.search_users') }}
                         </label>
                         <input type="text" name="search" id="userSearch" value="{{ request('search') }}" 
-                               placeholder="Name, email, phone..."
+                               placeholder="{{ __('ui.name_email_phone') }}"
                                autocomplete="off"
                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
                     </div>
@@ -138,7 +138,7 @@
                                 <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
                                 </svg>
-                                Filters
+                                {{ __('filters.filters') }}
                             </h3>
                         </div>
                         
@@ -208,12 +208,12 @@
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                         <thead class="bg-gray-50 dark:bg-gray-700">
                             <tr>
-                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">User</th>
-                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden sm:table-cell">Contact</th>
-                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden md:table-cell">Type</th>
-                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
-                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden lg:table-cell">Role</th>
-                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ __('ui.user') }}</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden sm:table-cell">{{ __('ui.contact') }}</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden md:table-cell">{{ __('ui.type') }}</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ __('ui.status') }}</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden lg:table-cell">{{ __('ui.role') }}</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ __('ui.actions') }}</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -332,6 +332,47 @@
                 timer = setTimeout(() => navigateWithQuery(val), 400);
             });
         });
+
+        // Modal helpers for Approve/Reject actions
+        function openApprovalModal(userId, userName) {
+            const modal = document.getElementById('approvalModal');
+            const nameEl = document.getElementById('approvalUserName');
+            const form = document.getElementById('approvalForm');
+            if (nameEl) nameEl.textContent = userName;
+            if (form) form.action = `/admin/users/${userId}/approve`;
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+        }
+
+        function closeApprovalModal() {
+            const modal = document.getElementById('approvalModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function openRejectionModal(userId, userName) {
+            const modal = document.getElementById('rejectionModal');
+            const nameEl = document.getElementById('rejectionUserName');
+            const form = document.getElementById('rejectionForm');
+            if (nameEl) nameEl.textContent = userName;
+            if (form) form.action = `/admin/users/${userId}/reject`;
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+        }
+
+        function closeRejectionModal() {
+            const modal = document.getElementById('rejectionModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
     </script>
 
     <!-- Approval Modal -->

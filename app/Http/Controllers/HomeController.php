@@ -5,14 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\Models\Book;
 use App\Models\Models\Category;
 use App\Models\Models\Tag;
+use App\Services\RecommendationService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Book::with(['category', 'tags', 'language', 'primaryAuthor', 'publisher'])
-                    ->where('available_copies', '>', 0);
+        // Base query: show all books by default (both available and unavailable)
+        $query = Book::with(['category', 'tags', 'language', 'primaryAuthor', 'publisher']);
         
         // Optimized search functionality
         if ($request->filled('search')) {
@@ -21,9 +23,6 @@ class HomeController extends Controller
                 // Direct field searches (fastest)
                 $q->where('title_en', 'like', '%'.$search.'%')
                   ->orWhere('title_bn', 'like', '%'.$search.'%')
-                  ->orWhere('author_en', 'like', '%'.$search.'%')
-                  ->orWhere('author_bn', 'like', '%'.$search.'%')
-                  ->orWhere('publisher_en', 'like', '%'.$search.'%')
                   ->orWhere('isbn', 'like', '%'.$search.'%');
                 
                 // Only search descriptions if search term is longer (performance optimization)
@@ -68,138 +67,54 @@ class HomeController extends Controller
             $query->where('publication_year', $request->year);
         }
         
-        // Availability filter
+        // Availability filter (simple)
         if ($request->filled('availability')) {
-            if ($request->availability === 'all') {
-                // Remove the default available filter to show all books
-                $query = Book::with(['category', 'tags', 'language', 'primaryAuthor', 'publisher']);
-                // Re-apply search if it exists
-                if ($request->filled('search')) {
-                    $search = $request->search;
-                    $query->where(function($q) use ($search) {
-                        $q->where('title_en', 'like', '%'.$search.'%')
-                          ->orWhere('title_bn', 'like', '%'.$search.'%')
-                          ->orWhere('author_en', 'like', '%'.$search.'%')
-                          ->orWhere('author_bn', 'like', '%'.$search.'%')
-                          ->orWhere('publisher_en', 'like', '%'.$search.'%')
-                          ->orWhere('isbn', 'like', '%'.$search.'%')
-                          ->orWhere('description_en', 'like', '%'.$search.'%')
-                          ->orWhere('description_bn', 'like', '%'.$search.'%')
-                          ->orWhereHas('primaryAuthor', function ($subQ) use ($search) {
-                              $subQ->where('name_en', 'like', '%'.$search.'%')
-                                   ->orWhere('name_bn', 'like', '%'.$search.'%');
-                          })
-                          ->orWhereHas('publisher', function ($subQ) use ($search) {
-                              $subQ->where('name_en', 'like', '%'.$search.'%')
-                                   ->orWhere('name_bn', 'like', '%'.$search.'%');
-                          })
-                          ->orWhereHas('category', function ($subQ) use ($search) {
-                              $subQ->where('name_en', 'like', '%'.$search.'%')
-                                   ->orWhere('name_bn', 'like', '%'.$search.'%');
-                          })
-                          ->orWhereHas('tags', function ($subQ) use ($search) {
-                              $subQ->where('name', 'like', '%'.$search.'%');
-                          });
-                    });
-                }
-                // Re-apply other filters
-                if ($request->filled('category')) {
-                    $query->where('category_id', $request->category);
-                }
-                if ($request->filled('language')) {
-                    $query->whereHas('language', function($q) use ($request) {
-                        $q->where('code', $request->language);
-                    });
-                }
-                if ($request->filled('year')) {
-                    $query->where('publication_year', $request->year);
-                }
+            if ($request->availability === 'available') {
+                $query->where('available_copies', '>', 0);
             } elseif ($request->availability === 'unavailable') {
-                // Rebuild query for unavailable books
-                $query = Book::with(['category', 'tags', 'language', 'primaryAuthor', 'publisher'])
-                            ->where('available_copies', '=', 0);
-                // Re-apply search if it exists
-                if ($request->filled('search')) {
-                    $search = $request->search;
-                    $query->where(function($q) use ($search) {
-                        $q->where('title_en', 'like', '%'.$search.'%')
-                          ->orWhere('title_bn', 'like', '%'.$search.'%')
-                          ->orWhere('author_en', 'like', '%'.$search.'%')
-                          ->orWhere('author_bn', 'like', '%'.$search.'%')
-                          ->orWhere('publisher_en', 'like', '%'.$search.'%')
-                          ->orWhere('isbn', 'like', '%'.$search.'%')
-                          ->orWhere('description_en', 'like', '%'.$search.'%')
-                          ->orWhere('description_bn', 'like', '%'.$search.'%')
-                          ->orWhereHas('primaryAuthor', function ($subQ) use ($search) {
-                              $subQ->where('name_en', 'like', '%'.$search.'%')
-                                   ->orWhere('name_bn', 'like', '%'.$search.'%');
-                          })
-                          ->orWhereHas('publisher', function ($subQ) use ($search) {
-                              $subQ->where('name_en', 'like', '%'.$search.'%')
-                                   ->orWhere('name_bn', 'like', '%'.$search.'%');
-                          })
-                          ->orWhereHas('category', function ($subQ) use ($search) {
-                              $subQ->where('name_en', 'like', '%'.$search.'%')
-                                   ->orWhere('name_bn', 'like', '%'.$search.'%');
-                          })
-                          ->orWhereHas('tags', function ($subQ) use ($search) {
-                              $subQ->where('name', 'like', '%'.$search.'%');
-                          });
-                    });
-                }
-                // Re-apply other filters
-                if ($request->filled('category')) {
-                    $query->where('category_id', $request->category);
-                }
-                if ($request->filled('language')) {
-                    $query->whereHas('language', function($q) use ($request) {
-                        $q->where('code', $request->language);
-                    });
-                }
-                if ($request->filled('year')) {
-                    $query->where('publication_year', $request->year);
-                }
+                $query->where('available_copies', '=', 0);
             }
-            // For 'available' option, we keep the default behavior (already filtered)
         }
         
         // Sort options
         $sort = $request->get('sort', 'latest');
         
         // Sort options
-        if ($request->availability === 'all') {
-            // For "All Books", sort by availability first, then by selected criteria
-            switch ($sort) {
-                case 'title':
-                    $query->orderBy('available_copies', 'desc')->orderBy('title_en');
-                    break;
-                case 'author':
-                    $query->orderBy('available_copies', 'desc')->orderBy('author_en');
-                    break;
-                case 'year':
-                    $query->orderBy('available_copies', 'desc')->orderBy('publication_year', 'desc');
-                    break;
-                default:
-                    $query->orderBy('available_copies', 'desc')->latest();
-            }
-        } else {
-            // For other availability filters, use normal sorting
-            switch ($sort) {
-                case 'title':
-                    $query->orderBy('title_en');
-                    break;
-                case 'author':
-                    $query->orderBy('author_en');
-                    break;
-                case 'year':
-                    $query->orderBy('publication_year', 'desc');
-                    break;
-                default:
-                    $query->latest();
+        // Unified sorting (no availability bias by default)
+        switch ($sort) {
+            case 'title':
+                $query->orderBy('title_en');
+                break;
+            case 'author':
+                $query->leftJoin('authors', 'books.primary_author_id', '=', 'authors.id')
+                      ->orderBy('authors.name_en');
+                break;
+            case 'year':
+                $query->orderBy('publication_year', 'desc');
+                break;
+            default:
+                $query->latest();
+        }
+
+        // Logged-in users: prioritize recommended books first (primary ordering)
+        if (Auth::check()) {
+            $serviceForOrder = new RecommendationService(Auth::user());
+            $recommendedForOrder = $serviceForOrder->getRecommendations(200)->pluck('id')->toArray();
+            if (!empty($recommendedForOrder)) {
+                $idsCsv = implode(',', $recommendedForOrder);
+                // Bring recommended IDs to the top while preserving secondary ordering above
+                $query->orderByRaw("FIELD(books.id, $idsCsv) DESC");
             }
         }
         
         $books = $query->paginate(15)->appends($request->query());
+
+        // Recommendations for logged-in users (hero slider)
+        $recommendedBooks = collect();
+        if (Auth::check()) {
+            $service = new RecommendationService(Auth::user());
+            $recommendedBooks = $service->getRecommendations(24);
+        }
         
         // Get filter data with caching
         $categories = cache()->remember('categories_list', 3600, function () {
@@ -228,7 +143,7 @@ class HomeController extends Controller
             'search' => $request->get('search'),
         ];
         
-        return view('home', compact('books', 'categories', 'languages', 'years', 'currentFilters'));
+        return view('home', compact('books', 'categories', 'languages', 'years', 'currentFilters', 'recommendedBooks'));
     }
 
     public function show(Book $book)

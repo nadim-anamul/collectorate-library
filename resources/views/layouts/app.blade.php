@@ -18,6 +18,17 @@
                 } catch(e) { /* no-op */ }
             })();
         </script>
+        
+        <!-- Prevent horizontal overflow -->
+        <style>
+            html, body {
+                overflow-x: hidden;
+                max-width: 100vw;
+            }
+            * {
+                box-sizing: border-box;
+            }
+        </style>
         <style>[x-cloak]{display:none!important}</style>
 
         <!-- Fonts -->
@@ -41,38 +52,34 @@
 
             <!-- Page Content -->
             <main class="text-gray-900 dark:text-gray-100">
-                @if (session('success'))
-                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-                        <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 rounded-lg px-4 py-3 notification-message">
+                <!-- Flash Messages -->
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 space-y-4">
+                    @if (session('success'))
+                        <x-alert type="success" dismissible class="notification-message animate-slide-up">
                             {{ session('success') }}
-                        </div>
-                    </div>
-                @endif
-                @if (session('status'))
-                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-                        <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 rounded-lg px-4 py-3 notification-message">
+                        </x-alert>
+                    @endif
+                    @if (session('status'))
+                        <x-alert type="success" dismissible class="notification-message animate-slide-up">
                             {{ session('status') }}
-                        </div>
-                    </div>
-                @endif
-                @if (session('error'))
-                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-                        <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 rounded-lg px-4 py-3 notification-message">
+                        </x-alert>
+                    @endif
+                    @if (session('error'))
+                        <x-alert type="error" dismissible class="notification-message animate-slide-up">
                             {{ session('error') }}
-                        </div>
-                    </div>
-                @endif
-                @if ($errors->any())
-                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-                        <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 text-yellow-700 dark:text-yellow-300 rounded-lg px-4 py-3">
-                            <ul class="list-disc list-inside">
+                        </x-alert>
+                    @endif
+                    @if ($errors && $errors->any())
+                        <x-alert type="warning" dismissible class="animate-slide-up">
+                            <ul class="list-disc list-inside space-y-1">
                                 @foreach ($errors->all() as $error)
                                     <li>{{ $error }}</li>
                                 @endforeach
                             </ul>
-                        </div>
-                    </div>
-                @endif
+                        </x-alert>
+                    @endif
+                </div>
+                
                 {{ $slot }}
             </main>
         </div>

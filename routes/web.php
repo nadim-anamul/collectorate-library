@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\BookController;
@@ -19,6 +21,7 @@ use App\Http\Controllers\Admin\ReportsController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\PasswordChangeController;
+use App\Http\Controllers\LanguageController as AppLanguageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,8 +34,16 @@ use App\Http\Controllers\Auth\PasswordChangeController;
 |
 */
 
+// Health check route for Docker
+Route::get('/health', function () {
+    return 'OK';
+});
+
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/books/{book}', [HomeController::class, 'show'])->name('books.show');
+
+// Language switching routes
+Route::get('/language/{locale}', [AppLanguageController::class, 'switchLanguage'])->name('language.switch');
 
 // Authenticated users can access notifications regardless of approval status
 Route::middleware(['auth'])->group(function(){
@@ -53,6 +64,7 @@ Route::middleware(['auth', 'approved'])->group(function(){
     // Borrow request from book page
     Route::post('/books/{book}/request', [LoanController::class,'request'])->name('books.request');
     Route::post('/loans/{loan}/request-return', [LoanController::class,'requestReturn'])->name('loans.requestReturn');
+    Route::post('/loans/{loan}/cancel', [LoanController::class,'cancel'])->name('loans.cancel');
     Route::post('/books/{book}/reserve', [ReservationController::class,'store'])->name('books.reserve');
     // (moved notifications routes to auth-only block above)
 

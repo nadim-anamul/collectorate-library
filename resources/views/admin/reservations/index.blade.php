@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-white leading-tight">Reservations</h2>
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-white leading-tight">{{ __('ui.reservations') }}</h2>
         </div>
     </x-slot>
     <div class="py-6">
@@ -9,24 +9,24 @@
             <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg overflow-hidden">
                 <div class="p-4 border-b border-gray-200 dark:border-gray-700">
                     <form method="GET" action="{{ route('admin.reservations.index') }}" class="flex items-center gap-3">
-                        <label class="text-sm text-gray-700 dark:text-gray-300">Status</label>
+                        <label class="text-sm text-gray-700 dark:text-gray-300">{{ __('ui.status') }}</label>
                         <select name="status" class="border rounded p-2 dark:bg-gray-700 dark:border-gray-600">
-                            <option value="">All</option>
+                            <option value="">{{ __('ui.all') }}</option>
                             @foreach(['active','fulfilled','cancelled'] as $s)
                                 <option value="{{ $s }}" @selected(($status ?? '')===$s)>{{ ucfirst($s) }}</option>
                             @endforeach
                         </select>
-                        <button class="px-3 py-2 bg-indigo-600 text-white rounded">Apply</button>
+                        <button class="px-3 py-2 bg-indigo-600 text-white rounded">{{ __('ui.apply') }}</button>
                     </form>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="min-w-full text-sm divide-y divide-gray-200 dark:divide-gray-700">
                         <thead class="bg-gray-50 dark:bg-gray-700">
                             <tr class="text-left text-gray-700 dark:text-gray-200">
-                                <th class="py-2 px-3">User</th>
-                                <th class="py-2 px-3">Book</th>
-                                <th class="py-2 px-3">Queued</th>
-                                <th class="py-2 px-3">Status</th>
+                                <th class="py-2 px-3">{{ __('ui.user') }}</th>
+                                <th class="py-2 px-3">{{ __('ui.book') }}</th>
+                                <th class="py-2 px-3">{{ __('ui.queued') }}</th>
+                                <th class="py-2 px-3">{{ __('ui.status') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -48,7 +48,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" class="py-6 text-center text-gray-500 dark:text-gray-400">No reservations found.</td>
+                                    <td colspan="4" class="py-6 text-center text-gray-500 dark:text-gray-400">{{ __('ui.no_reservations_found') }}</td>
                                 </tr>
                             @endforelse
                         </tbody>

@@ -47,22 +47,21 @@ class SearchController extends Controller
             ->map(function ($book) {
                 return [
                     'id' => $book->id,
-                    'title' => $book->language_primary === 'bangla' && $book->title_bn ? $book->title_bn : ($book->title_en ?: $book->title_bn),
+                    'title' => $book->title_en ?: $book->title_bn,
                     'title_bn' => $book->title_bn,
-                    'language_primary' => $book->language_primary,
                     'isbn' => $book->isbn,
-                    'description' => $book->language_primary === 'bangla' && $book->description_bn ? $book->description_bn : ($book->description_en ?: $book->description_bn),
+                    'description' => $book->description_en ?: $book->description_bn,
                     'publication_year' => $book->publication_year,
                     'status' => $book->available_copies > 0 ? 'Available' : 'Unavailable',
                     'cover_image' => $book->cover_path ? Storage::url($book->cover_path) : null,
                     'primary_author' => $book->primaryAuthor ? [
                         'id' => $book->primaryAuthor->id,
-                        'name' => $book->language_primary === 'bangla' && $book->primaryAuthor->name_bn ? $book->primaryAuthor->name_bn : ($book->primaryAuthor->name_en ?: $book->primaryAuthor->name_bn),
+                        'name' => $book->primaryAuthor->name_en ?: $book->primaryAuthor->name_bn,
                         'name_bn' => $book->primaryAuthor->name_bn,
                     ] : null,
                     'publisher' => $book->publisher ? [
                         'id' => $book->publisher->id,
-                        'name' => $book->language_primary === 'bangla' && $book->publisher->name_bn ? $book->publisher->name_bn : ($book->publisher->name_en ?: $book->publisher->name_bn),
+                        'name' => $book->publisher->name_en ?: $book->publisher->name_bn,
                         'name_bn' => $book->publisher->name_bn,
                     ] : null,
                     'language' => $book->language ? [
@@ -72,7 +71,7 @@ class SearchController extends Controller
                     ] : null,
                     'category' => $book->category ? [
                         'id' => $book->category->id,
-                        'name' => $book->language_primary === 'bangla' && $book->category->name_bn ? $book->category->name_bn : ($book->category->name_en ?: $book->category->name_bn),
+                        'name' => $book->category->name_en ?: $book->category->name_bn,
                         'name_bn' => $book->category->name_bn,
                     ] : null,
                     'tags' => $book->tags->map(function ($tag) {

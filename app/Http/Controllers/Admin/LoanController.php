@@ -47,7 +47,7 @@ class LoanController extends Controller
                 });
             });
         }
-        if ($status && in_array($status, ['pending','issued','returned','declined','return_requested'])) {
+        if ($status && in_array($status, ['pending','issued','returned','declined','return_requested','cancelled'])) {
             $query->where('status', $status);
         }
         if ($userId) { $query->where('user_id', $userId); }
@@ -69,7 +69,8 @@ class LoanController extends Controller
                 WHEN status = 'issued' THEN 3
                 WHEN status = 'returned' THEN 4
                 WHEN status = 'declined' THEN 5
-                ELSE 6
+                WHEN status = 'cancelled' THEN 6
+                ELSE 7
             END
         ")->orderByDesc('created_at')
         ->paginate(20)->appends(request()->query());
@@ -327,5 +328,44 @@ class LoanController extends Controller
             }
         } catch (\Throwable $e) { Log::error($e->getMessage()); }
         return back()->with('status','Return requested. Please hand the book to the librarian.');
+    }
+
+    // User cancels their own pending request
+    public function cancel(Loan $loan)
+    {
+        $user = Auth::user();
+        if ($loan->user_id !== $user->id) {
+            return back()->with('error','You can only cancel your own loan requests.');
+        }
+        if ($loan->status !== 'pending') {
+            return back()->with('error','Only pending requests can be cancelled.');
+        }
+        
+        $book = $loan->book;
+        $loan->update([
+            'status' => 'cancelled',
+        ]);
+        
+        ActivityLogger::log('loan.cancelled','Loan',$loan->id,['book_id' => $book->id, 'user_id' => $user->id]);
+        
+        // Notify admins/librarians about cancelled request
+        try {
+            $admins = SystemUser::role(['Admin','Librarian'])->get();
+            foreach ($admins as $admin) {
+                $admin->notify(new LoanEventNotification('loan.cancelled', [
+                    'message' => "Loan request cancelled for '{$book->title_en}' by {$user->name}",
+                    'loan_id' => $loan->id,
+                    'book_id' => $book->id,
+                    'book_title' => $book->title_en,
+                    'by_user_id' => $user->id,
+                    'by_user_name' => $user->name,
+                    'url' => '/admin/loans/' . $loan->id,
+                ]));
+            }
+        } catch (\Throwable $e) { 
+            Log::error($e->getMessage()); 
+        }
+        
+        return back()->with('status', __('ui.request_cancelled'));
     }
 }

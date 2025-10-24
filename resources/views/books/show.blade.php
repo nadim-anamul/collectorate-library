@@ -3,7 +3,7 @@
         <div class="flex justify-between items-center">
             <h1 class="text-2xl font-bold text-gray-800 dark:text-white">{{ $book->title_en ?: $book->title_bn }}</h1>
             <a href="{{ route('home') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition duration-200">
-                ← Back to Library
+                {{ __('ui.back_to_library') }}
             </a>
         </div>
     </x-slot>
@@ -41,7 +41,7 @@
                             <!-- Author -->
                             @if($book->primaryAuthor)
                                 <div>
-                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">Author</h3>
+                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">{{ __('ui.author') }}</h3>
                                     <p class="text-gray-600 dark:text-gray-400">
                                         {{ $book->primaryAuthor->name_en ?: $book->primaryAuthor->name_bn }}
                                         @if($book->primaryAuthor->name_bn && $book->primaryAuthor->name_en)
@@ -54,7 +54,7 @@
                             <!-- Publisher -->
                             @if($book->publisher)
                                 <div>
-                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">Publisher</h3>
+                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">{{ __('ui.publisher') }}</h3>
                                     <p class="text-gray-600 dark:text-gray-400">
                                         {{ $book->publisher->name_en ?: $book->publisher->name_bn }}
                                         @if($book->publisher->name_bn && $book->publisher->name_en)
@@ -67,7 +67,7 @@
                             <!-- ISBN -->
                             @if($book->isbn)
                                 <div>
-                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">ISBN</h3>
+                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">{{ __('ui.isbn') }}</h3>
                                     <p class="text-gray-600 dark:text-gray-400 font-mono">{{ $book->isbn }}</p>
                                 </div>
                             @endif
@@ -75,7 +75,7 @@
                             <!-- Publication Year -->
                             @if($book->publication_year)
                                 <div>
-                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">Publication Year</h3>
+                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">{{ __('ui.publication_year') }}</h3>
                                     <p class="text-gray-600 dark:text-gray-400">{{ $book->publication_year }}</p>
                                 </div>
                             @endif
@@ -83,7 +83,7 @@
                             <!-- Language -->
                             @if($book->language)
                                 <div>
-                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">Language</h3>
+                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">{{ __('ui.language') }}</h3>
                                     <p class="text-gray-600 dark:text-gray-400">{{ $book->language->name }}</p>
                                 </div>
                             @endif
@@ -91,7 +91,7 @@
                             <!-- Category -->
                             @if($book->category)
                                 <div>
-                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">Category</h3>
+                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">{{ __('ui.category') }}</h3>
                                     <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
                                         {{ $book->category->name_en ?: $book->category->name_bn }}
                                     </span>
@@ -101,7 +101,7 @@
                             <!-- Tags -->
                             @if($book->tags->count() > 0)
                                 <div>
-                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">Tags</h3>
+                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">{{ __('ui.tags') }}</h3>
                                     <div class="flex flex-wrap gap-2">
                                         @foreach($book->tags as $tag)
                                             <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
@@ -114,13 +114,13 @@
 
                             <!-- Availability -->
                             <div>
-                                <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">Availability</h3>
+                                <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">{{ __('ui.availability') }}</h3>
                                 <div class="flex items-center space-x-4">
                                     <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium {{ $book->available_copies > 0 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' }}">
-                                        {{ $book->available_copies > 0 ? 'Available' : 'Unavailable' }}
+                                        {{ $book->available_copies > 0 ? __('ui.available') : __('ui.unavailable') }}
                                     </span>
                                     <span class="text-gray-600 dark:text-gray-400">
-                                        {{ $book->available_copies }} of {{ $book->total_copies }} copies available
+                                        {{ $book->available_copies }} {{ __('ui.of') }} {{ $book->total_copies }} {{ __('ui.copies_available') }}
                                     </span>
                                 </div>
                                 
@@ -137,10 +137,10 @@
                                             @if($existingLoan)
                                                 <div class="inline-flex items-center gap-3">
                                                     <span class="text-sm text-gray-600 dark:text-gray-400">
-                                                        You have a {{ ucfirst($existingLoan->status) }} request for this book
+                                                        {{ __('ui.you_have_request', ['status' => ucfirst($existingLoan->status)]) }}
                                                     </span>
                                                     <button class="px-4 py-2 bg-gray-400 text-white rounded-lg cursor-not-allowed" disabled>
-                                                        Request to Borrow
+                                                        {{ __('ui.request_to_borrow') }}
                                                     </button>
                                                 </div>
                                             @else
@@ -151,7 +151,7 @@
                                                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                                             </svg>
-                                                            Request to Borrow
+                                                            {{ __('ui.request_to_borrow') }}
                                                         </button>
                                                     </form>
                                                 @else
@@ -161,7 +161,7 @@
                                                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                                             </svg>
-                                                            Reserve
+                                                            {{ __('ui.reserve') }}
                                                         </button>
                                                     </form>
                                                 @endif
@@ -173,14 +173,14 @@
                                                 <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
                                                 </svg>
-                                                Your account must be approved to request a borrow.
+                                                {{ __('ui.account_must_be_approved') }}
                                             </p>
                                         </div>
                                     @endif
                                 @else
                                     <div class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
                                         <p class="text-sm text-blue-700 dark:text-blue-300">
-                                            <a href="{{ route('login') }}" class="font-medium hover:underline">Sign in</a> to request this book.
+                                            <a href="{{ route('login') }}" class="font-medium hover:underline">{{ __('navigation.login') }}</a> {{ __('ui.sign_in_to_request') }}
                                         </p>
                                     </div>
                                 @endauth
@@ -189,7 +189,7 @@
                             <!-- Description -->
                             @if($book->description_en || $book->description_bn)
                                 <div>
-                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">Description</h3>
+                                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">{{ __('ui.description') }}</h3>
                                     <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
                                         {{ $book->description_en ?: $book->description_bn }}
                                     </p>
