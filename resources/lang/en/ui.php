@@ -36,8 +36,12 @@ return [
     'decline_reason' => 'Decline Reason',
     
     // Approve
+    'approve' => 'Approve',
     'approve_loan_request' => 'Approve Loan Request',
     'confirm_approval' => 'Confirm Approval',
+    
+    // Loans
+    'total_loans' => 'Total Loans',
 ];
 
 

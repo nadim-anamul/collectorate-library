@@ -21,7 +21,7 @@
                         </div>
                         <div class="ml-3">
                             <div class="text-xs opacity-80">{{ __('ui.total_books') }}</div>
-                            <div class="text-2xl font-bold">{{ $stats['books'] ?? 0 }}</div>
+                            <div class="text-2xl font-bold">@bn($stats['books'] ?? 0)</div>
                         </div>
                     </div>
                 </div>
@@ -32,7 +32,7 @@
                         </div>
                         <div class="ml-3">
                             <div class="text-xs opacity-80">{{ __('ui.available') }}</div>
-                            <div class="text-2xl font-bold">{{ $stats['available_books'] ?? 0 }}</div>
+                            <div class="text-2xl font-bold">@bn($stats['available_books'] ?? 0)</div>
                         </div>
                     </div>
                 </div>
@@ -43,7 +43,7 @@
                         </div>
                         <div class="ml-3">
                             <div class="text-xs opacity-80">{{ __('ui.pending_loans') }}</div>
-                            <div class="text-2xl font-bold">{{ $stats['pending_loans'] ?? 0 }}</div>
+                            <div class="text-2xl font-bold">@bn($stats['pending_loans'] ?? 0)</div>
                         </div>
                     </div>
                 </a>
@@ -54,7 +54,7 @@
                         </div>
                         <div class="ml-3">
                             <div class="text-xs opacity-80">{{ __('ui.users') }}</div>
-                            <div class="text-2xl font-bold">{{ $stats['users'] ?? 0 }}</div>
+                            <div class="text-2xl font-bold">@bn($stats['users'] ?? 0)</div>
                         </div>
                     </div>
                 </div>
@@ -65,7 +65,7 @@
                         </div>
                         <div class="ml-3">
                             <div class="text-xs opacity-80">{{ __('ui.active_loans') }}</div>
-                            <div class="text-2xl font-bold">{{ $stats['loans_active'] ?? 0 }}</div>
+                            <div class="text-2xl font-bold">@bn($stats['loans_active'] ?? 0)</div>
                         </div>
                     </div>
                 </div>
@@ -259,7 +259,7 @@
                                                         {{ $book->primaryAuthor ? ($book->primaryAuthor->name_en ?? $book->primaryAuthor->name_bn) : __('ui.unknown_author') }}
                                                     @endif
                                                 </p>
-                                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ $book->publication_year }} • {{ $book->available_copies }}/{{ $book->total_copies }} {{ __('ui.copies') }}</p>
+                                                <p class="text-xs text-gray-500 dark:text-gray-400">@bn($book->publication_year) • @bn($book->available_copies)/@bn($book->total_copies) {{ __('ui.copies') }}</p>
                                             </div>
                                         </div>
                                     @endforeach

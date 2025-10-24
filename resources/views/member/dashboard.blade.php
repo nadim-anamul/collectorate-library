@@ -11,11 +11,11 @@
             </div>
             <div class="flex flex-wrap gap-2">
                 <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300">
-                    {{ $stats['current_loans'] }} {{ __('ui.active') }}
+                    @bn($stats['current_loans']) {{ __('ui.active') }}
                 </span>
                 @if($stats['overdue_books'] > 0)
                     <span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">
-                        {{ $stats['overdue_books'] }} {{ __('ui.overdue') }}
+                        @bn($stats['overdue_books']) {{ __('ui.overdue') }}
                     </span>
                 @endif
             </div>
@@ -42,7 +42,7 @@
                         </div>
                         <div class="ml-4">
                             <p class="text-blue-100">{{ __('ui.current_loans') }}</p>
-                            <p class="text-3xl font-bold">{{ $stats['current_loans'] }}</p>
+                            <p class="text-3xl font-bold">@bn($stats['current_loans'])</p>
                         </div>
                     </div>
                 </div>
@@ -58,7 +58,7 @@
                             <p class="text-purple-100">{{ __('ui.reading_status') }}</p>
                             <p class="text-3xl font-bold">
                                 @if($stats['overdue_books'] > 0)
-                                    {{ $stats['overdue_books'] }} {{ __('ui.overdue') }}
+                                    @bn($stats['overdue_books']) {{ __('ui.overdue') }}
                                 @else
                                     {{ __('ui.up_to_date') }}
                                 @endif
@@ -76,7 +76,7 @@
                         </div>
                         <div class="ml-4">
                             <p class="text-green-100">{{ __('ui.total_borrowed') }}</p>
-                            <p class="text-3xl font-bold">{{ $stats['total_borrowed'] }}</p>
+                            <p class="text-3xl font-bold">@bn($stats['total_borrowed'])</p>
                         </div>
                     </div>
                 </div>
@@ -320,7 +320,7 @@
                                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                             </svg>
-                                            {{ $loan->book->publication_year }}
+                                            @bn($loan->book->publication_year)
                                         </span>
                                     @endif
                                     @if($loan->book->pages)
@@ -328,7 +328,7 @@
                                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                             </svg>
-                                            {{ $loan->book->pages }} {{ __('ui.pages') }}
+                                            @bn($loan->book->pages) {{ __('ui.pages') }}
                                         </span>
                                     @endif
                                 </div>

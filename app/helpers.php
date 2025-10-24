@@ -63,6 +63,34 @@ if (!function_exists('trans_sync')) {
     }
 }
 
+if (!function_exists('toBengaliNumbers')) {
+    /**
+     * Convert English numbers to Bengali numbers
+     */
+    function toBengaliNumbers($text)
+    {
+        $englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+        $bengaliNumbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+        
+        return str_replace($englishNumbers, $bengaliNumbers, $text);
+    }
+}
+
+if (!function_exists('bn')) {
+    /**
+     * Convert any value to Bengali numbers if locale is Bengali
+     * Usage: {{ bn($book->publication_year) }}
+     */
+    function bn($value)
+    {
+        if (app()->getLocale() === 'bn' && is_string($value)) {
+            return toBengaliNumbers($value);
+        }
+        
+        return $value;
+    }
+}
+
 if (!function_exists('__')) {
     /**
      * Override Laravel's __ function to use JSON translations first
@@ -79,10 +107,23 @@ if (!function_exists('__')) {
                     $translation = str_replace(":{$search}", $replacement, $translation);
                 }
             }
+            
+            // Convert numbers to Bengali if locale is Bengali
+            if (app()->getLocale() === 'bn' && is_string($translation)) {
+                $translation = toBengaliNumbers($translation);
+            }
+            
             return $translation;
         }
         
         // Fallback to Laravel's default translation system
-        return \Illuminate\Support\Facades\__($key, $replace, $locale);
+        $translation = \Illuminate\Support\Facades\__($key, $replace, $locale);
+        
+        // Convert numbers to Bengali if locale is Bengali
+        if (app()->getLocale() === 'bn' && is_string($translation)) {
+            $translation = toBengaliNumbers($translation);
+        }
+        
+        return $translation;
     }
 }

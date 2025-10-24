@@ -398,8 +398,12 @@ return [
     'enter_decline_reason' => 'ঋণের অনুরোধ প্রত্যাখ্যানের কারণ লিখুন...',
     'decline_loan' => 'ঋণ প্রত্যাখ্যান করুন',
     'decline_loan_request' => 'ঋণের অনুরোধ প্রত্যাখ্যান করুন',
+    'approve' => 'অনুমোদন করুন',
     'approve_loan_request' => 'ঋণের অনুরোধ অনুমোদন করুন',
     'confirm_approval' => 'অনুমোদন নিশ্চিত করুন',
+    
+    // Loans
+    'total_loans' => 'মোট ঋণ',
     'please_fix_errors' => 'নিম্নলিখিত ত্রুটিগুলি ঠিক করুন:',
     'only_approved_users_listed' => 'শুধু অনুমোদিত ব্যবহারকারীরা তালিকাভুক্ত।',
     'unavailable_books_disabled' => 'অনুপলব্ধ বইগুলি নিষ্ক্রিয়।',

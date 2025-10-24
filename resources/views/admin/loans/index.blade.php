@@ -33,7 +33,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-blue-100 text-sm font-medium">{{ __('ui.total_loans') }}</p>
-                            <p class="text-3xl font-bold">{{ $loans->total() }}</p>
+                            <p class="text-3xl font-bold">@bn($loans->total())</p>
                         </div>
                         <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -47,7 +47,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-yellow-100 text-sm font-medium">{{ __('filters.pending') }}</p>
-                            <p class="text-3xl font-bold">{{ $loans->where('status', 'pending')->count() }}</p>
+                            <p class="text-3xl font-bold">@bn($loans->where('status', 'pending')->count())</p>
                         </div>
                         <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -61,7 +61,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-green-100 text-sm font-medium">{{ __('filters.active') }}</p>
-                            <p class="text-3xl font-bold">{{ $loans->where('status', 'issued')->count() }}</p>
+                            <p class="text-3xl font-bold">@bn($loans->where('status', 'issued')->count())</p>
                         </div>
                         <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -326,12 +326,12 @@
                                     </div>
                                     <div>
                                         <h3 class="text-lg font-bold text-gray-900 dark:text-white">{{ __('ui.loan_records') }}</h3>
-                                        <p class="text-sm text-gray-600 dark:text-gray-400">{{ $loans->total() }} {{ __('ui.total_loans_count') }}</p>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">@bn($loans->total()) {{ __('ui.total_loans_count') }}</p>
                                     </div>
                                 </div>
                                 <div class="flex items-center space-x-2">
                                     <div class="text-sm text-gray-500 dark:text-gray-400">
-                                        {{ __('ui.showing') }} {{ $loans->firstItem() ?? 0 }}-{{ $loans->lastItem() ?? 0 }} {{ __('ui.of') }} {{ $loans->total() }}
+                                        {{ __('ui.showing') }} @bn($loans->firstItem() ?? 0)-@bn($loans->lastItem() ?? 0) {{ __('ui.of') }} @bn($loans->total())
                                     </div>
                                 </div>
                             </div>
